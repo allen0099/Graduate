@@ -73,7 +73,7 @@
                             {{$page.user.name}}<v-icon right>{{ 'mdi-menu-down' }}</v-icon>
                         </v-btn>
                     </template>
-                    <v-list>
+                    <v-list class="hidden-sm-and-down">
                         <v-subheader>Manage Account</v-subheader>
                         <v-list-item
                             v-for="(link, index) in userlinks"
@@ -103,22 +103,20 @@
                     @click.stop="sidebar = !sidebar"
                 >
                 </v-app-bar-nav-icon>
+
                 <v-navigation-drawer
                     class="hidden-lg-and-up"
                     v-model="sidebar"
-                    app
                     clipped
                     hide-overlay
                     temporary
                     light
                     right
                     width="300"
+                    app
                 >
 
-                    <v-list
-                        nav
-                        dense
-                    >
+                    <v-list nav>
                         <v-list-item>
                             <v-list-item-content>
                                 <v-list-item-title class="title">
@@ -176,10 +174,9 @@
                                 <v-list-item-title>{{ link.label }}</v-list-item-title>
                             </v-list-item-content>
                         </v-list-item> -->
-                        <!-- <v-list-group
+                        <v-list-group
                             prepend-icon="mdi-account-circle"
                             no-action
-                            v-show="isLogin.length"
                         >
                             <template v-slot:activator>
                                 <v-list-item-title>Users</v-list-item-title>
@@ -194,7 +191,7 @@
                                     <v-icon left>{{ link.icon }}</v-icon>{{ link.label }}
                                 </v-list-item-title>
                             </v-list-item>
-                        </v-list-group> -->
+                        </v-list-group>
                     </v-list>
                 </v-navigation-drawer>
             </v-app-bar>
