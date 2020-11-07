@@ -1,40 +1,83 @@
 <template>
     <jet-form-section @submitted="updatePassword">
         <template #title>
-            Update Password
+            更新密碼
         </template>
 
         <template #description>
-            Ensure your account is using a long, random password to stay secure.
+            密碼至少 8 個字元 (後端需要去設定)
         </template>
 
         <template #form>
             <div class="col-span-6 sm:col-span-4">
-                <jet-label for="current_password" value="Current Password" />
-                <jet-input id="current_password" type="password" class="mt-1 block w-full" v-model="form.current_password" ref="current_password" autocomplete="current-password" />
-                <jet-input-error :message="form.error('current_password')" class="mt-2" />
+                <jet-label
+                    for="current_password"
+                    value="當前密碼"
+                />
+                <jet-input
+                    id="current_password"
+                    type="password"
+                    class="mt-1 block w-full"
+                    v-model="form.current_password"
+                    ref="current_password"
+                    autocomplete="current-password"
+                />
+                <jet-input-error
+                    :message="form.error('current_password')"
+                    class="mt-2"
+                />
             </div>
 
             <div class="col-span-6 sm:col-span-4">
-                <jet-label for="password" value="New Password" />
-                <jet-input id="password" type="password" class="mt-1 block w-full" v-model="form.password" autocomplete="new-password" />
-                <jet-input-error :message="form.error('password')" class="mt-2" />
+                <jet-label
+                    for="password"
+                    value="新密碼"
+                />
+                <jet-input
+                    id="password"
+                    type="password"
+                    class="mt-1 block w-full"
+                    v-model="form.password"
+                    autocomplete="new-password"
+                />
+                <jet-input-error
+                    :message="form.error('password')"
+                    class="mt-2"
+                />
             </div>
 
             <div class="col-span-6 sm:col-span-4">
-                <jet-label for="password_confirmation" value="Confirm Password" />
-                <jet-input id="password_confirmation" type="password" class="mt-1 block w-full" v-model="form.password_confirmation" autocomplete="new-password" />
-                <jet-input-error :message="form.error('password_confirmation')" class="mt-2" />
+                <jet-label
+                    for="password_confirmation"
+                    value="再次輸入新密碼"
+                />
+                <jet-input
+                    id="password_confirmation"
+                    type="password"
+                    class="mt-1 block w-full"
+                    v-model="form.password_confirmation"
+                    autocomplete="new-password"
+                />
+                <jet-input-error
+                    :message="form.error('password_confirmation')"
+                    class="mt-2"
+                />
             </div>
         </template>
 
         <template #actions>
-            <jet-action-message :on="form.recentlySuccessful" class="mr-3">
-                Saved.
+            <jet-action-message
+                :on="form.recentlySuccessful"
+                class="mr-3"
+            >
+                已儲存.
             </jet-action-message>
 
-            <jet-button :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                Save
+            <jet-button
+                :class="{ 'opacity-25': form.processing }"
+                :disabled="form.processing"
+            >
+                儲存
             </jet-button>
         </template>
     </jet-form-section>
@@ -80,4 +123,5 @@
             },
         },
     }
+
 </script>
