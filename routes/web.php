@@ -24,7 +24,5 @@ Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
 
 
 // helper function
-Route::get('/test', fn() => Inertia::render('HelloWorld', [
-    'name' => 'assff',
-]));
+Route::get('/test', fn() => Inertia::render('HelloWorld'));
 Route::get('/about', fn() => Inertia::render('About'));

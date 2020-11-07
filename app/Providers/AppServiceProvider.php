@@ -14,7 +14,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        Inertia::version(fn() => md5_file(public_path('js/app.js')));
+        $this->registerInertia();
     }
 
     /**
@@ -25,5 +25,14 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         //
+    }
+
+    protected function registerInertia()
+    {
+        Inertia::version(fn() => md5_file(public_path('js/app.js')));
+
+//        Inertia::share([
+//            'title' => config('app.name'),
+//        ]);
     }
 }

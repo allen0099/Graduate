@@ -8,19 +8,19 @@
 
         <div>
             <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
-                <update-profile-information-form :user="$page.user" />
+                <!--                <update-profile-information-form :user="$page.user" />-->
 
-                <jet-section-border />
+                <!--                <jet-section-border />-->
 
-                <update-password-form class="mt-10 sm:mt-0" />
+                <!--                <update-password-form class="mt-10 sm:mt-0" />-->
 
-                <div v-if="$page.jetstream.canManageTwoFactorAuthentication">
-                    <jet-section-border />
+                <!--                <div v-if="$page.jetstream.canManageTwoFactorAuthentication">-->
+                <!--                    <jet-section-border />-->
 
-                    <two-factor-authentication-form class="mt-10 sm:mt-0" />
-                </div>
+                <!--                    <two-factor-authentication-form class="mt-10 sm:mt-0" />-->
+                <!--                </div>-->
 
-                <jet-section-border />
+                <!--                <jet-section-border />-->
 
                 <logout-other-browser-sessions-form :sessions="sessions" class="mt-10 sm:mt-0" />
 
