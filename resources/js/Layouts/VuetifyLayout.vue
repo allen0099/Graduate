@@ -32,6 +32,7 @@
                     :key="`${link.label}-link`"
                     color="gray"
                     text
+                    rounded
                     class=" my-2 ml-5 bottom hidden-sm-and-down text-decoration-none"
                     :href="route(link.url)"
                     :class="{'v-btn--active': route().current(link.url)}"
@@ -44,19 +45,19 @@
                 </v-btn>
                 <v-spacer />
 
-                <!-- <v-btn
+                <v-btn
                     v-for="link in login"
                     :key="`${link.label}-link`"
-                    color="white"
+                    color="gray"
                     text
                     rounded
                     class="my-2 ml-5 hidden-sm-and-down text-decoration-none"
-                    :to="link.url"
-                    v-show="link.isLogin.indexOf(isLogin) >= 0"
+                    :href="route(link.url)"
+                    :class="{'v-btn--active': route().current(link.url)}"
                 >
                     <v-icon left>{{ link.icon }}</v-icon>
                     {{ link.label }}
-                </v-btn> -->
+                </v-btn>
                 <v-menu
                     offset-y
                     left
@@ -184,11 +185,21 @@
                             <v-list-item
                                 v-for="(link, index) in userlinks"
                                 :key="index"
-                                :to="link.url"
+                                :href="route(link.url)"
                                 class="text-decoration-none"
+                                :class="{'v-btn--active': route().current(link.url)}"
                             >
                                 <v-list-item-title>
                                     <v-icon left>{{ link.icon }}</v-icon>{{ link.label }}
+                                </v-list-item-title>
+                            </v-list-item>
+                            <v-list-item
+                                class="text-decoration-none"
+                                link
+                                @click.prevent="logout"
+                            >
+                                <v-list-item-title>
+                                    <v-icon left>{{ 'mdi-logout' }}</v-icon> {{ '登出' }}
                                 </v-list-item-title>
                             </v-list-item>
                         </v-list-group>
@@ -248,14 +259,14 @@
                     }
                 ],
                 login: [{
-                        label: '登入',
-                        url: '/login',
-                        icon: 'mdi-login',
-                        isLogin: [''],
+                        label: '設定',
+                        url: 'meow',
+                        icon: 'mdi-cog',
+                        isLogin: ['admin'],
                     },
                     {
                         label: '設定',
-                        url: '/setting',
+                        url: 'dashboard',
                         icon: 'mdi-cog',
                         isLogin: ['admin'],
                     }
