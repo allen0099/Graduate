@@ -30,3 +30,7 @@ Route::get('/about', fn() => Inertia::render('About'));
 Route::middleware(['auth:sanctum', 'verified'])->get('/meow', function () {
     return Inertia::render('Test', ['name' => 'Test meow']);
 })->name('meow');
+
+Route::middleware(['auth:sanctum', 'verified'])->get('/admin/setting', function () {
+    return Inertia::render('Admin/Setting/Show');
+})->name('admin.setting');

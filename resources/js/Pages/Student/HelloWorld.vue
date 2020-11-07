@@ -1,7 +1,9 @@
 <template>
     <VuetifyLayout>
         <template #header>
-            Hello 123
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                Hello 123
+            </h2>
         </template>
         <v-container>
             <v-row justify="space-around">
@@ -106,7 +108,6 @@
             ],
         }),
     }
-
 </script>
 
 <!-- <style src="vuetify/dist/vuetify.min.css" /> -->

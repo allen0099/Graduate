@@ -259,14 +259,14 @@
                     }
                 ],
                 login: [{
-                        label: '設定',
+                        label: '設定1',
                         url: 'meow',
                         icon: 'mdi-cog',
                         isLogin: ['admin'],
                     },
                     {
                         label: '設定',
-                        url: 'dashboard',
+                        url: 'admin.setting',
                         icon: 'mdi-cog',
                         isLogin: ['admin'],
                     }
