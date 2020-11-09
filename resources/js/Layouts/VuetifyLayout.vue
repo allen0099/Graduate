@@ -240,20 +240,14 @@
                         isLogin: ['user', 'admin'],
                     },
                     {
-                        label: '日出勤',
-                        url: 'dashboard',
-                        icon: 'mdi-view-dashboard',
-                        isLogin: ['admin'],
-                    },
-                    {
-                        label: '月出勤報表',
-                        url: 'meow',
-                        icon: 'mdi-view-dashboard',
-                        isLogin: ['admin'],
-                    },
-                    {
                         label: '編輯出勤資料',
                         url: 'dashboard',
+                        icon: 'mdi-pencil-outline',
+                        isLogin: ['admin'],
+                    },
+                    {
+                        label: 'stu',
+                        url: 'student.meow',
                         icon: 'mdi-pencil-outline',
                         isLogin: ['admin'],
                     }
