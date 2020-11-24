@@ -21,7 +21,10 @@ class CreateUsersTable extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->string('role');
-            $table->string('department')->nullable();
+
+            $table->foreignId('school_year_id')->nullable()->constrained();
+            $table->foreignId('department_id')->nullable()->constrained();
+
             $table->string('grade')->nullable();
             $table->string('class')->nullable();
             $table->string('stamp')->nullable(); // admin
