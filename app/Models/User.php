@@ -60,4 +60,24 @@ class User extends Authenticatable
     protected $appends = [
         'profile_photo_url',
     ];
+
+    public function owned_orders()
+    {
+        return $this->hasMany('App\Models\Order', 'owner_id');
+    }
+
+    public function shared_orders()
+    {
+        return $this->belongsToMany('App\Models\Order', 'orders_share');
+    }
+
+    public function school_year()
+    {
+        return $this->belongsTo('App\Models\SchoolYear');
+    }
+
+    public function department()
+    {
+        return $this->belongsTo('App\Models\Department');
+    }
 }
