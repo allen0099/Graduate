@@ -19,6 +19,7 @@ class User extends Authenticatable
     use TwoFactorAuthenticatable;
 
     const ADMIN = 'admin';
+    const STUDENT = 'student';
 
     /**
      * The attributes that are mass assignable.
