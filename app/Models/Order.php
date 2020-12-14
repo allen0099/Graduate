@@ -33,4 +33,9 @@ class Order extends Model
     {
         return $this->belongsTo('App\Models\Accessory');
     }
+
+    public function shared_users()
+    {
+        return $this->belongsToMany('App\Models\User', 'orders_share');
+    }
 }

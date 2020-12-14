@@ -18,6 +18,8 @@ class CreateOrdersShareTable extends Migration
 
             $table->foreignId('order_id')->references('id')->on('orders')->cascadeOnDelete();
             $table->foreignId('user_id')->references('id')->on('users')->cascadeOnDelete();
+
+            $table->unique(['order_id', 'user_id'], 'combine_unique');
         });
     }
 
