@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -26,13 +28,28 @@ Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
 // Gate is registered in \App\Providers\AuthServiceProvider.php
 // Global Inertia shared data is in \app\Providers\AppServiceProvider.php
 
-// return use helper function below
-Route::get('/test', fn() => Inertia::render('HelloWorld', ['name' => 'bro, this is not cool']));
+// return use helper function below, backend test data in this route
+Route::get('/test', fn() => Inertia::render('HelloWorld', ['name' => 'bro, this is not cool']))
+    ->name('test');
+
+Route::post('/location', 'ReturnLocationController@update')
+    ->name('location')
+    ->middleware('can:admin');
 
 // HTTP status, ... , name
+// check routes `php artisan route:list --columns=uri,name`
+Route::group([
+    'middleware' => ['auth:sanctum'],
+    'prefix' => 'user', // route prefix, all routes in this group is prefix by 'user'
+    'as' => 'user.' // for naming routes, all routes name in this group is prefix by 'user.'
+], function () {
+    Route::get('/', fn() => Auth::user());
+
+});
+
 Route::group([
     'middleware' => ['auth:sanctum', 'can:admin'],
-    'as' => 'admin.' // for naming routes, so in this group, all routes name is prefix by 'admin.'
+    'as' => 'admin.'
 ], function () {
     Route::get('/meow', fn() => Inertia::render('Test', ['name' => 'Test meow']))
         ->name('meow'); // routes name as 'admin.meow'

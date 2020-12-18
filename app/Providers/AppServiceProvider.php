@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\ServiceProvider;
 use Inertia\Inertia;
 
@@ -37,6 +38,10 @@ class AppServiceProvider extends ServiceProvider
             'auth' => fn() => [
                 'user' => Auth::user(),
             ],
+
+            'flash' => fn() => [
+                'success' => Session::get('success'),
+            ]
         ]);
     }
 }
