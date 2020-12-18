@@ -32,12 +32,16 @@ Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
 Route::get('/test', fn() => Inertia::render('HelloWorld', ['name' => 'bro, this is not cool']))
     ->name('test');
 
+Route::resource('time', 'App\Http\Controllers\TimeRangeController',
+    ['except' => ['index', 'create', 'edit', 'show']]);
+
 Route::post('/location', 'App\Http\Controllers\ReturnLocationController@update')
     ->name('location')
     ->middleware('can:admin');
 
+
 // HTTP status, ... , name
-// check routes `php artisan route:list --columns=uri,name`
+// check routes `php artisan route:list --columns=method,uri,name --path=user`
 Route::group([
     'middleware' => ['auth:sanctum'],
     'prefix' => 'user', // route prefix, all routes in this group is prefix by 'user'

@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\TimeRange;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\ServiceProvider;
@@ -38,10 +40,18 @@ class AppServiceProvider extends ServiceProvider
             'auth' => fn() => [
                 'user' => Auth::user(),
             ],
+            'configs' => function () {
+                if (Auth::user()->role === User::ADMIN) {
+                    return [
+                        'time_range' => TimeRange::all(),
+                    ];
+                }
+                return null;
+            },
 
             'flash' => fn() => [
                 'success' => Session::get('success'),
-            ]
+            ],
         ]);
     }
 }
