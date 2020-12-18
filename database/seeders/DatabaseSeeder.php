@@ -24,6 +24,7 @@ class DatabaseSeeder extends Seeder
             OrderShareSeeder::class,
 
             ConfigSeeder::class,
+            TimeRangeSeeder::class,
         ]);
     }
 }
