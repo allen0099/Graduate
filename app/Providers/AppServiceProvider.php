@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\ServiceProvider;
 use Inertia\Inertia;
 
@@ -31,8 +32,11 @@ class AppServiceProvider extends ServiceProvider
     {
         Inertia::version(fn() => md5_file(public_path('js/app.js')));
 
-//        Inertia::share([
-//            'title' => config('app.name'),
-//        ]);
+        Inertia::share([
+            'title' => config('app.name'),
+            'auth' => fn() => [
+                'user' => Auth::user(),
+            ],
+        ]);
     }
 }

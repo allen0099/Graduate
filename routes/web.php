@@ -22,19 +22,25 @@ Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->name('dashboard');
 
+// middleware is registered in \App\Http\Kernel.php
+// Gate is registered in \App\Providers\AuthServiceProvider.php
+// Global Inertia shared data is in \app\Providers\AppServiceProvider.php
 
-// helper function
-Route::get('/test', fn() => Inertia::render('HelloWorld'));
-Route::get('/about', fn() => Inertia::render('About'));
+// return use helper function below
+Route::get('/test', fn() => Inertia::render('HelloWorld', ['name' => 'bro, this is not cool']));
 
-Route::middleware(['auth:sanctum', 'verified'])->get('/meow', function () {
-    return Inertia::render('Test', ['name' => 'Test meow']);
-})->name('meow');
+// HTTP status, ... , name
+Route::group([
+    'middleware' => ['auth:sanctum', 'can:admin'],
+    'as' => 'admin.' // for naming routes, so in this group, all routes name is prefix by 'admin.'
+], function () {
+    Route::get('/meow', fn() => Inertia::render('Test', ['name' => 'Test meow']))
+        ->name('meow'); // routes name as 'admin.meow'
+});
 
-Route::middleware(['auth:sanctum', 'verified'])->get('/admin/setting', function () {
-    return Inertia::render('Admin/Setting/Show');
-})->name('admin.setting');
+Route::group([
+    'middleware' => ['auth:sanctum', 'can:student'],
+    'as' => 'student.'
+], function () {
 
-Route::middleware(['auth:sanctum', 'verified'])->get('/student/meow', function () {
-    return Inertia::render('Student/meow/Show');
-})->name('student.meow');
+});
