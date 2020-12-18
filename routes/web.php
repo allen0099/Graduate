@@ -32,7 +32,7 @@ Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
 Route::get('/test', fn() => Inertia::render('HelloWorld', ['name' => 'bro, this is not cool']))
     ->name('test');
 
-Route::post('/location', 'ReturnLocationController@update')
+Route::post('/location', 'App\Http\Controllers\ReturnLocationController@update')
     ->name('location')
     ->middleware('can:admin');
 
@@ -43,8 +43,10 @@ Route::group([
     'prefix' => 'user', // route prefix, all routes in this group is prefix by 'user'
     'as' => 'user.' // for naming routes, all routes name in this group is prefix by 'user.'
 ], function () {
-    Route::get('/', fn() => Auth::user());
-
+    // stamp update
+    Route::post('/stamp', 'App\Http\Controllers\AdminStampChangeController@update')
+        ->name('admin-stamp.update')
+        ->middleware('can:admin');
 });
 
 Route::group([
