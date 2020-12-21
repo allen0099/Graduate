@@ -33,7 +33,7 @@
                     </v-card>
                 </v-tab-item>
                 <!-- tab 2 -->
-                <v-tab-item>
+                <!-- <v-tab-item>
                     <v-card flat>
                         <v-card-text>
                             <UploadStudentData></UploadStudentData>
@@ -41,12 +41,16 @@
                             <UploadStampImg></UploadStampImg>
                         </v-card-text>
                     </v-card>
-                </v-tab-item>
+                </v-tab-item> -->
                 <!-- tab 3 -->
                 <v-tab-item>
                     <v-card flat>
                         <v-card-text>
-                            <TimeSetting></TimeSetting>
+                            <TimeSetting
+                                v-for="(time, index) in $page.configs.time_range"
+                                :key="`time-${index}`"
+                                :time="time"
+                            ></TimeSetting>
                         </v-card-text>
                     </v-card>
                 </v-tab-item>

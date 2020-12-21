@@ -1,8 +1,8 @@
 <!-- vuetify fixed -->
 <template>
-    <jet-form-section @submitted="updateProfileInformation">
+    <jet-form-section @submitted="updateTimeRange">
         <template #title>
-            借用時間設定
+            {{ time.content + '設定' }}
         </template>
 
         <!-- form grid-cols-6 -->
@@ -52,7 +52,6 @@
                 </v-menu>
             </div>
         </template>
-
         <template #actions>
             <jet-action-message
                 :on="form.recentlySuccessful"
@@ -86,17 +85,18 @@
             JetFormSection,
             JetLabel,
         },
-
+        props: ['time'],
         data() {
             return {
-                form: this.$inertia.form({
-                    '_method': 'PUT',
-                    std_data: null,
-                }, {
-                    bag: 'uploadStudentData',
-                }),
-                dates: [], // new Date().toISOString().substr(0, 10)
+                dates: ["2020-12-08", "2020-12-10"], // new Date().toISOString().substr(0, 10)
                 show: false,
+                form: this.$inertia.form({
+                    '_method': 'PATCH',
+                    start_time: '',
+                    end_time: '',
+                }, {
+                    bag: 'updateTimeRange',
+                }),
             }
         },
         computed: {
@@ -105,14 +105,22 @@
             },
         },
         methods: {
-            uploadStudentData() {
-                if (this.$refs.std_data) {
-                    this.form.std_data = this.$refs.std_data.files[0]
-                }
-
-                this.form.post(route('user-profile-information.update'));
+            updateTimeRange() {
+                this.form.start_time = this.dates[0]
+                this.form.end_time = this.dates[1]
+                // this.form.content = this.time.content
+                this.form.patch('/time/' + this.time.id);
             },
+            initTime() {
+                this.dates = [this.time.start_time, this.time.end_time]
+                this.content = this.time.content
+                this.form.start_time = this.dates[0]
+                this.form.end_time = this.dates[1]
+            }
         },
+        mounted() {
+            this.initTime()
+        }
     }
 
 </script>
