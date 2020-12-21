@@ -32,10 +32,6 @@ Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
 Route::get('/test', fn() => Inertia::render('HelloWorld', ['name' => 'bro, this is not cool']))
     ->name('test');
 
-Route::middleware(['auth:sanctum'])->get('/meow', function () {
-    return Inertia::render('Test', ['name' => 'Test meow']);
-})->name('meow'); // new dashboard
-
 // HTTP status, ... , name
 // check routes `php artisan route:list --columns=method,uri,name --path=user`
 Route::group([
@@ -74,6 +70,10 @@ Route::group([
     'middleware' => ['auth:sanctum', 'can:student'],
     'as' => 'student.'
 ], function () {
-    Route::get('/student/meow', Inertia::render('Student/meow/Show'))
+    Route::get('/student/meow', fn() => Inertia::render('Student/meow/Show'))
         ->name('meow'); // routes name as 'student.meow'
 });
+
+Route::middleware(['auth:sanctum'])->get('/meow', function () {
+    return Inertia::render('Test', ['name' => 'Test meow']);
+})->name('meow'); // new dashboard

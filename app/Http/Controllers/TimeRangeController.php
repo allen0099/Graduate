@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Redirect;
 
 class TimeRangeController extends Controller
 {
-    public function update(Request $request, $id)
+    public function update(Request $request, int $id)
     {
         $this->validateTime($request);
 
@@ -18,6 +18,26 @@ class TimeRangeController extends Controller
         $timeRange->save();
 
         return $this->redirectAfterDone('success', '資料變更成功！');
+    }
+
+    public function store(Request $request)
+    {
+        $this->validateTime($request);
+
+        $time = new TimeRange();
+        $time->content = $request->input('content');
+        $time->start_time = $request->input('start_time');
+        $time->end_time = $request->input('end_time');
+        $time->save();
+
+        return $this->redirectAfterDone('success', '新增資料成功！');
+    }
+
+    public function destroy(Request $request, $id)
+    {
+        $timeRange->delete();
+        $request->session()->flash('success', '資料刪除成功！');
+        return $this->redirectAfterDone();
     }
 
     private function validateTime(Request $request)
