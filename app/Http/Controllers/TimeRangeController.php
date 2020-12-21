@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\TimeRange;
 use Illuminate\Http\Request;
+use Redirect;
 
 class TimeRangeController extends Controller
 {
@@ -27,6 +28,7 @@ class TimeRangeController extends Controller
                 'content' => 'required|unique:App\Time,content',
             ]);
         }
+
         $request->validate([
             'start_time' => 'required|date',
             'end_time' => 'required|date|after:start_time',
@@ -37,13 +39,13 @@ class TimeRangeController extends Controller
 
     private function redirectAfterDone()
     {
-        return Redirect::route('time.index');
+        return Redirect::route('admin.setting');
     }
 
-    public function update(Request $request, TimeRange $timeRange)
+    public function update(Request $request, $id)
     {
         $this->validateTime($request);
-
+        $timeRange = TimeRange::find($id);
         $timeRange->start_time = $request->start_time;
         $timeRange->end_time = $request->end_time;
         $timeRange->save();
