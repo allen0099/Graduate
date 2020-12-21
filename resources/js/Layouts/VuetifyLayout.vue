@@ -256,20 +256,20 @@
                     },
                     {
                         label: 'stu',
-                        url: 'student.meow',
+                        url: 'root',
                         icon: 'mdi-pencil-outline',
                         role: ['student', 'admin'],
                     }
                 ],
-                rightLinks: [{
-                        label: '設定1',
-                        url: 'meow',
-                        icon: 'mdi-cog',
-                        role: ['student', 'admin'],
-                    },
+                login: [{
+                    label: '設定1',
+                    url: 'root',
+                    icon: 'mdi-cog',
+                    isLogin: ['admin'],
+                },
                     {
                         label: '設定',
-                        url: 'admin.setting',
+                        url: 'root',
                         icon: 'mdi-cog',
                         role: ['student', 'admin'],
                     }

@@ -16,6 +16,7 @@ class CreateAccessoriesTable extends Migration
         Schema::create('accessories', function (Blueprint $table) {
             $table->id();
             $table->char('type', 5)->comment('學 / 碩 / 博');
+            $table->string('name');
             $table->string('color');
             $table->unsignedInteger('quantity');
 

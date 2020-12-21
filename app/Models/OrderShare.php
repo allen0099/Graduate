@@ -11,8 +11,5 @@ class OrderShare extends Model
 
     protected $table = 'orders_share';
 
-    public function shared_users()
-    {
-        return $this->belongsToMany('App\Models\User', 'orders_share');
-    }
+    public $timestamps = false;
 }

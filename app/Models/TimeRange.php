@@ -8,4 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class TimeRange extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'content',
+        'start_time',
+        'end_time',
+    ];
 }

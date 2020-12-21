@@ -26,10 +26,10 @@
                                 Dashboard
                             </jet-nav-link>
                             <jet-nav-link
-                                :href="route('meow')"
-                                :active="route().current('meow')"
+                                :active="route().current('root')"
+                                :href="route('root')"
                             >
-                                meow
+                                Meow
                             </jet-nav-link>
                         </div>
                     </div>

@@ -25,9 +25,11 @@ class CreateUsersTable extends Migration
             $table->foreignId('school_year_id')->nullable()->constrained();
             $table->foreignId('department_id')->nullable()->constrained();
 
-            $table->string('grade')->nullable();
-            $table->string('class')->nullable();
-            $table->string('stamp')->nullable(); // admin
+            $table->string('grade', 10)->nullable(); // student
+            $table->string('class', 10)->nullable(); // student
+
+            $table->text('stamp')->nullable(); // admin
+
             $table->text('two_factor_secret')->nullable();
             $table->text('two_factor_recovery_codes')->nullable();
             $table->rememberToken();

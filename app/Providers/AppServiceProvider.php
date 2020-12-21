@@ -2,6 +2,10 @@
 
 namespace App\Providers;
 
+use App\Models\TimeRange;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\ServiceProvider;
 use Inertia\Inertia;
 
@@ -31,8 +35,23 @@ class AppServiceProvider extends ServiceProvider
     {
         Inertia::version(fn() => md5_file(public_path('js/app.js')));
 
-//        Inertia::share([
-//            'title' => config('app.name'),
-//        ]);
+        Inertia::share([
+            'title' => config('app.name'),
+            'auth' => fn() => [
+                'user' => Auth::user(),
+            ],
+            'configs' => function () {
+                if (Auth::user()->role === User::ADMIN) {
+                    return [
+                        'time_range' => TimeRange::all(),
+                    ];
+                }
+                return null;
+            },
+
+            'flash' => fn() => [
+                'success' => Session::get('success'),
+            ],
+        ]);
     }
 }
