@@ -250,7 +250,7 @@
                     },
                     {
                         label: '我的訂單',
-                        url: 'meow',
+                        url: 'student.meow',
                         icon: 'mdi-pencil-outline',
                         role: ['admin', 'student'],
                     },

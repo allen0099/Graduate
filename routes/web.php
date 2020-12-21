@@ -54,29 +54,29 @@ Route::group([
 });
 
 Route::group([
+//    'prefix' => 'admin', // if enable, will prefix route with it
     'middleware' => ['auth:sanctum', 'can:admin'],
     'as' => 'admin.'
 ], function () {
     Route::get('/meow', fn() => Inertia::render('Test', ['name' => 'Test meow']))
         ->name('meow'); // routes name as 'admin.meow'
+
+    Route::get('/admin/setting', function () {
+        return Inertia::render('Admin/Setting/Show');
+    })->name('setting'); // routes name as 'admin.setting'
 });
 
+// Student routes group
 Route::group([
+//    'prefix' => 'student', // if enable, will prefix route with it
     'middleware' => ['auth:sanctum', 'can:student'],
     'as' => 'student.'
 ], function () {
-
+    Route::get('/student/meow', function () {
+        return Inertia::render('Student/meow/Show');
+    })->name('meow'); // routes name as 'student.meow'
 });
-
 
 Route::middleware(['auth:sanctum', 'verified'])->get('/meow', function () {
     return Inertia::render('Test', ['name' => 'Test meow']);
-})->name('meow');
-
-Route::middleware(['auth:sanctum', 'verified'])->get('/admin/setting', function () {
-    return Inertia::render('Admin/Setting/Show');
-})->name('admin.setting');
-
-Route::middleware(['auth:sanctum', 'verified'])->get('/student/meow', function () {
-    return Inertia::render('Student/meow/Show');
-})->name('student.meow');
+})->name('meow'); // new dashbord
