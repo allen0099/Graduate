@@ -28,14 +28,15 @@
                     </v-toolbar-title>
                 </div>
                 <v-btn
-                    v-for="(link) in links"
-                    :key="`${link.label}-link`"
+                    v-for="(link) in leftLinks"
+                    :key="`${link.label}-left-link`"
                     color="gray"
                     text
                     rounded
                     class=" my-2 ml-5 bottom hidden-sm-and-down text-decoration-none"
                     :href="route(link.url)"
                     :class="{'v-btn--active': route().current(link.url)}"
+                    v-if="link.role.indexOf($page.user.role) >= 0"
                 >
                     <v-icon
                         left
@@ -46,8 +47,8 @@
                 <v-spacer />
 
                 <v-btn
-                    v-for="link in login"
-                    :key="`${link.label}-link`"
+                    v-for="link in rightLinks"
+                    :key="`${link.label}-right-link`"
                     color="gray"
                     text
                     rounded
@@ -77,8 +78,8 @@
                     <v-list class="hidden-sm-and-down">
                         <v-subheader>Manage Account</v-subheader>
                         <v-list-item
-                            v-for="(link, index) in userlinks"
-                            :key="index"
+                            v-for="(link, index) in menuLinks"
+                            :key="`${link.label}-menu-link`"
                             :href="route(link.url)"
                             class="text-decoration-none"
                         >
@@ -141,8 +142,8 @@
                         <v-divider></v-divider>
 
                         <v-list-item
-                            v-for="link in links"
-                            :key="`${link.label}-drawer-link`"
+                            v-for="link in leftLinks"
+                            :key="`${link.label}-drawer-left-link`"
                             :href="route(link.url)"
                             class="text-decoration-none"
                             color="primary"
@@ -183,8 +184,8 @@
                                 <v-list-item-title>Users</v-list-item-title>
                             </template>
                             <v-list-item
-                                v-for="(link, index) in userlinks"
-                                :key="index"
+                                v-for="(link, index) in rightLinks"
+                                :key="`${link.label}-drawer-right-link`"
                                 :href="route(link.url)"
                                 class="text-decoration-none"
                                 :class="{'v-btn--active': route().current(link.url)}"
@@ -208,12 +209,14 @@
             </v-app-bar>
 
             <v-container class="py-5">
-                <v-card>
+                <v-card min-height="85vh">
                     <v-card-title class="title font-weight-bold mx-auto px-sm-6 px-lg-8">
                         <slot name="header"></slot>
                     </v-card-title>
                     <v-divider class="mx-5 v-divider-bold" />
-                    <slot></slot>
+                    <div class="px-5">
+                        <slot></slot>
+                    </div>
                 </v-card>
             </v-container>
         </v-main>
@@ -228,44 +231,50 @@
                 sidebar: false,
                 helloworld: 'helloworld',
                 showingNavigationDropdown: false,
-                outside_links: [{
+                outsideLinks: [{
                     label: '排班查詢系統',
                     url: 'http://agox.tku.edu.tw',
                     icon: 'mdi-launch ',
                 }, ],
-                links: [{
-                        label: '月出勤',
+                leftLinks: [{
+                        label: '學生才會看到',
                         url: 'meow',
                         icon: 'mdi-view-dashboard',
-                        isLogin: ['user', 'admin'],
+                        role: ['student'],
                     },
                     {
-                        label: '編輯出勤資料',
-                        url: 'dashboard',
+                        label: 'admin才會看到',
+                        url: 'meow',
+                        icon: 'mdi-view-dashboard',
+                        role: ['admin'],
+                    },
+                    {
+                        label: '我的訂單',
+                        url: 'order.all',
                         icon: 'mdi-pencil-outline',
-                        isLogin: ['admin'],
+                        role: ['admin', 'student'],
                     },
                     {
                         label: 'stu',
                         url: 'student.meow',
                         icon: 'mdi-pencil-outline',
-                        isLogin: ['admin'],
+                        role: ['student', 'admin'],
                     }
                 ],
-                login: [{
+                rightLinks: [{
                         label: '設定1',
                         url: 'meow',
                         icon: 'mdi-cog',
-                        isLogin: ['admin'],
+                        role: ['student', 'admin'],
                     },
                     {
                         label: '設定',
                         url: 'admin.setting',
                         icon: 'mdi-cog',
-                        isLogin: ['admin'],
+                        role: ['student', 'admin'],
                     }
                 ].reverse(),
-                userlinks: [{
+                menuLinks: [{
                     label: '個人設定',
                     url: 'profile.show', // 在 vendor 裡面有 定義
                     icon: 'mdi-account-cog-outline',

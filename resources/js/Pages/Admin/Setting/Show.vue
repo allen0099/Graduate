@@ -22,7 +22,7 @@
                     <v-icon left>mdi-access-point</v-icon>
                     衣服相關設定
                 </v-tab>
-
+                <!-- tab 1 -->
                 <v-tab-item>
                     <v-card flat>
                         <v-card-text>
@@ -32,6 +32,7 @@
                         </v-card-text>
                     </v-card>
                 </v-tab-item>
+                <!-- tab 2 -->
                 <v-tab-item>
                     <v-card flat>
                         <v-card-text>
@@ -41,6 +42,7 @@
                         </v-card-text>
                     </v-card>
                 </v-tab-item>
+                <!-- tab 3 -->
                 <v-tab-item>
                     <v-card flat>
                         <v-card-text>

@@ -411,14 +411,13 @@
                         class="mb-6"
                         min-height="350px"
                         outlined
-                    ></v-card>
+                    >
+                        {{ order }}
+                    </v-card>
                     <v-row class="mx-1">
 
                         <v-spacer></v-spacer>
-                        <v-btn
-                            color="primary"
-                            @click="e6 = 4"
-                        >
+                        <v-btn @click="e6 = 4">
                             前往我的訂單
                         </v-btn>
                     </v-row>

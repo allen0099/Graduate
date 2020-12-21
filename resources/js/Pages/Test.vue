@@ -2,6 +2,7 @@
     <VuetifyLayout>
         <template #header>
             Hello 123
+            {{ $page.user }}
         </template>
         <v-container>
             <v-row justify="space-around">

@@ -38,3 +38,7 @@ Route::middleware(['auth:sanctum', 'verified'])->get('/admin/setting', function 
 Route::middleware(['auth:sanctum', 'verified'])->get('/student/meow', function () {
     return Inertia::render('Student/meow/Show');
 })->name('student.meow');
+
+Route::middleware(['auth:sanctum', 'verified'])->get('/order/all', function () {
+    return Inertia::render('Student/MyOrder/Show');
+})->name('order.all');
