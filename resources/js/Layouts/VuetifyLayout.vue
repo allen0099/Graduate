@@ -250,7 +250,7 @@
                     },
                     {
                         label: '我的訂單',
-                        url: 'order.all',
+                        url: 'meow',
                         icon: 'mdi-pencil-outline',
                         role: ['admin', 'student'],
                     },
@@ -261,15 +261,15 @@
                         role: ['student', 'admin'],
                     }
                 ],
-                login: [{
-                    label: '設定1',
-                    url: 'root',
-                    icon: 'mdi-cog',
-                    isLogin: ['admin'],
-                },
+                rightLinks: [{
+                        label: '設定1',
+                        url: 'meow',
+                        icon: 'mdi-cog',
+                        role: ['student', 'admin'],
+                    },
                     {
                         label: '設定',
-                        url: 'root',
+                        url: 'admin.setting',
                         icon: 'mdi-cog',
                         role: ['student', 'admin'],
                     }
