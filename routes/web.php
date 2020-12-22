@@ -32,13 +32,9 @@ Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
 Route::get('/test', fn() => Inertia::render('HelloWorld', ['name' => 'bro, this is not cool']))
     ->name('test');
 
-Route::resource('time', 'App\Http\Controllers\TimeRangeController',
-    ['except' => ['index', 'create', 'edit', 'show']]);
-
-Route::post('/location', 'App\Http\Controllers\ReturnLocationController@update')
-    ->name('location')
-    ->middleware('can:admin');
-
+Route::middleware(['auth:sanctum'])->get('/meow', function () {
+    return Inertia::render('Test', ['name' => 'Test meow']);
+})->name('meow'); // new dashboard
 
 // HTTP status, ... , name
 // check routes `php artisan route:list --columns=method,uri,name --path=user`
@@ -53,6 +49,7 @@ Route::group([
         ->middleware('can:admin');
 });
 
+// Admin routes group
 Route::group([
 //    'prefix' => 'admin', // if enable, will prefix route with it
     'middleware' => ['auth:sanctum', 'can:admin'],
@@ -61,9 +58,14 @@ Route::group([
     Route::get('/meow', fn() => Inertia::render('Test', ['name' => 'Test meow']))
         ->name('meow'); // routes name as 'admin.meow'
 
-    Route::get('/admin/setting', function () {
-        return Inertia::render('Admin/Setting/Show');
-    })->name('setting'); // routes name as 'admin.setting'
+    Route::get('/admin/setting', fn() => Inertia::render('Admin/Setting/Show'))
+        ->name('setting'); // routes name as 'admin.setting'
+
+    Route::resource('time', 'App\Http\Controllers\TimeRangeController',
+        ['except' => ['index', 'create', 'edit', 'show', 'destroy', 'store']]);
+
+    Route::post('/location', 'App\Http\Controllers\ReturnLocationController@update')
+        ->name('location');
 });
 
 // Student routes group
@@ -72,11 +74,6 @@ Route::group([
     'middleware' => ['auth:sanctum', 'can:student'],
     'as' => 'student.'
 ], function () {
-    Route::get('/student/meow', function () {
-        return Inertia::render('Student/meow/Show');
-    })->name('meow'); // routes name as 'student.meow'
+    Route::get('/student/meow', Inertia::render('Student/meow/Show'))
+        ->name('meow'); // routes name as 'student.meow'
 });
-
-Route::middleware(['auth:sanctum', 'verified'])->get('/meow', function () {
-    return Inertia::render('Test', ['name' => 'Test meow']);
-})->name('meow'); // new dashbord
