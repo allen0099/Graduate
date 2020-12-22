@@ -3,6 +3,7 @@
     <jet-form-section @submitted="updateTimeRange">
         <template #title>
             {{ time.content + '設定' }}
+            {{ $page.errors.length }}
         </template>
 
         <!-- form grid-cols-6 -->
@@ -56,8 +57,10 @@
             <jet-action-message
                 :on="form.recentlySuccessful"
                 class="mr-3"
+                :color="Object.values($page.errors).length > 0 ? 'red' : ''"
             >
-                已設定
+                {{ Object.values($page.errors).length > 0 ? Object.values($page.errors)[0] : $page.flash.success }}
+
             </jet-action-message>
 
             <jet-button
@@ -88,7 +91,7 @@
         props: ['time'],
         data() {
             return {
-                dates: ["2020-12-08", "2020-12-10"], // new Date().toISOString().substr(0, 10)
+                dates: [], // new Date().toISOString().substr(0, 10)
                 show: false,
                 form: this.$inertia.form({
                     '_method': 'PATCH',
@@ -120,7 +123,7 @@
         },
         mounted() {
             this.initTime()
-        }
+        },
     }
 
 </script>

@@ -33,8 +33,10 @@ class TimeRangeController extends Controller
             'start_time' => 'required|date',
             'end_time' => 'required|date|after:start_time',
         ], [
-            'after' => '結束時間必須在開始時間之後。',
+            'after' => '變更失敗，結束時間必須在開始時間之後。',
         ]);
+
+        $request->session()->flash('error', '資料變更成功！');
     }
 
     private function redirectAfterDone()

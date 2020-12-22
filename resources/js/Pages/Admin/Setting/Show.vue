@@ -46,11 +46,13 @@
                 <v-tab-item>
                     <v-card flat>
                         <v-card-text>
-                            <TimeSetting
+                            <div
                                 v-for="(time, index) in $page.configs.time_range"
                                 :key="`time-${index}`"
-                                :time="time"
-                            ></TimeSetting>
+                            >
+                                <TimeSetting :time="time"></TimeSetting>
+                                <jet-section-border />
+                            </div>
                         </v-card-text>
                     </v-card>
                 </v-tab-item>
