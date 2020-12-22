@@ -35,8 +35,6 @@ class TimeRangeController extends Controller
         ], [
             'after' => '變更失敗，結束時間必須在開始時間之後。',
         ]);
-
-        $request->session()->flash('error', '資料變更成功！');
     }
 
     private function redirectAfterDone()
