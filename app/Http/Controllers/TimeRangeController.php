@@ -35,9 +35,10 @@ class TimeRangeController extends Controller
 
     public function destroy(Request $request, $id)
     {
+        $timeRange = TimeRange::find($id);
         $timeRange->delete();
-        $request->session()->flash('success', '資料刪除成功！');
-        return $this->redirectAfterDone();
+
+        return $this->redirectAfterDone('success', '資料刪除成功！');
     }
 
     private function validateTime(Request $request)

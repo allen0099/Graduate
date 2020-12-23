@@ -9,6 +9,11 @@ class Cloth extends Model
 {
     use HasFactory;
 
+    protected $hidden = [
+        'created_at',
+        'updated_at',
+    ];
+
     public function order()
     {
         return $this->hasMany('App\Models\Order', 'cloth_id');
