@@ -60,7 +60,7 @@ Route::group([
     Route::resource('time', 'App\Http\Controllers\TimeRangeController',
         ['except' => ['index', 'create', 'edit', 'show', 'destroy', 'store']]);
 
-    Route::post('/location', 'App\Http\Controllers\ReturnLocationController@update')
+    Route::post('/location', 'App\Http\Controllers\LocationUpdateController')
         ->name('location');
 });
 
