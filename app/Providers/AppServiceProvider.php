@@ -44,10 +44,12 @@ class AppServiceProvider extends ServiceProvider
                 'user' => Auth::user(),
             ],
             'configs' => function () {
-                if (Auth::user()->role === User::ADMIN) {
-                    return [
-                        'time_range' => TimeRange::all(),
-                    ];
+                if (Auth::check()) {
+                    if (Auth::user()->role === User::ADMIN) {
+                        return [
+                            'time_range' => TimeRange::all(),
+                        ];
+                    }
                 }
                 return null;
             },
@@ -64,13 +66,16 @@ class AppServiceProvider extends ServiceProvider
                 ];
             },
             'orders' => function () {
-                if (Auth::user()->role === User::ADMIN) {
-                    return Order::all();
+                if (Auth::check()) {
+                    if (Auth::user()->role === User::ADMIN) {
+                        return Order::all();
+                    }
+                    return [
+                        'own' => User::find(Auth::id())->owned_orders,
+                        'shared' => User::find(Auth::id())->shared_orders,
+                    ];
                 }
-                return [
-                    'own' => User::find(Auth::id())->owned_orders,
-                    'shared' => User::find(Auth::id())->shared_orders,
-                ];
+                return null;
             },
             'flash' => fn() => [
                 'success' => Session::get('success'),
