@@ -19,6 +19,22 @@ class Order extends Model
     const code_51 = 51; // 退款完成
     const code_100 = 100; // 已取消訂單
 
+    /**
+     * The relations to eager load on every query.
+     *
+     * @var array
+     */
+    protected $with = ['shared_users'];
+
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var array
+     */
+    protected $hidden = [
+        'pivot',
+    ];
+
     public function owner()
     {
         return $this->belongsTo('App\Models\User');

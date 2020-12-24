@@ -4,30 +4,37 @@
             Remove this page in production
         </div>
         <v-divider/>
-        <div v-if="user" class="text-center text-5xl font-thin px-4 border-r-2 border-current">
-            User: {{ user }}
-        </div>
-        <div v-else class="text-center text-5xl font-thin px-4 border-r-2 border-current">
-            User: Null, please login
-        </div>
         <h1 class="text-2xl mt-2">Hello {{ name }}</h1>
+        <v-divider/>
+        <form @submit.prevent="logout">
+            <button class="text-5xl font-thin px-4 border-r-2 border-current">
+                Logout
+            </button>
+        </form>
     </div>
 </template>
 
 <script>
+import Button from "../Jetstream/Button";
 export default {
-    name: "HelloWorld",
-    metaInfo: {
-        title: 'About'
-    },
+    name: "OrderTest",
+    components: {Button},
     props: {
         name: String
     },
     computed: {
-        user() {
+        orders() {
             // WTF $page is
-            return this.$page.auth?.user
+            // return this.$inertia
+            return this.$page.orders
         }
+    },
+    methods: {
+        logout() {
+            axios.post(route('logout').url()).then(response => {
+                window.location = '/login';
+            })
+        },
     },
 }
 </script>

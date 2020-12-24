@@ -63,6 +63,15 @@ class AppServiceProvider extends ServiceProvider
                     'cloth' => $cloths,
                 ];
             },
+            'orders' => function () {
+                if (Auth::user()->role === User::ADMIN) {
+                    return Order::all();
+                }
+                return [
+                    'own' => User::find(Auth::id())->owned_orders,
+                    'shared' => User::find(Auth::id())->shared_orders,
+                ];
+            },
             'flash' => fn() => [
                 'success' => Session::get('success'),
             ],
