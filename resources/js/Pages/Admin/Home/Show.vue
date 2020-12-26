@@ -4,13 +4,100 @@
             首頁
         </template>
         <v-card
-            class="mt-3"
+            class="mt-3 mb-10"
             flat
+            v-show="cancel_order_list.length > 0"
         >
-            <v-card-title>取消訂單申請</v-card-title>
+            <v-card-title>
+                <v-badge
+                    color="error"
+                    :content="cancel_order_list.length"
+                    offset-x="0"
+                    offset-y="13"
+                >
+                    取消訂單申請
+                </v-badge>
+            </v-card-title>
+            <v-card
+                class="pa-3"
+                outlined
+            >
+                <v-virtual-scroll
+                    v-resize="onResize"
+                    height="300"
+                    min-height="300"
+                    :item-height="item_height"
+                    :items="cancel_order_list"
+                >
+                    <template v-slot:default="{ item }">
+                        <v-list-item style="background-color: #FFCDD2">
+                            <v-list-item-content>
+                                <v-row dense>
+                                    <v-col
+                                        cols="12"
+                                        md="4"
+                                    >班級：{{ item.department }}</v-col>
+                                    <v-col
+                                        cols="12"
+                                        md="4"
+                                    >學生：{{ item.name }}</v-col>
+                                    <v-col
+                                        cols="12"
+                                        md="4"
+                                    >學號：{{ item.stu_id }}</v-col>
+                                    <v-col
+                                        cols="12"
+                                        md="4"
+                                    >訂單編號：{{ item.orderNumber }}</v-col>
+                                    <v-col
+                                        cols="12"
+                                        md="4"
+                                    >訂單日期：{{ item.orderDate }}</v-col>
+                                    <v-col
+                                        cols="12"
+                                        md="4"
+                                    >取消日期：{{ item.cancelDate }}</v-col>
+                                    <v-col cols="12">取消原因：{{ item.reason }}</v-col>
+                                </v-row>
+                            </v-list-item-content>
+
+                            <v-list-item-action>
+                                <v-btn
+                                    depressed
+                                    small
+                                    color="success"
+                                >
+                                    批准
+                                    <v-icon
+                                        right
+                                        dark
+                                    >
+                                        mdi-check
+                                    </v-icon>
+                                </v-btn>
+                                <v-btn
+                                    depressed
+                                    small
+                                    color="error"
+                                    class="mt-2"
+                                >
+                                    取消
+                                    <v-icon
+                                        right
+                                        dark
+                                    >
+                                        mdi-close
+                                    </v-icon>
+                                </v-btn>
+                                <v-spacer></v-spacer>
+                            </v-list-item-action>
+                        </v-list-item>
+                    </template>
+                </v-virtual-scroll>
+            </v-card>
         </v-card>
 
-        <v-divider class="v-divider-bold" />
+        <v-divider></v-divider>
 
         <v-card
             class="mt-3"
@@ -87,7 +174,7 @@
                 </v-col>
             </v-row>
         </v-card>
-
+        <v-divider class="mt-6 mb-3"></v-divider>
         <v-card
             class="mt-3"
             flat
@@ -126,7 +213,7 @@
         </v-card>
 
         <v-card
-            class="mt-3"
+            class="my-3"
             flat
         >
             <v-card-title>學士服領巾數量 (剩餘/總數)</v-card-title>
@@ -252,7 +339,120 @@
                     r: '#FFFFFF'
                 }
             },
+            cancel_order_list: [{
+                name: '學生一',
+                stu_id: '406410232',
+                department: '電機喵喵喵喵組',
+                orderNumber: "20201116990146",
+                orderDate: "2020-11-28 14:29",
+                cancelDate: "2020-11-28 18:29",
+                order_content: "訂單內容",
+                reason: "品項或數量錯誤"
+            }, {
+                name: '學生一',
+                stu_id: '406410232',
+                department: '電機喵喵喵喵組',
+                orderNumber: "20201116990146",
+                orderDate: "2020-11-28 14:29",
+                cancelDate: "2020-11-28 18:29",
+                order_content: "訂單內容",
+                reason: "品項或數量錯誤"
+            }, {
+                name: '學生一',
+                stu_id: '406410232',
+                department: '電機喵喵喵喵組',
+                orderNumber: "20201116990146",
+                orderDate: "2020-11-28 14:29",
+                cancelDate: "2020-11-28 18:29",
+                order_content: "訂單內容",
+                reason: "品項或數量錯誤"
+            }, {
+                name: '學生一',
+                stu_id: '406410232',
+                department: '電機喵喵喵喵組',
+                orderNumber: "20201116990146",
+                orderDate: "2020-11-28 14:29",
+                cancelDate: "2020-11-28 18:29",
+                order_content: "訂單內容",
+                reason: "品項或數量錯誤"
+            }, {
+                name: '學生一',
+                stu_id: '406410232',
+                department: '電機喵喵喵喵組',
+                orderNumber: "20201116990146",
+                orderDate: "2020-11-28 14:29",
+                cancelDate: "2020-11-28 18:29",
+                order_content: "訂單內容",
+                reason: "品項或數量錯誤"
+            }, {
+                name: '學生一',
+                stu_id: '406410232',
+                department: '電機喵喵喵喵組',
+                orderNumber: "20201116990146",
+                orderDate: "2020-11-28 14:29",
+                cancelDate: "2020-11-28 18:29",
+                order_content: "訂單內容",
+                reason: "品項或數量錯誤"
+            }, {
+                name: '學生一',
+                stu_id: '406410232',
+                department: '電機喵喵喵喵組',
+                orderNumber: "20201116990146",
+                orderDate: "2020-11-28 14:29",
+                cancelDate: "2020-11-28 18:29",
+                order_content: "訂單內容",
+                reason: "品項或數量錯誤"
+            }, {
+                name: '學生一',
+                stu_id: '406410232',
+                department: '電機喵喵喵喵組',
+                orderNumber: "20201116990146",
+                orderDate: "2020-11-28 14:29",
+                cancelDate: "2020-11-28 18:29",
+                order_content: "訂單內容",
+                reason: "品項或數量錯誤"
+            }, {
+                name: '學生一',
+                stu_id: '406410232',
+                department: '電機喵喵喵喵組',
+                orderNumber: "20201116990146",
+                orderDate: "2020-11-28 14:29",
+                cancelDate: "2020-11-28 18:29",
+                order_content: "訂單內容",
+                reason: "品項或數量錯誤"
+            }, {
+                name: '學生一',
+                stu_id: '406410232',
+                department: '電機喵喵喵喵組',
+                orderNumber: "20201116990146",
+                orderDate: "2020-11-28 14:29",
+                cancelDate: "2020-11-28 18:29",
+                order_content: "訂單內容",
+                reason: "meow meow meow meow meow"
+            }, ],
+            item_height: 100,
+            windowSize: {
+                x: 0,
+                y: 0,
+            },
         }),
+        mounted() {
+            this.onResize()
+        },
+
+        methods: {
+            onResize() {
+                this.windowSize = {
+                    x: window.innerWidth,
+                    y: window.innerHeight
+                }
+                if (this.windowSize.x < 960) {
+                    this.item_height = 220
+                } else {
+                    this.item_height = 110
+                }
+            },
+        },
     }
 
 </script>
