@@ -244,13 +244,19 @@
                     },
                     {
                         label: 'admin才會看到',
-                        url: 'meow',
+                        url: 'admin.home',
                         icon: 'mdi-view-dashboard',
                         role: ['admin'],
                     },
                     {
+                        label: '訂單管理',
+                        url: 'admin.order',
+                        icon: 'mdi-pencil-outline',
+                        role: ['admin'],
+                    },
+                    {
                         label: '我的訂單',
-                        url: 'student.meow',
+                        url: 'student.myorder',
                         icon: 'mdi-pencil-outline',
                         role: ['admin', 'student'],
                     },
