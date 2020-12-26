@@ -51,14 +51,21 @@ Route::group([
     'middleware' => ['auth:sanctum', 'can:admin'],
     'as' => 'admin.'
 ], function () {
+
     Route::get('/meow', fn() => Inertia::render('Test', ['name' => 'Test meow']))
         ->name('meow'); // routes name as 'admin.meow'
+
+    Route::get('/admin/home', fn() => Inertia::render('Admin/Home/Show'))
+        ->name('home');
+
+    Route::get('/admin/order', fn() => Inertia::render('Admin/Order/Show'))
+        ->name('order'); // routes name as 'admin.setting'
 
     Route::get('/admin/setting', fn() => Inertia::render('Admin/Setting/Show'))
         ->name('setting'); // routes name as 'admin.setting'
 
     Route::resource('time', 'App\Http\Controllers\TimeRangeController',
-        ['except' => ['index', 'create', 'edit', 'show', 'destroy', 'store']]);
+        ['except' => ['create', 'edit', 'show', 'destroy', 'store']]);
 
     Route::post('/location', 'App\Http\Controllers\LocationUpdateController')
         ->name('location');
@@ -72,6 +79,8 @@ Route::group([
 ], function () {
     Route::get('/student/meow', fn() => Inertia::render('Student/meow/Show'))
         ->name('meow'); // routes name as 'student.meow'
+    Route::get('/student/myorder', fn() => Inertia::render('Student/MyOrder/Show'))
+        ->name('myorder'); // routes name as 'student.meow'
 });
 
 Route::middleware(['auth:sanctum'])->get('/meow', function () {
