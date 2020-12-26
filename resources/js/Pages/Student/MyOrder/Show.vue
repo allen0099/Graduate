@@ -10,7 +10,6 @@
                 v-for="order in orderList"
                 :key="order.orderNumber"
                 tile
-                hover
                 :color="colorList[order.orderStatus].bg"
                 class="mt-5"
                 v-if="orderFilter(order) === true"
@@ -21,6 +20,8 @@
                             outlined
                             tile
                             :color="colorList[order.orderStatus].bg"
+                            @click="order.show = !order.show"
+                            class="click_init"
                         >
                             <v-card-text class="font-weight-bold">
                                 <v-row dense>
@@ -93,6 +94,13 @@
         </v-container>
     </VuetifyLayout>
 </template>
+
+<style>
+    .click_init:before {
+        background: initial;
+    }
+
+</style>
 
 <script>
     import VuetifyLayout from '@/Layouts/VuetifyLayout'
