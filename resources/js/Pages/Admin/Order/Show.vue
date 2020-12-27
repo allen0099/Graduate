@@ -123,6 +123,10 @@
                                         cols="12"
                                         md="4"
                                     >總金額：{{ order.total }}</v-col>
+                                    <v-col
+                                        v-if="order.payment_id"
+                                        cols="12"
+                                    >付款單據編號：{{ order.payment_id }}</v-col>
                                     <v-col cols="12">
                                         <span>訂單狀態：</span>
                                         <span :class="order.orderStatus === 3 ? 'green--text text--accent--3' :
@@ -291,6 +295,14 @@
                                 cols="12"
                                 md="4"
                             >總金額：{{ order.total }}</v-col>
+                            <v-col clos="12">
+                                <v-text-field
+                                    v-model="order.payment_id"
+                                    label="付款單據編號"
+                                    single-line
+                                    hide-details
+                                ></v-text-field>
+                            </v-col>
                             <v-col cols="12">
                                 <v-select
                                     v-model="order.orderStatus"
@@ -357,6 +369,7 @@
                 stu_id: '',
                 department: '',
                 orderNumber: "",
+                payment_id: '',
                 orderDate: "",
                 total: 0,
                 orderStatus: 0,
@@ -368,6 +381,7 @@
                 stu_id: '',
                 department: '',
                 orderNumber: "",
+                payment_id: '',
                 orderDate: "",
                 total: 0,
                 orderStatus: 0,
@@ -382,6 +396,7 @@
                 orderDate: "2020-11-28 14:29",
                 total: 1111,
                 orderStatus: 3,
+                payment_id: 'payment-2020-1000-4658-444',
                 show: false,
                 logs: [{
                         status: 1,
@@ -407,6 +422,7 @@
                 orderDate: "2020-11-28 14:29",
                 total: 1111,
                 orderStatus: 2,
+                payment_id: 'payment-2020-1000-4658-444',
                 show: false,
                 logs: [{
                         status: 1,
@@ -425,6 +441,7 @@
                 department: '電機喵喵喵喵組',
                 orderNumber: "20201116990148",
                 orderDate: "2020-11-28 14:29",
+                payment_id: 'payment-2020-1000-4658-444',
                 total: 1111,
                 orderStatus: 1,
                 show: false,
@@ -439,6 +456,7 @@
                 department: '電機喵喵喵喵組',
                 orderNumber: "20201116990149",
                 orderDate: "2020-11-28 14:29",
+                payment_id: '',
                 total: 1111,
                 orderStatus: 0,
                 show: false,
@@ -449,6 +467,7 @@
                 department: '電機喵喵喵喵組',
                 orderNumber: "20201116990150",
                 orderDate: "2020-11-28 14:29",
+                payment_id: null,
                 total: 1111,
                 orderStatus: 4,
                 show: false,
@@ -463,6 +482,7 @@
                 department: '電機喵喵喵喵組',
                 orderNumber: "20201116990151",
                 orderDate: "2020-11-28 14:29",
+                payment_id: null,
                 total: 1111,
                 orderStatus: 5,
                 show: false,
