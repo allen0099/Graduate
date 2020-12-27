@@ -6,6 +6,21 @@
             </h2>
         </template>
         <v-container>
+            <v-row class="mb-5">
+                <v-col
+                    class="d-flex justify-end"
+                    cols="12"
+                >
+                    <v-text-field
+                        v-model="search"
+                        label="訂單搜尋"
+                        single-line
+                        hide-details
+                        clearable
+                    ></v-text-field>
+                    <v-btn class="ml-3 mt-3">搜尋</v-btn>
+                </v-col>
+            </v-row>
             <v-btn-toggle
                 v-model="statusFilterSelected"
                 color="deep-purple accent-3"
@@ -60,15 +75,30 @@
             >
                 <v-row no-gutters>
                     <v-col>
+                        <!-- @click="order.show = !order.show" -->
+                        <!-- class="click_init" -->
                         <v-card
                             outlined
                             tile
                             :color="colorList[order.orderStatus].bg"
-                            @click="order.show = !order.show"
-                            class="click_init"
                         >
                             <v-card-text class="font-weight-bold">
                                 <v-row dense>
+                                    <v-col
+                                        cols="12"
+                                        class="d-flex justify-end"
+                                    >
+                                        <v-btn
+                                            outlined
+                                            color="indigo"
+                                            @click="edit_order(order)"
+                                        >
+                                            編輯
+                                            <v-icon right>
+                                                mdi-pencil
+                                            </v-icon>
+                                        </v-btn>
+                                    </v-col>
                                     <v-col
                                         cols="12"
                                         md="4"
@@ -97,6 +127,11 @@
                                         <span>訂單狀態：</span>
                                         <span :class="order.orderStatus === 3 ? 'green--text text--accent--3' :
                                             'red--text'">{{ statusMsg[order.orderStatus] }}</span>
+                                        <span
+                                            v-if="order.orderStatus === 4 || order.orderStatus === 5"
+                                            :class="order.orderStatus === 3 ? 'green--text text--accent--3' :
+                                            'red--text'"
+                                        >{{'(品項或數量錯誤)'}}</span>
                                         <span v-if="order.logs.find(x => x.status ===
                                             3)">({{ order.logs[2].date }})</span>
                                     </v-col>
@@ -113,6 +148,35 @@
                                     </v-col>
                                 </v-row>
                             </v-card-text>
+                            <v-card-actions v-if="order.orderStatus === 4">
+                                <v-spacer></v-spacer>
+                                <v-btn
+                                    depressed
+                                    small
+                                    color="success"
+                                >
+                                    批准
+                                    <v-icon
+                                        right
+                                        dark
+                                    >
+                                        mdi-check
+                                    </v-icon>
+                                </v-btn>
+                                <v-btn
+                                    depressed
+                                    small
+                                    color="error"
+                                >
+                                    取消
+                                    <v-icon
+                                        right
+                                        dark
+                                    >
+                                        mdi-close
+                                    </v-icon>
+                                </v-btn>
+                            </v-card-actions>
                         </v-card>
                     </v-col>
                 </v-row>
@@ -140,14 +204,126 @@
                         <v-divider></v-divider>
 
                         <v-card-text>
-                            <v-row></v-row>
-                            {{ getOrderDetial() }}
-
+                            <!-- <v-row no-gutters>
+                                <v-col
+                                    cols="12"
+                                    v-for="(item, index) in getOrderDetial()"
+                                    :key="`${order.orderNumber}-detial-${index}`"
+                                >{{ item.name +' '+ item.label +' '+ item.num + '件'}}</v-col>
+                            </v-row> -->
+                            <v-simple-table
+                                dense
+                                fixed-header
+                                max-height="300px"
+                                :color="colorList[order.orderStatus].bg"
+                            >
+                                <template v-slot:default>
+                                    <thead>
+                                        <tr>
+                                            <th class="text-left">
+                                                品項
+                                            </th>
+                                            <th class="text-left">
+                                                規格
+                                            </th>
+                                            <th class="text-left">
+                                                數量/件
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr
+                                            v-for="(item, index) in getOrderDetial()"
+                                            :key="`${order.orderNumber}-detial-${index}`"
+                                        >
+                                            <td>{{ item.name }}</td>
+                                            <td>{{ item.label }}</td>
+                                            <td>{{ item.num }}</td>
+                                        </tr>
+                                    </tbody>
+                                </template>
+                            </v-simple-table>
                         </v-card-text>
                     </div>
                 </v-expand-transition>
             </v-card>
         </v-container>
+        <v-dialog
+            v-model="edit_toggle"
+            max-width="850px"
+        >
+            <v-form
+                ref="form"
+                v-model="valid"
+            >
+                <v-card>
+                    <v-card-title>
+                        <span>訂單編輯</span>
+                    </v-card-title>
+                    <v-card-text class="font-weight-bold">
+                        <v-row dense>
+                            <v-col
+                                cols="12"
+                                class="d-flex justify-end"
+                            >
+                            </v-col>
+                            <v-col
+                                cols="12"
+                                md="4"
+                            >班級：{{ order.department }}</v-col>
+                            <v-col
+                                cols="12"
+                                md="4"
+                            >學生：{{ order.name }}</v-col>
+                            <v-col
+                                cols="12"
+                                md="4"
+                            >學號：{{ order.stu_id }}</v-col>
+                            <v-col
+                                cols="12"
+                                md="4"
+                            >訂單編號：{{ order.orderNumber }}</v-col>
+                            <v-col
+                                cols="12"
+                                md="4"
+                            >訂單日期：{{ order.orderDate }}</v-col>
+                            <v-col
+                                cols="12"
+                                md="4"
+                            >總金額：{{ order.total }}</v-col>
+                            <v-col cols="12">
+                                <v-select
+                                    v-model="order.orderStatus"
+                                    :items="statusMsgObj.slice(1)"
+                                    item-text="text"
+                                    item-value="value"
+                                    label="訂單當前狀態"
+                                    required
+                                ></v-select>
+                                <!-- <span>{{ statusMsg[order.orderStatus] }}</span> -->
+                            </v-col>
+                        </v-row>
+                    </v-card-text>
+                    <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn
+                            color="primary"
+                            text
+                            @click="dialog3 = false"
+                        >
+                            取消
+                        </v-btn>
+                        <v-btn
+                            color="primary"
+                            text
+                            @click="dialog3 = false"
+                        >
+                            儲存
+                        </v-btn>
+                    </v-card-actions>
+                </v-card>
+            </v-form>
+        </v-dialog>
     </VuetifyLayout>
 </template>
 
@@ -163,14 +339,41 @@
 
     export default {
         props: {
-            name: String
+            name: String,
+            search: String,
+            order_meow: Object
         },
         components: {
             VuetifyLayout,
         },
-        name: "helloworld",
+        name: "AdminOrder",
         data: () => ({
             statusFilterSelected: -1,
+            edit_toggle: false,
+            valid: false,
+            search: '',
+            baseorder: {
+                name: '',
+                stu_id: '',
+                department: '',
+                orderNumber: "",
+                orderDate: "",
+                total: 0,
+                orderStatus: 0,
+                show: false,
+                logs: []
+            },
+            order: {
+                name: '',
+                stu_id: '',
+                department: '',
+                orderNumber: "",
+                orderDate: "",
+                total: 0,
+                orderStatus: 0,
+                show: false,
+                logs: []
+            },
             orderList: [{
                 name: '學生一',
                 stu_id: '406410232',
@@ -358,6 +561,13 @@
                     return order.orderStatus === this.statusFilterSelected
                 }
                 return true
+            },
+            edit_order(order) {
+                this.edit_toggle = true
+                this.order = Object.assign({}, order);
+            },
+            init_search() {
+                if (this.$route.params.search) this.search = this.$route.params.search
             }
         },
         computed: {
@@ -374,6 +584,9 @@
                     'value': -1
                 }])
             }
+        },
+        created() {
+            // this.init_search()
         }
     }
 

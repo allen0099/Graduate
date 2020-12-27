@@ -58,7 +58,7 @@ Route::group([
     Route::get('/admin/home', fn() => Inertia::render('Admin/Home/Show'))
         ->name('home');
 
-    Route::get('/admin/order', fn() => Inertia::render('Admin/Order/Show'))
+    Route::get('/admin/order', fn() => Inertia::render('Admin/Order/Show', ['search' => '123', 'order_meow' => 'aaaa']))
         ->name('order'); // routes name as 'admin.setting'
 
     Route::get('/admin/setting', fn() => Inertia::render('Admin/Setting/Show'))
