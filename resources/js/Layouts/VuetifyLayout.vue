@@ -11,10 +11,10 @@
                 <!-- desktop navbar -->
                 <div class="d-flex align-center">
                     <v-img
-                        alt="Vuetify Logo"
+                        alt="Logo"
                         class="shrink mr-4"
                         contain
-                        src="@/assets/logo.jpg"
+                        src="/asset/Tamkang_University_logo.svg.png"
                         transition="scale-transition"
                         width="50"
                     />
