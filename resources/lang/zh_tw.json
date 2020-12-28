@@ -1,0 +1,8 @@
+{
+    "//login": "login page",
+    "Whoops! Something went wrong.": "哎呀！ 出了些問題",
+
+    "//profile": "profile page",
+    "The provided password does not match your current password.": "提供的密碼與您當前的密碼不相符",
+    "The password confirmation does not match.": "與再次輸入之密碼不相符"
+}
