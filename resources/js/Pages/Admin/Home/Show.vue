@@ -28,6 +28,7 @@
                     min-height="300"
                     :item-height="item_height"
                     :items="cancel_order_list"
+                    bench="5"
                 >
                     <template v-slot:default="{ item }">
                         <v-list-item style="background-color: #FFCDD2">
@@ -59,9 +60,40 @@
                                     >取消日期：{{ item.cancelDate }}</v-col>
                                     <v-col cols="12">取消原因：{{ item.reason }}</v-col>
                                 </v-row>
+                                <v-col
+                                    cols="12"
+                                    class="d-flex justify-end pa-0 pt-1"
+                                >
+                                    <v-btn
+                                        depressed
+                                        small
+                                        color="success"
+                                    >
+                                        批准
+                                        <v-icon
+                                            right
+                                            dark
+                                        >
+                                            mdi-check
+                                        </v-icon>
+                                    </v-btn>
+                                    <v-btn
+                                        depressed
+                                        small
+                                        color="error"
+                                    >
+                                        取消
+                                        <v-icon
+                                            right
+                                            dark
+                                        >
+                                            mdi-close
+                                        </v-icon>
+                                    </v-btn>
+                                </v-col>
                             </v-list-item-content>
 
-                            <v-list-item-action>
+                            <!-- <v-list-item-action>
                                 <v-btn
                                     depressed
                                     small
@@ -90,7 +122,7 @@
                                     </v-icon>
                                 </v-btn>
                                 <v-spacer></v-spacer>
-                            </v-list-item-action>
+                            </v-list-item-action> -->
                         </v-list-item>
                     </template>
                 </v-virtual-scroll>
@@ -447,9 +479,9 @@
                     y: window.innerHeight
                 }
                 if (this.windowSize.x < 960) {
-                    this.item_height = 220
+                    this.item_height = 280
                 } else {
-                    this.item_height = 110
+                    this.item_height = 160
                 }
             },
         },

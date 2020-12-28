@@ -5,10 +5,11 @@
                 訂購流程
             </h2>
         </template>
-        <v-container>
+        <v-container class="py-2 m-0">
             <v-stepper
                 v-model="e6"
                 vertical
+                v-show="e6 !== 4"
             >
                 <v-stepper-step
                     :complete="e6 > 1"
@@ -17,7 +18,10 @@
                     檢視當前剩餘數量
                 </v-stepper-step>
 
-                <v-stepper-content step="1">
+                <v-stepper-content
+                    step="1"
+                    class="px-0 mx-0 px-sm-5 mx-sm-8"
+                >
                     <v-card
                         min-height="350px"
                         flat
@@ -125,7 +129,10 @@
                     選擇品項與數量
                 </v-stepper-step>
 
-                <v-stepper-content step="2">
+                <v-stepper-content
+                    step="2"
+                    class="px-0 mx-0 px-sm-5 mx-sm-8"
+                >
                     <v-card
                         class="mb-6"
                         min-height="350px"
@@ -165,11 +172,16 @@
                                         <v-icon @click="increment(bachelor_gown, sizeList)">
                                             mdi-plus
                                         </v-icon>
+                                        <v-spacer class="hidden-sm-and-up"></v-spacer>
                                         <v-btn
                                             class="ml-3"
                                             small
-                                            v-show="bachelor_gown.label && sizeList.find(x=>x.label ===
-                                            bachelor_gown.label).num > 0 && bachelor_gown.num > 0"
+                                            v-show="!(bachelor_gown.label && sizeList.find(x=>x.label ===
+                                            bachelor_gown.label).num === 0)"
+                                            :disabled="!bachelor_gown.label 
+                                                    || (!!sizeList.find(x=>x.label === bachelor_gown.label) 
+                                                        && sizeList.find(x=>x.label === bachelor_gown.label).num === 0) 
+                                                    || bachelor_gown.num === 0"
                                             @click="push_order(bachelor_gown, '學士服')"
                                         >
                                             新增
@@ -217,11 +229,18 @@
                                         <v-icon @click="increment(bachelor_accessory, accessoriesList)">
                                             mdi-plus
                                         </v-icon>
+                                        <v-spacer class="hidden-sm-and-up"></v-spacer>
                                         <v-btn
                                             class="ml-3"
                                             small
-                                            v-show="bachelor_accessory.label && accessoriesList.find(x=>x.label ===
-                                            bachelor_accessory.label).num > 0 && bachelor_accessory.num > 0"
+                                            v-show="!(bachelor_accessory.label && accessoriesList.find(x=>x.label ===
+                                            bachelor_accessory.label).num === 0)"
+                                            :disabled="!bachelor_accessory.label
+                                                    || (!!accessoriesList.find(x=>x.label === bachelor_accessory.label)
+                                                        && accessoriesList.find(x=>x.label ===
+                                                        bachelor_accessory.label).num
+                                                        === 0)
+                                                    || bachelor_accessory.num === 0"
                                             @click="push_order(bachelor_accessory, '帽穗、披肩')"
                                         >
                                             新增
@@ -241,7 +260,7 @@
                                 <v-card outlined>
                                     <v-list
                                         dense
-                                        class="pa-5"
+                                        class="px-1 mx-0 pa-sm-5"
                                     >
                                         <span class="subtitle">訂單內容：</span>
                                         <template v-for="(item, i) in order">
@@ -250,8 +269,9 @@
                                                     :key="`order-item-${i}`"
                                                     style="border-bottom: thin solid rgba(0,0,0,.12);"
                                                     :class="{ 'grey lighten-3': hover }"
+                                                    class="px-sm-6 px-1"
                                                 >
-                                                    <v-list-item-action>
+                                                    <v-list-item-action class="mr-1 mr-sm-3">
                                                         <v-icon
                                                             color="red"
                                                             small
@@ -300,7 +320,10 @@
                     確認訂單資訊
                 </v-stepper-step>
 
-                <v-stepper-content step="3">
+                <v-stepper-content
+                    step="3"
+                    class="px-0 mx-0 px-sm-5 mx-sm-8"
+                >
                     <v-card
                         class="mb-6"
                         min-height="350px"
@@ -314,7 +337,7 @@
                                     dense
                                 >
                                     <v-col cols="12"><span>姓名：{{ $page.user.name }}</span></v-col>
-                                    <v-col cols="12"><span>學號：{{ '406410232' }}</span></v-col>
+                                    <v-col cols="12"><span>學號：{{ $page.user.username }}</span></v-col>
                                     <v-col cols="12"><span>科系：{{ '資訊工程學系(日)' }}</span></v-col>
                                     <v-col cols="12"><span>年級：{{ '四年級' }}&nbsp;&nbsp;&nbsp;&nbsp;班級：{{ 'B 班' }}</span>
                                     </v-col>
@@ -402,11 +425,24 @@
                         </v-btn>
                     </v-row>
                 </v-stepper-content>
+            </v-stepper>
 
-                <v-stepper-step step="4">
-                    完成訂單
+            <v-stepper
+                v-model="e6"
+                vertical
+                v-show="e6 === 4"
+            >
+                <v-stepper-step
+                    step="4"
+                    color="success"
+                    complete
+                >
+                    已完成訂單
                 </v-stepper-step>
-                <v-stepper-content step="4">
+                <v-stepper-content
+                    step="4"
+                    class="px-0 mx-0 px-sm-5 mx-sm-8"
+                >
                     <v-card
                         class="mb-6"
                         min-height="350px"
@@ -417,7 +453,10 @@
                     <v-row class="mx-1">
 
                         <v-spacer></v-spacer>
-                        <v-btn @click="e6 = 4">
+                        <v-btn
+                            @click="e6 = 4"
+                            class="mb-3"
+                        >
                             前往我的訂單
                         </v-btn>
                     </v-row>
@@ -439,15 +478,15 @@
         },
         name: "helloworld",
         data: () => ({
-            e6: 3,
+            e6: 1,
             switch1: false,
             sizeList: [{
                     label: 'M',
-                    num: 100
+                    num: 0
                 },
                 {
                     label: 'L',
-                    num: 100
+                    num: 5
                 }, {
                     label: 'XL',
                     num: 100
@@ -455,10 +494,10 @@
             ],
             accessoriesList: [{
                 label: '白',
-                num: 100
+                num: 0
             }, {
                 label: '黃',
-                num: 100
+                num: 5
             }, {
                 label: '橘',
                 num: 100
@@ -557,6 +596,14 @@
                 "name": "帽穗、披肩"
             }],
         }),
+        watch: {
+            "bachelor_gown.label": function () {
+                this.bachelor_gown.num = 0
+            },
+            "bachelor_accessory.label": function () {
+                this.bachelor_accessory.num = 0
+            }
+        },
         methods: {
             decrement(item) {
                 if (item.label && item.num > 0) item.num--

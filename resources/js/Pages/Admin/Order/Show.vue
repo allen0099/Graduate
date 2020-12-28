@@ -5,7 +5,7 @@
                 訂單管理
             </h2>
         </template>
-        <v-container>
+        <v-container v-resize="onResize">
             <v-row class="mb-5">
                 <v-col
                     class="d-flex justify-end"
@@ -126,9 +126,13 @@
                                     <v-col
                                         v-if="order.payment_id"
                                         cols="12"
-                                    >付款單據編號：{{ order.payment_id }}</v-col>
+                                    >付款單據編號：{{ windowSize.x >= 430 ? order.payment_id :'' }}</v-col>
+                                    <v-col
+                                        v-if="order.payment_id && windowSize.x < 430"
+                                        cols="12"
+                                    >{{order.payment_id }}</v-col>
+                                    <v-col cols="12">{{ '訂單狀態：' }}</v-col>
                                     <v-col cols="12">
-                                        <span>訂單狀態：</span>
                                         <span :class="order.orderStatus === 3 ? 'green--text text--accent--3' :
                                             'red--text'">{{ statusMsg[order.orderStatus] }}</span>
                                         <span
@@ -145,8 +149,6 @@
                                         cols="12"
                                         v-if="log.status <= order.orderStatus && log.status < 3"
                                     >
-                                        <span>
-                                            &emsp;&emsp;&emsp;&emsp;&emsp;</span>
                                         <span class="green--text text--accent--3">{{ log.logName }}</span>
                                         <span>({{ log.date }})</span>
                                     </v-col>
@@ -268,11 +270,6 @@
                         <v-row dense>
                             <v-col
                                 cols="12"
-                                class="d-flex justify-end"
-                            >
-                            </v-col>
-                            <v-col
-                                cols="12"
                                 md="4"
                             >班級：{{ order.department }}</v-col>
                             <v-col
@@ -353,7 +350,7 @@
         props: {
             name: String,
             search: String,
-            order_meow: Object
+            // order_meow: Object
         },
         components: {
             VuetifyLayout,
@@ -363,7 +360,6 @@
             statusFilterSelected: -1,
             edit_toggle: false,
             valid: false,
-            search: '',
             baseorder: {
                 name: '',
                 stu_id: '',
@@ -396,7 +392,7 @@
                 orderDate: "2020-11-28 14:29",
                 total: 1111,
                 orderStatus: 3,
-                payment_id: 'payment-2020-1000-4658-444',
+                payment_id: '2020-1000-4658-444',
                 show: false,
                 logs: [{
                         status: 1,
@@ -525,8 +521,24 @@
             ],
             statusMsg: ["未付款", "未領取衣服", "未歸還衣服", "已歸還衣服", "已申請訂單取消", "已取消訂單"],
             // statusMsg2: ["未付款", "已付款", "已領取衣服", "已歸還衣服", "已申請訂單取消", "已取消訂單"]
+            windowSize: {
+                x: 0,
+                y: 0,
+            },
         }),
         methods: {
+            onResize() {
+                this.windowSize = {
+                    x: window.innerWidth,
+                    y: window.innerHeight
+                }
+                if (this.windowSize.x <
+                    960) {
+                    this.item_height = 280
+                } else {
+                    this.item_height = 160
+                }
+            },
             getOrderDetial() {
                 let item = [{
                     "label": "L",
@@ -607,7 +619,10 @@
         },
         created() {
             // this.init_search()
-        }
+        },
+        mounted() {
+            this.onResize()
+        },
     }
 
 </script>
