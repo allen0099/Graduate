@@ -24,7 +24,13 @@ class Order extends Model
      *
      * @var array
      */
-    protected $with = ['shared_users'];
+    protected $with = [
+        'shared_users',
+        'owner',
+        'cloth',
+        'accessory',
+        'logs',
+    ];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -33,6 +39,9 @@ class Order extends Model
      */
     protected $hidden = [
         'pivot',
+        'owner_id',
+        'cloth_id',
+        'accessory_id',
     ];
 
     public function owner()
@@ -53,5 +62,10 @@ class Order extends Model
     public function shared_users()
     {
         return $this->belongsToMany('App\Models\User', 'orders_share');
+    }
+
+    public function logs()
+    {
+        return $this->hasMany('App\Models\OrderLog');
     }
 }
