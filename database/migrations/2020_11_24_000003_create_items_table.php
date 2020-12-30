@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateClothsTable extends Migration
+class CreateItemsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,13 @@ class CreateClothsTable extends Migration
      */
     public function up()
     {
-        Schema::create('cloths', function (Blueprint $table) {
+        Schema::create('items', function (Blueprint $table) {
             $table->id();
+
             $table->char('type', 5)->comment('學 / 碩 / 博');
-            $table->string('size');
-            $table->unsignedInteger('quantity');
+            $table->string('name', 15);
+            $table->string('spec', 20);
+            $table->unsignedInteger('quantity'); // total
 
             $table->timestamps();
         });
@@ -30,6 +32,6 @@ class CreateClothsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('cloths');
+        Schema::dropIfExists('items');
     }
 }

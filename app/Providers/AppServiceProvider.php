@@ -2,8 +2,7 @@
 
 namespace App\Providers;
 
-use App\Models\Accessory;
-use App\Models\Cloth;
+use App\Models\Item;
 use App\Models\Order;
 use App\Models\TimeRange;
 use App\Models\User;
@@ -54,16 +53,7 @@ class AppServiceProvider extends ServiceProvider
                 return null;
             },
             'inventory' => function () {
-                $cloths = Cloth::all()->each(function ($item, $key) {
-                    $item['quantity'] -= Order::where('cloth_id', $item['id'])->count();
-                });
-                $accessories = Accessory::all()->each(function ($item, $key) {
-                    $item['quantity'] -= Order::where('accessory_id', $item['id'])->count();
-                });
-                return [
-                    'accessory' => $accessories,
-                    'cloth' => $cloths,
-                ];
+                return Item::all()->each(fn($item, $key) => $item['remain'] = $item->Remain());
             },
             'orders' => function () {
                 if (Auth::check()) {

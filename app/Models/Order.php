@@ -27,8 +27,7 @@ class Order extends Model
     protected $with = [
         'shared_users',
         'owner',
-        'cloth',
-        'accessory',
+        'items',
         'logs',
     ];
 
@@ -38,10 +37,7 @@ class Order extends Model
      * @var array
      */
     protected $hidden = [
-        'pivot',
         'owner_id',
-        'cloth_id',
-        'accessory_id',
     ];
 
     public function owner()
@@ -49,14 +45,11 @@ class Order extends Model
         return $this->belongsTo('App\Models\User');
     }
 
-    public function cloth()
+    public function items()
     {
-        return $this->belongsTo('App\Models\Cloth');
-    }
-
-    public function accessory()
-    {
-        return $this->belongsTo('App\Models\Accessory');
+        return $this->belongsToMany('App\Models\Item', 'order_items')
+            ->withPivot('quantity')
+            ->as('order');
     }
 
     public function shared_users()

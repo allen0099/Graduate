@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateAccessoriesTable extends Migration
+class CreateOrderItemsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,15 @@ class CreateAccessoriesTable extends Migration
      */
     public function up()
     {
-        Schema::create('accessories', function (Blueprint $table) {
+        Schema::create('order_items', function (Blueprint $table) {
             $table->id();
-            $table->char('type', 5)->comment('學 / 碩 / 博');
-            $table->string('name');
-            $table->string('color');
+
+            $table->foreignId('order_id')->references('id')->on('orders')->cascadeOnDelete();
+            $table->foreignId('item_id')->references('id')->on('items')->cascadeOnDelete();
+
             $table->unsignedInteger('quantity');
 
-            $table->timestamps();
+            $table->unique(['order_id', 'item_id'], 'item_in_order_unique');
         });
     }
 
@@ -31,6 +32,6 @@ class CreateAccessoriesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('accessories');
+        Schema::dropIfExists('order_items');
     }
 }

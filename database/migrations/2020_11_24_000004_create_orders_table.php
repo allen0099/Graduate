@@ -18,8 +18,6 @@ class CreateOrdersTable extends Migration
             $table->string('document_id')->unique();
 
             $table->foreignId('owner_id')->references('id')->on('users')->cascadeOnDelete();
-            $table->foreignId('cloth_id')->references('id')->on('cloths');
-            $table->foreignId('accessory_id')->references('id')->on('accessories');
 
             $table->integer('status_code');
             $table->timestamps();
