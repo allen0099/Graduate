@@ -13,7 +13,7 @@ class LoginRedirectConroller extends Controller
             
             return redirect('/admin/home');
         } else if (Auth::user()->role === User::STUDENT) {
-            return redirect('/student/home');
+            return redirect('/student/meow');
         }
         return redirect('/');
     }
