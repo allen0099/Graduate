@@ -6,17 +6,6 @@
 
         <x-jet-validation-errors class="mb-4" />
 
-        {{-- @if ($errors->any())
-            <div class="mb-4">
-                <div class="font-medium text-red-600">{{ __('哎呀！ 出了些問題') }}</div>
-
-                <ul class="mt-3 list-disc list-inside text-sm text-red-600">
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif --}}
         @if (session('status'))
             <div class="mb-4 font-medium text-sm text-green-600">
                 {{ session('status') }}

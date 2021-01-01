@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Http\Controllers\LoginRedirectConroller;
 
 /*
 |--------------------------------------------------------------------------
@@ -86,3 +87,5 @@ Route::group([
 Route::middleware(['auth:sanctum'])->get('/meow', function () {
     return Inertia::render('Test', ['name' => 'Test meow']);
 })->name('meow'); // new dashboard
+
+Route::middleware(['auth:sanctum'])->get('index', [LoginRedirectConroller::class, 'redirectTo']);
