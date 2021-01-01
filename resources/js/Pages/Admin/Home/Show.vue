@@ -18,6 +18,7 @@
                     取消訂單申請
                 </v-badge>
             </v-card-title>
+
             <v-card
                 class="pa-3"
                 outlined
@@ -130,7 +131,7 @@
         </v-card>
 
         <v-divider></v-divider>
-
+        <!-- 學士服 -->
         <v-card
             class="mt-3"
             flat
@@ -138,8 +139,8 @@
             <v-card-title>學士服品項數量 (剩餘/總數)</v-card-title>
             <v-row dense>
                 <v-col
-                    v-for="item in [1, 2, 3, 4, 5, 6]"
-                    :key="item"
+                    v-for="(bc_item, index) in bachelor_cloths"
+                    :key="`bachelor_cloths-${index}`"
                     cols="6"
                     lg="2"
                     sm="4"
@@ -148,7 +149,7 @@
                         <v-card-title
                             class="body2 pb-1 font-weight-bold"
                             style="color: #968C83"
-                        >{{'S 號'}}</v-card-title>
+                        >{{ bc_item.spec }}</v-card-title>
                         <v-row
                             class="pb-1 ml-7"
                             no-gutters
@@ -159,15 +160,15 @@
                                 class="text-h6 font-weight-bold"
                                 cols="12"
                             >
-                                <span style="color:#8FB69B">{{ '123' }}</span> /
-                                <span>{{ '123' }}</span>
+                                <span style="color:#8FB69B">{{ bc_item.remain }}</span> /
+                                <span>{{ bc_item.quantity }}</span>
                             </v-col>
                         </v-row>
                     </v-card>
                 </v-col>
             </v-row>
         </v-card>
-
+        <!-- 學士服配件 -->
         <v-card
             class="mt-3"
             flat
@@ -181,11 +182,11 @@
                     lg="2"
                     sm="4"
                 >
-                    <v-card :color="card_color[ba_item.color] ? card_color[ba_item.color].bg : '#ffffff'">
+                    <v-card :color="card_color[ba_item.spec] ? card_color[ba_item.spec].bg : '#ffffff'">
                         <v-card-title
                             class="body2 pb-1 font-weight-bold"
-                            :style="{color: card_color[ba_item.color] ? card_color[ba_item.color].q : '#000000'}"
-                        >{{ba_item.color }}</v-card-title>
+                            :style="{color: card_color[ba_item.spec] ? card_color[ba_item.spec].q : '#000000'}"
+                        >{{ ba_item.spec }}</v-card-title>
                         <v-row
                             class="pb-1 ml-7"
                             no-gutters
@@ -196,10 +197,10 @@
                                 class="text-h6 font-weight-bold"
                                 cols="12"
                             >
-                                <span :style="{color: card_color[ba_item.color] ? card_color[ba_item.color].q :
-                                    '#000000'}">{{ ba_item.quantity }}</span>
-                                <span :style="{color: card_color[ba_item.color] ? card_color[ba_item.color].r :
-                                    '#000000'}"> / {{ ba_item.remaining }}</span>
+                                <span :style="{color: card_color[ba_item.spec] ? card_color[ba_item.spec].q :
+                                    '#000000'}">{{ ba_item.remain }}</span>
+                                <span :style="{color: card_color[ba_item.spec] ? card_color[ba_item.spec].r :
+                                    '#000000'}"> / {{ ba_item.quantity }}</span>
                             </v-col>
                         </v-row>
                     </v-card>
@@ -207,15 +208,16 @@
             </v-row>
         </v-card>
         <v-divider class="mt-6 mb-3"></v-divider>
+        <!-- 碩士服 -->
         <v-card
             class="mt-3"
             flat
         >
-            <v-card-title>學士服品項數量 (剩餘/總數)</v-card-title>
+            <v-card-title>碩士服品項數量 (剩餘/總數)</v-card-title>
             <v-row dense>
                 <v-col
-                    v-for="item in [1, 2, 3, 4, 5, 6]"
-                    :key="item"
+                    v-for="(mc_item, index) in master_cloths"
+                    :key="`master_cloths-${index}`"
                     cols="6"
                     lg="2"
                     sm="4"
@@ -224,7 +226,7 @@
                         <v-card-title
                             class="body2 pb-1 font-weight-bold"
                             style="color: #968C83"
-                        >{{'S 號'}}</v-card-title>
+                        >{{ mc_item.spec }}</v-card-title>
                         <v-row
                             class="pb-1 ml-7"
                             no-gutters
@@ -235,20 +237,20 @@
                                 class="text-h6 font-weight-bold"
                                 cols="12"
                             >
-                                <span style="color:#8FB69B">{{ '123' }}</span> /
-                                <span>{{ '123' }}</span>
+                                <span style="color:#8FB69B">{{ mc_item.remain }}</span> /
+                                <span>{{ mc_item.quantity }}</span>
                             </v-col>
                         </v-row>
                     </v-card>
                 </v-col>
             </v-row>
         </v-card>
-
+        <!-- 碩士服配件 -->
         <v-card
-            class="my-3"
+            class="mt-3"
             flat
         >
-            <v-card-title>學士服領巾數量 (剩餘/總數)</v-card-title>
+            <v-card-title>碩士服披肩、帽穗數量 (剩餘/總數)</v-card-title>
             <v-row dense>
                 <v-col
                     v-for="(ma_item, index) in master_accessories"
@@ -257,11 +259,11 @@
                     lg="2"
                     sm="4"
                 >
-                    <v-card :color="card_color[ma_item.color] ? card_color[ma_item.color].bg : '#ffffff'">
+                    <v-card :color="card_color[ma_item.spec] ? card_color[ma_item.spec].bg : '#ffffff'">
                         <v-card-title
                             class="body2 pb-1 font-weight-bold"
-                            :style="{color: card_color[ma_item.color] ? card_color[ma_item.color].q : '#000000'}"
-                        >{{ma_item.color }}</v-card-title>
+                            :style="{color: card_color[ma_item.spec] ? card_color[ma_item.spec].q : '#000000'}"
+                        >{{ ma_item.spec }}</v-card-title>
                         <v-row
                             class="pb-1 ml-7"
                             no-gutters
@@ -272,10 +274,10 @@
                                 class="text-h6 font-weight-bold"
                                 cols="12"
                             >
-                                <span :style="{color: card_color[ma_item.color] ? card_color[ma_item.color].q :
-                                    '#000000'}">{{ ma_item.quantity }}</span>
-                                <span :style="{color: card_color[ma_item.color] ? card_color[ma_item.color].r :
-                                    '#000000'}"> / {{ ma_item.remaining }}</span>
+                                <span :style="{color: card_color[ma_item.spec] ? card_color[ma_item.spec].q :
+                                    '#000000'}">{{ ma_item.remain }}</span>
+                                <span :style="{color: card_color[ma_item.spec] ? card_color[ma_item.spec].r :
+                                    '#000000'}"> / {{ ma_item.quantity }}</span>
                             </v-col>
                         </v-row>
                     </v-card>
@@ -304,68 +306,36 @@
         name: "AdminHome",
         data: () => ({
             bachelor_cloths: [],
-            bachelor_accessories: [{
-                color: '白色',
-                quantity: 3000,
-                remaining: 2000
-            }, {
-                color: '藍色',
-                quantity: 3001,
-                remaining: 2001
-            }, ],
+            bachelor_accessories: [],
             master_cloths: [],
-            master_accessories: [{
-                color: '白色',
-                quantity: 3000,
-                remaining: 2000
-            }, {
-                color: '黃色',
-                quantity: 3001,
-                remaining: 2001
-            }, {
-                color: '橘色',
-                quantity: 3002,
-                remaining: 2002
-            }, {
-                color: '灰色',
-                quantity: 3000,
-                remaining: 2003
-            }, {
-                color: '藍色',
-                quantity: 3004,
-                remaining: 2004
-            }, {
-                color: '紫色',
-                quantity: 3005,
-                remaining: 2005
-            }],
+            master_accessories: [],
             card_color: {
-                '白色': {
+                '白': {
                     bg: '#FFFFFF',
                     q: '#000000',
                     r: '#000000',
                 },
-                '黃色': {
+                '黃': {
                     q: '#FFFDE7',
                     bg: '#F57F17',
                     r: '#FFFFFF'
                 },
-                '橘色': {
+                '橘': {
                     q: '#FFF3E0',
                     bg: '#E65100',
                     r: '#FFFFFF'
                 },
-                '灰色': {
+                '灰': {
                     q: '#F5F5F5',
                     bg: '#424242',
                     r: '#FFFFFF'
                 },
-                '藍色': {
+                '藍': {
                     q: '#BBDEFB',
                     bg: '#0D47A1',
                     r: '#FFFFFF'
                 },
-                '紫色': {
+                '紫': {
                     q: '#D1C4E9',
                     bg: '#311B92',
                     r: '#FFFFFF'
@@ -468,10 +438,6 @@
                 y: 0,
             },
         }),
-        mounted() {
-            this.onResize()
-        },
-
         methods: {
             onResize() {
                 this.windowSize = {
@@ -484,6 +450,18 @@
                     this.item_height = 160
                 }
             },
+            init_obj() {
+                this.bachelor_accessories = this.$page.inventory.slice(0, 2)
+                this.master_accessories = this.$page.inventory.slice(2, 8)
+                this.bachelor_cloths = this.$page.inventory.slice(8, 12)
+                this.master_cloths = this.$page.inventory.slice(12, 15)
+            }
+        },
+        created() {
+            this.init_obj()
+        },
+        mounted() {
+            this.onResize()
         },
     }
 
