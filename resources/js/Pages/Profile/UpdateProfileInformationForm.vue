@@ -98,14 +98,14 @@
             <!-- Student ID -->
             <div class="col-span-6 sm:col-span-4">
                 <jet-label
-                    for="sud_id"
-                    value="學號"
+                    for="username"
+                    :value="user.role === 'admin' ? '帳號' : '學號'"
                 />
                 <jet-input
-                    id="sud_id"
+                    id="username"
                     type="text"
                     class="mt-1 block w-full shadow-none"
-                    value="406410232"
+                    v-model="form.username"
                     disabled
                 />
             </div>
@@ -189,6 +189,7 @@
                     '_method': 'PUT',
                     name: this.user.name,
                     email: this.user.email,
+                    username: this.user.username,
                     photo: null,
                 }, {
                     bag: 'updateProfileInformation',
