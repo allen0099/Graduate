@@ -52,6 +52,9 @@ Route::group([
     'as' => 'admin.'
 ], function () {
 
+    Route::get('/search_order', \App\Http\Controllers\SearchOrderController::class)
+        ->name('search_order');
+
     Route::get('/meow', fn() => Inertia::render('Test', ['name' => 'Test meow']))
         ->name('meow'); // routes name as 'admin.meow'
 
