@@ -49,7 +49,7 @@
             </form>
         </div>
 
-        <div class="mt-3 grid md:grid-rows-1 grid-rows-3 grid-flow-col gap-2">
+        <div class="mt-8 grid md:grid-rows-1 grid-rows-3 grid-flow-col gap-2">
             <a href="https://tailwindcss.com/docs" class="text-center text-green-600 hover:text-purple-700">@108學年度學士學位服借用公告</a>
             <a href="https://tailwindcss.com/docs" class="text-center text-green-600 hover:text-purple-700">@使用說明</a>
             <a href="https://tailwindcss.com/docs" class="text-center text-green-600 hover:text-purple-700">@淡江大學學位服借用要點</a>

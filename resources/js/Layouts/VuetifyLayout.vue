@@ -1,6 +1,7 @@
 <template>
     <v-app>
         <v-main>
+            <!-- navbar -->
             <v-app-bar
                 app
                 elevation="2"
@@ -161,22 +162,6 @@
 
                         <v-divider></v-divider>
 
-                        <!-- <v-list-item
-                            v-for="link in login"
-                            :key="`${link.label}-drawer-link`"
-                            :to="link.url"
-                            class="text-decoration-none"
-                            color="primary"
-                            v-show="link.isLogin.indexOf(isLogin) >= 0"
-                        >
-                            <v-list-item-icon>
-                                <v-icon>{{ link.icon }}</v-icon>
-                            </v-list-item-icon>
-
-                            <v-list-item-content>
-                                <v-list-item-title>{{ link.label }}</v-list-item-title>
-                            </v-list-item-content>
-                        </v-list-item> -->
                         <v-list-group
                             prepend-icon="mdi-account-circle"
                             no-action
@@ -209,6 +194,7 @@
                 </v-navigation-drawer>
             </v-app-bar>
 
+            <!-- main page -->
             <v-container class="py-5">
                 <v-card
                     min-height="85vh"
@@ -223,6 +209,8 @@
                     </div>
                 </v-card>
             </v-container>
+
+            <!-- footer -->
             <v-footer
                 id="footer"
                 class="d-block py-0"
