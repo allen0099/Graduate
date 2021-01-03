@@ -325,27 +325,22 @@
                 sidebar: false,
                 helloworld: 'helloworld',
                 showingNavigationDropdown: false,
-                outsideLinks: [{
-                    label: '排班查詢系統',
-                    url: 'http://agox.tku.edu.tw',
-                    icon: 'mdi-launch ',
-                }, ],
                 leftLinks: [{
-                        label: 'admin才會看到',
+                        label: '首頁',
                         url: 'admin.home',
-                        icon: 'mdi-view-dashboard',
+                        icon: 'mdi-home',
                         role: ['admin'],
                     },
                     {
                         label: '訂單管理',
                         url: 'admin.order',
-                        icon: 'mdi-pencil-outline',
+                        icon: 'mdi-format-list-bulleted-type',
                         role: ['admin'],
                     },
                     {
                         label: '我的訂單',
                         url: 'student.myorder',
-                        icon: 'mdi-format-list-bulleted-type ',
+                        icon: 'mdi-format-list-bulleted-type',
                         role: ['student'],
                     },
                     {
