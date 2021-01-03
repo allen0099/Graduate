@@ -145,7 +145,10 @@
                     lg="2"
                     sm="4"
                 >
-                    <v-card color="#FFF5EB">
+                    <v-card
+                        color="#FFF5EB"
+                        :class="{'breathe-div' : bc_item.remain_quantity < bc_item.quantity * 0.1}"
+                    >
                         <v-card-title
                             class="body2 pb-1 font-weight-bold"
                             style="color: #968C83"
@@ -160,7 +163,11 @@
                                 class="text-h6 font-weight-bold"
                                 cols="12"
                             >
-                                <span style="color:#8FB69B">{{ bc_item.remain }}</span> /
+                                <span
+                                    :style="{color: bc_item.remain_quantity < bc_item.quantity * 0.1 ? '#D19999' : '#8FB69B'}"
+                                >
+                                    {{ bc_item.remain_quantity }}</span>
+                                /
                                 <span>{{ bc_item.quantity }}</span>
                             </v-col>
                         </v-row>
@@ -182,7 +189,10 @@
                     lg="2"
                     sm="4"
                 >
-                    <v-card :color="card_color[ba_item.spec] ? card_color[ba_item.spec].bg : '#ffffff'">
+                    <v-card
+                        :color="card_color[ba_item.spec] ? card_color[ba_item.spec].bg : '#ffffff'"
+                        :class="{'breathe-div' : ba_item.remain_quantity < ba_item.quantity * 0.1}"
+                    >
                         <v-card-title
                             class="body2 pb-1 font-weight-bold"
                             :style="{color: card_color[ba_item.spec] ? card_color[ba_item.spec].q : '#000000'}"
@@ -198,7 +208,7 @@
                                 cols="12"
                             >
                                 <span :style="{color: card_color[ba_item.spec] ? card_color[ba_item.spec].q :
-                                    '#000000'}">{{ ba_item.remain }}</span>
+                                    '#000000'}">{{ ba_item.remain_quantity }}</span>
                                 <span :style="{color: card_color[ba_item.spec] ? card_color[ba_item.spec].r :
                                     '#000000'}"> / {{ ba_item.quantity }}</span>
                             </v-col>
@@ -222,7 +232,10 @@
                     lg="2"
                     sm="4"
                 >
-                    <v-card color="#FFF5EB">
+                    <v-card
+                        color="#FFF5EB"
+                        :class="{'breathe-div' : mc_item.remain_quantity < mc_item.quantity * 0.1}"
+                    >
                         <v-card-title
                             class="body2 pb-1 font-weight-bold"
                             style="color: #968C83"
@@ -237,7 +250,11 @@
                                 class="text-h6 font-weight-bold"
                                 cols="12"
                             >
-                                <span style="color:#8FB69B">{{ mc_item.remain }}</span> /
+                                <span
+                                    :style="{color: mc_item.remain_quantity < mc_item.quantity * 0.1 ? '#D19999' : '#8FB69B'}"
+                                >
+                                    {{ mc_item.remain_quantity }}
+                                </span> /
                                 <span>{{ mc_item.quantity }}</span>
                             </v-col>
                         </v-row>
@@ -259,7 +276,10 @@
                     lg="2"
                     sm="4"
                 >
-                    <v-card :color="card_color[ma_item.spec] ? card_color[ma_item.spec].bg : '#ffffff'">
+                    <v-card
+                        :color="card_color[ma_item.spec] ? card_color[ma_item.spec].bg : '#ffffff'"
+                        :class="{'breathe-div' : ma_item.remain_quantity < ma_item.quantity * 0.1}"
+                    >
                         <v-card-title
                             class="body2 pb-1 font-weight-bold"
                             :style="{color: card_color[ma_item.spec] ? card_color[ma_item.spec].q : '#000000'}"
@@ -275,7 +295,7 @@
                                 cols="12"
                             >
                                 <span :style="{color: card_color[ma_item.spec] ? card_color[ma_item.spec].q :
-                                    '#000000'}">{{ ma_item.remain }}</span>
+                                    '#000000'}">{{ ma_item.remain_quantity }}</span>
                                 <span :style="{color: card_color[ma_item.spec] ? card_color[ma_item.spec].r :
                                     '#000000'}"> / {{ ma_item.quantity }}</span>
                             </v-col>
@@ -287,6 +307,37 @@
 
     </VuetifyLayout>
 </template>
+
+
+<style>
+    .breathe-div {
+        border: 1px solid #D19999;
+        border-radius: 50%;
+        text-align: center;
+        cursor: pointer;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        overflow: hidden;
+        animation-timing-function: ease-in-out;
+        animation-name: breathe;
+        animation-duration: 1500ms;
+        animation-iteration-count: infinite;
+        animation-direction: alternate;
+    }
+
+    @keyframes breathe {
+        0% {
+            opacity: .8;
+            box-shadow: 0 1px 2px rgba(173, 25, 25, 0.4), 0 1px 1px rgba(173, 25, 25, 0.1) inset;
+        }
+
+        100% {
+            opacity: 1;
+            border: 1px solid rgba(209, 153, 153, 0.7);
+            box-shadow: 0 1px 5px #D19999, 0 1px 10px #D19999 inset;
+        }
+    }
+
+</style>
 
 <script>
     import VuetifyLayout from '@/Layouts/VuetifyLayout'
