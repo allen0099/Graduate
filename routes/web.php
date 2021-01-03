@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Http\Controllers\LoginRedirectConroller;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,7 +18,7 @@ use Inertia\Inertia;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect('/login');
 })->name('root');
 
 Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
@@ -80,12 +81,14 @@ Route::group([
     'middleware' => ['auth:sanctum', 'can:student'],
     'as' => 'student.'
 ], function () {
-    Route::get('/student/meow', fn() => Inertia::render('Student/meow/Show'))
-        ->name('meow'); // routes name as 'student.meow'
+    Route::get('/student/order', fn() => Inertia::render('Student/Order/Show'))
+        ->name('order'); 
     Route::get('/student/myorder', fn() => Inertia::render('Student/MyOrder/Show'))
-        ->name('myorder'); // routes name as 'student.meow'
+        ->name('myorder');
 });
 
 Route::middleware(['auth:sanctum'])->get('/meow', function () {
     return Inertia::render('Test', ['name' => 'Test meow']);
 })->name('meow'); // new dashboard
+
+Route::middleware(['auth:sanctum'])->get('index', [LoginRedirectConroller::class, 'redirectTo']);

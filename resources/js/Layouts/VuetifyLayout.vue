@@ -209,7 +209,10 @@
             </v-app-bar>
 
             <v-container class="py-5">
-                <v-card min-height="85vh">
+                <v-card
+                    min-height="85vh"
+                    class="pb-10"
+                >
                     <v-card-title class="title font-weight-bold mx-auto px-sm-6 px-lg-8">
                         <slot name="header"></slot>
                     </v-card-title>
