@@ -9,13 +9,26 @@ class Item extends Model
 {
     use HasFactory;
 
-    public function Orders()
-    {
-        return $this->belongsToMany('App\Models\Order', 'order_items')
-            ->as('orders');
-    }
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var array
+     */
+    protected $hidden = [
+        'pivot',
+    ];
 
-    public function Remain()
+    /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array
+     */
+    protected $appends = [
+        'remain_quantity',
+        'request_quantity',
+    ];
+
+    public function getRemainQuantityAttribute()
     {
         if (OrderItem::where('item_id', $this->id)->count() > 0) {
             // todo: check returned items
@@ -27,5 +40,19 @@ class Item extends Model
             return $this->quantity - $ordered_sum;
         }
         return $this->quantity;
+    }
+
+    public function getRequestQuantityAttribute()
+    {
+        if ($this->pivot !== null) {
+            return $this->pivot->quantity;
+        }
+        return null;
+    }
+
+    public function Orders()
+    {
+        return $this->belongsToMany('App\Models\Order', 'order_items')
+            ->as('orders');
     }
 }

@@ -53,7 +53,7 @@ class AppServiceProvider extends ServiceProvider
                 return null;
             },
             'inventory' => function () {
-                return Item::all()->each(fn($item, $key) => $item['remain'] = $item->Remain());
+                return Item::all();
             },
             'orders' => function () {
                 if (Auth::check()) {

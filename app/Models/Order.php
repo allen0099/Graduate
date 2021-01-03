@@ -48,8 +48,7 @@ class Order extends Model
     public function items()
     {
         return $this->belongsToMany('App\Models\Item', 'order_items')
-            ->withPivot('quantity')
-            ->as('order');
+            ->withPivot('quantity');
     }
 
     public function shared_users()
