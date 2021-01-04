@@ -27,7 +27,7 @@ class OrderItemFactory extends Factory
 
         do {
             $item = $this->faker->randomElement(Item::all());
-        } while ($item->Remain() - $quantity < 0);
+        } while ($item->remain_quantity - $quantity < 0);
 
         return [
             'order_id' => Order::factory(),
@@ -43,7 +43,7 @@ class OrderItemFactory extends Factory
 
         do {
             $item = $this->faker->randomElement(Item::all()->diff($order->items));
-        } while ($item->Remain() - $quantity < 0);
+        } while ($item->remain_quantity - $quantity < 0);
 
         return $this->state(fn(array $attributes) => [
             'order_id' => $order->id,
