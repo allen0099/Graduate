@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Http\Controllers\OrderController;
 use App\Models\Item;
 use App\Models\Order;
 use App\Models\TimeRange;
@@ -56,16 +57,7 @@ class AppServiceProvider extends ServiceProvider
                 return Item::all();
             },
             'orders' => function () {
-                if (Auth::check()) {
-                    if (Auth::user()->role === User::ADMIN) {
-                        return Order::all();
-                    }
-                    return [
-                        'own' => User::find(Auth::id())->owned_orders,
-                        'shared' => User::find(Auth::id())->shared_orders,
-                    ];
-                }
-                return null;
+                return OrderController::show_orders();
             },
             'flash' => fn() => [
                 'success' => Session::get('success'),
