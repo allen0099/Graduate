@@ -24,20 +24,6 @@ class OrderController extends Controller
         return $this->show_orders();
     }
 
-    public static function show_orders()
-    {
-        if (Auth::check()) {
-            if (Auth::user()->role === User::ADMIN) {
-                return Order::all();
-            }
-            return [
-                'own' => User::find(Auth::id())->owned_orders,
-                'shared' => User::find(Auth::id())->shared_orders,
-            ];
-        }
-        return [];
-    }
-
     /**
      * Store a newly created resource in storage.
      *
@@ -86,20 +72,6 @@ class OrderController extends Controller
         $this->create_items($order, $request->items);
 
         return $order->fresh();
-    }
-
-    private function create_items($order, $items)
-    {
-        foreach ($items as $item) {
-            $id = $item['id'];
-            $quantity = $item['quantity'];
-
-            $order_item = new OrderItem();
-            $order_item->item_id = $id;
-            $order_item->order_id = $order->id;
-            $order_item->quantity = $quantity;
-            $order_item->save();
-        }
     }
 
     /**
@@ -240,5 +212,33 @@ class OrderController extends Controller
     public function destroy($id)
     {
         // todo: not implement
+    }
+
+    public static function show_orders()
+    {
+        if (Auth::check()) {
+            if (Auth::user()->role === User::ADMIN) {
+                return Order::all();
+            }
+            return [
+                'own' => User::find(Auth::id())->owned_orders,
+                'shared' => User::find(Auth::id())->shared_orders,
+            ];
+        }
+        return [];
+    }
+
+    private function create_items($order, $items)
+    {
+        foreach ($items as $item) {
+            $id = $item['id'];
+            $quantity = $item['quantity'];
+
+            $order_item = new OrderItem();
+            $order_item->item_id = $id;
+            $order_item->order_id = $order->id;
+            $order_item->quantity = $quantity;
+            $order_item->save();
+        }
     }
 }
