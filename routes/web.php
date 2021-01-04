@@ -3,13 +3,13 @@
 use App\Http\Controllers\AdminStampChangeController;
 use App\Http\Controllers\LocationUpdateController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\RedirectAfterLoginController;
 use App\Http\Controllers\SearchOrderController;
 use App\Http\Controllers\TimeRangeController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use App\Http\Controllers\LoginRedirectConroller;
 
 /*
 |--------------------------------------------------------------------------
@@ -104,4 +104,4 @@ Route::middleware(['auth:sanctum'])->get('/meow', function () {
     return Inertia::render('Test', ['name' => 'Test meow']);
 })->name('meow'); // new dashboard
 
-Route::middleware(['auth:sanctum'])->get('index', [LoginRedirectConroller::class, 'redirectTo']);
+Route::middleware(['auth:sanctum'])->get('index', RedirectAfterLoginController::class);
