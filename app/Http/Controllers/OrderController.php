@@ -21,7 +21,7 @@ class OrderController extends Controller
      */
     public function index()
     {
-        return $this->show_orders();
+        return $this->showOrders();
     }
 
     /**
@@ -69,7 +69,7 @@ class OrderController extends Controller
 
         $order->save();
 
-        $this->create_items($order, $request->items);
+        $this->createItems($order, $request->items);
 
         return $order->fresh();
     }
@@ -99,8 +99,8 @@ class OrderController extends Controller
         $user = Auth::user();
         if (Auth::user()->role === User::STUDENT) {
             // role student, only cancel
-            if ($order->owner->id !== Auth::id()) // check order is belong to student
-                return abort(403);
+            $this->checkBelongToStudent($order);
+
             $request->validate([
                 'document_id' => [
                     'required',
@@ -198,7 +198,7 @@ class OrderController extends Controller
             $item->pivot->delete();
         });
 
-        $this->create_items($order, $request->items);
+        $this->createItems($order, $request->items);
 
         return $order->fresh();
     }
@@ -211,10 +211,13 @@ class OrderController extends Controller
      */
     public function destroy($id)
     {
-        // todo: not implement
+        $order = Order::find($id);
+        $order->delete();
+
+        return response()->noContent();
     }
 
-    public static function show_orders()
+    public static function showOrders()
     {
         if (Auth::check()) {
             if (Auth::user()->role === User::ADMIN) {
@@ -228,7 +231,7 @@ class OrderController extends Controller
         return [];
     }
 
-    private function create_items($order, $items)
+    private function createItems($order, $items)
     {
         foreach ($items as $item) {
             $id = $item['id'];
@@ -240,5 +243,11 @@ class OrderController extends Controller
             $order_item->quantity = $quantity;
             $order_item->save();
         }
+    }
+
+    private function checkBelongToStudent($order)
+    {
+        if ($order->owner->id !== Auth::id())
+            abort(403);
     }
 }

@@ -57,7 +57,7 @@ class AppServiceProvider extends ServiceProvider
                 return Item::all();
             },
             'orders' => function () {
-                return OrderController::show_orders();
+                return OrderController::showOrders();
             },
             'flash' => fn() => [
                 'success' => Session::get('success'),
