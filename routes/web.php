@@ -1,9 +1,11 @@
 <?php
 
 use App\Http\Controllers\AdminStampChangeController;
+use App\Http\Controllers\ItemController;
 use App\Http\Controllers\LocationUpdateController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\RedirectAfterLoginController;
+use App\Http\Controllers\ReturnOrderController;
 use App\Http\Controllers\SearchOrderController;
 use App\Http\Controllers\TimeRangeController;
 use Illuminate\Support\Facades\Auth;
@@ -54,6 +56,9 @@ Route::group([
 Route::apiResource('order', OrderController::class, ['only' => ['index', 'store', 'update']])
     ->middleware(['auth:sanctum']);
 
+Route::apiResource('item', ItemController::class, ['only' => ['index']])
+    ->middleware(['auth:sanctum']);
+
 // Admin routes group
 Route::group([
 //    'prefix' => 'admin', // if enable, will prefix route with it
@@ -64,7 +69,7 @@ Route::group([
     Route::get('/search_order', SearchOrderController::class)
         ->name('search_order');
 
-    Route::get('/return_order', SearchOrderController::class)
+    Route::get('/return_order', ReturnOrderController::class)
         ->name('return_order');
 
     Route::get('/meow', fn() => Inertia::render('Test', ['name' => 'Test meow']))
@@ -80,6 +85,8 @@ Route::group([
         ->name('setting'); // routes name as 'admin.setting'
 
     Route::apiResource('order', OrderController::class, ['except' => ['index', 'store', 'update']]);
+
+    Route::apiResource('item', ItemController::class, ['except' => ['index']]);
 
     Route::apiResource('time', TimeRangeController::class,
         ['except' => ['index', 'show', 'destroy', 'store']]);
