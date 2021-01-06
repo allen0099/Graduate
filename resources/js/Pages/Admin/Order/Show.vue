@@ -12,13 +12,17 @@
                     cols="12"
                 >
                     <v-text-field
-                        v-model="search"
-                        label="訂單搜尋"
+                        v-model="$page.search"
+                        label="訂單搜尋 (學號或訂單編號)"
                         single-line
                         hide-details
                         clearable
+                        @keyup.enter="search_submit"
                     ></v-text-field>
-                    <v-btn class="ml-3 mt-3">搜尋</v-btn>
+                    <v-btn
+                        class="ml-3 mt-3"
+                        @click="search_submit"
+                    >搜尋</v-btn>
                 </v-col>
             </v-row>
             <v-btn-toggle
@@ -334,6 +338,25 @@
                 </v-card>
             </v-form>
         </v-dialog>
+        <v-dialog
+            v-model="pageLoading"
+            persistent
+            width="300"
+        >
+            <v-card
+                color="primary"
+                dark
+            >
+                <v-card-text>
+                    Loading...
+                    <v-progress-linear
+                        indeterminate
+                        color="white"
+                        class="mb-0"
+                    ></v-progress-linear>
+                </v-card-text>
+            </v-card>
+        </v-dialog>
     </VuetifyLayout>
 </template>
 
@@ -348,16 +371,12 @@
     import VuetifyLayout from '@/Layouts/VuetifyLayout'
 
     export default {
-        props: {
-            name: String,
-            search: String,
-            // order_meow: Object
-        },
         components: {
             VuetifyLayout,
         },
         name: "AdminOrder",
         data: () => ({
+            pageLoading: false,
             show: [],
             statusFilterSelected: -1,
             edit_toggle: false,
@@ -600,8 +619,16 @@
                 this.edit_toggle = true
                 this.order = Object.assign({}, order);
             },
-            init_search() {
-                if (this.$route.params.search) this.search = this.$route.params.search
+            search_submit() {
+                this.pageLoading = true
+
+                if (this.$page.search) {
+                    this.$inertia.get('/admin/order', {
+                        search: this.$page.search
+                    })
+                } else {
+                    this.$inertia.get('/admin/order')
+                }
             },
             init_show() {
                 // this.orderList = JSON.parse(JSON.stringify())
@@ -636,7 +663,7 @@
             }
         },
         created() {
-            // this.init_search()
+            console.log(this.$page)
         },
         async mounted() {
             await this.onResize()
