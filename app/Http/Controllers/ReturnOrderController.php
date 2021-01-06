@@ -22,14 +22,14 @@ class ReturnOrderController extends Controller
                 return abort(404);
             });
 
-            if ($order->status_code === Order::code_4) {
+            if ($order->status_code === Order::code_returned) {
                 return [
                     'error' => 'duplicate',
                     'message' => 'order has returned'
                 ];
             }
 
-            $order->status_code = Order::code_4;
+            $order->status_code = Order::code_returned;
             $order->save();
 
             return $order;

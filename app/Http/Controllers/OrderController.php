@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Item;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\OrderLog;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
@@ -71,6 +72,8 @@ class OrderController extends Controller
 
         $this->createItems($order, $request->items);
 
+        $this->saveLog($order, "{$request->username} 建立新的訂單。");
+
         return $order->fresh();
     }
 
@@ -97,7 +100,7 @@ class OrderController extends Controller
     {
         $order = Order::find($id);
         $user = Auth::user();
-        if (Auth::user()->role === User::STUDENT) {
+        if ($user->role === User::STUDENT) {
             // role student, only cancel
             $this->checkBelongToStudent($order);
 
@@ -117,13 +120,13 @@ class OrderController extends Controller
                 'status_code' => [
                     'required',
                     Rule::in([
-                        Order::code_cancel // cancel
+                        Order::code_requestCancel
                     ]),
                     function ($attribute, $value, $fail) {
                         $order = Order::where('document_id', \request()->document_id)->first();
-                        if ($order->status_code === Order::code_has_cancel)
+                        if ($order->status_code === Order::code_canceled)
                             $fail($order->document_id . ' has been cancelled, contact admin for more help.');
-                        if ($order->status_code === Order::code_cancel)
+                        if ($order->status_code === Order::code_requestCancel)
                             $fail($order->document_id . ' has been cancelled successfully.');
                     },
                 ],
@@ -145,7 +148,7 @@ class OrderController extends Controller
                 ],
             ]);
         }
-        if (Auth::user()->role === User::ADMIN) {
+        if ($user->role === User::ADMIN) {
             // role admin, edit order
             $request->validate([
                 'document_id' => [
@@ -160,12 +163,12 @@ class OrderController extends Controller
                 'status_code' => [
                     'required',
                     Rule::in([
-                        Order::code_1,
-                        Order::code_2,
-                        Order::code_3,
-                        Order::code_4,
-                        Order::code_cancel, // cancel
-                        Order::code_has_cancel,
+                        Order::code_created,
+                        Order::code_paid,
+                        Order::code_received,
+                        Order::code_returned,
+                        Order::code_requestCancel,
+                        Order::code_canceled,
                     ]),
                 ],
                 'items' => 'required',
@@ -199,6 +202,12 @@ class OrderController extends Controller
         });
 
         $this->createItems($order, $request->items);
+
+        if ($user->role === User::ADMIN) {
+            $this->saveLog($order, "{$user->username} 更新了訂單狀態。");
+        } else {
+            $this->saveLog($order, "{$user->username} 要求取消訂單。");
+        }
 
         return $order->fresh();
     }
@@ -249,5 +258,16 @@ class OrderController extends Controller
     {
         if ($order->owner->id !== Auth::id())
             abort(403);
+    }
+
+    private function saveLog($order, $message)
+    {
+        $log = new OrderLog();
+        $log->order_id = $order->id;
+        $log->status_code = $order->status_code;
+        $log->description = $message;
+        $log->log_time = now();
+
+        $log->save();
     }
 }
