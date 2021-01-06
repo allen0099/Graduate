@@ -65,10 +65,6 @@ Route::group([
     'middleware' => ['auth:sanctum', 'can:admin'],
     'as' => 'admin.'
 ], function () {
-
-    Route::get('/search_order', SearchOrderController::class)
-        ->name('search_order');
-
     Route::get('/return_order', ReturnOrderController::class)
         ->name('return_order');
 
@@ -78,7 +74,7 @@ Route::group([
     Route::get('/admin/home', fn() => Inertia::render('Admin/Home/Show'))
         ->name('home');
 
-    Route::get('/admin/order', fn() => Inertia::render('Admin/Order/Show', ['search' => '123']))
+    Route::get('/admin/order', SearchOrderController::class)
         ->name('order'); // routes name as 'admin.setting'
 
     Route::get('/admin/setting', fn() => Inertia::render('Admin/Setting/Show'))

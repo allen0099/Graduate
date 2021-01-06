@@ -78,10 +78,8 @@ class OrderController extends Controller
 
         $this->saveLog($order, "{$request->username} 建立新的訂單。");
         $order->fresh();
-        
-        // return Inertia::render('Student/Order/Show', ['re_order'=> $order, 'finish'=> true]);
-        return redirect()->back()->with('success', $order);
-        // return $order->fresh();
+
+        return redirect()->back()->with('success', $order->fresh());
     }
 
     /**
