@@ -1,6 +1,7 @@
 <template>
     <v-app>
         <v-main>
+            <!-- navbar -->
             <v-app-bar
                 app
                 elevation="2"
@@ -55,6 +56,7 @@
                     class="my-2 ml-5 hidden-sm-and-down text-decoration-none"
                     :href="route(link.url)"
                     :class="{'v-btn--active': route().current(link.url)}"
+                    v-if="link.role.indexOf($page.user.role) >= 0"
                 >
                     <v-icon left>{{ link.icon }}</v-icon>
                     {{ link.label }}
@@ -76,7 +78,7 @@
                         </v-btn>
                     </template>
                     <v-list class="hidden-sm-and-down">
-                        <v-subheader>Manage Account</v-subheader>
+                        <v-subheader>帳號管理</v-subheader>
                         <v-list-item
                             v-for="(link, index) in menuLinks"
                             :key="`${link.label}-menu-link`"
@@ -125,8 +127,7 @@
                                     {{$page.user.name? $page.user.name : "訪客"}}
                                 </v-list-item-title>
                                 <v-list-item-subtitle>
-                                    {{ '406410232@s06.tku.edu.tw' }}
-                                    <!-- {{$page.user.email? $page.user.email : "406410232@s06.tku.edu.tw"}} -->
+                                    {{ $page.user.username? $page.user.username : "Owooooooooo" }}
                                 </v-list-item-subtitle>
                             </v-list-item-content>
                             <v-list-item-avatar>
@@ -148,6 +149,7 @@
                             class="text-decoration-none"
                             color="primary"
                             :class="{'v-btn--active': route().current(link.url)}"
+                            v-if="link.role.indexOf($page.user.role) >= 0"
                         >
                             <v-list-item-icon>
                                 <v-icon v-text="link.icon" />
@@ -160,32 +162,16 @@
 
                         <v-divider></v-divider>
 
-                        <!-- <v-list-item
-                            v-for="link in login"
-                            :key="`${link.label}-drawer-link`"
-                            :to="link.url"
-                            class="text-decoration-none"
-                            color="primary"
-                            v-show="link.isLogin.indexOf(isLogin) >= 0"
-                        >
-                            <v-list-item-icon>
-                                <v-icon>{{ link.icon }}</v-icon>
-                            </v-list-item-icon>
-
-                            <v-list-item-content>
-                                <v-list-item-title>{{ link.label }}</v-list-item-title>
-                            </v-list-item-content>
-                        </v-list-item> -->
                         <v-list-group
                             prepend-icon="mdi-account-circle"
                             no-action
                         >
                             <template v-slot:activator>
-                                <v-list-item-title>Users</v-list-item-title>
+                                <v-list-item-title>帳號管理</v-list-item-title>
                             </template>
                             <v-list-item
-                                v-for="(link, index) in rightLinks"
-                                :key="`${link.label}-drawer-right-link`"
+                                v-for="(link, index) in menuLinks"
+                                :key="`${link.label}-drawer-menu-link`"
                                 :href="route(link.url)"
                                 class="text-decoration-none"
                                 :class="{'v-btn--active': route().current(link.url)}"
@@ -208,6 +194,7 @@
                 </v-navigation-drawer>
             </v-app-bar>
 
+            <!-- main page -->
             <v-container class="py-5">
                 <v-card
                     min-height="85vh"
@@ -222,9 +209,113 @@
                     </div>
                 </v-card>
             </v-container>
+
+            <!-- footer -->
+            <v-footer
+                id="footer"
+                class="d-block py-0"
+                color="grey darken-4"
+                dark
+            >
+                <!-- hidden when xs -->
+                <v-container class="text-center d-none d-sm-flex">
+                    <v-row>
+                        <v-col cols="12">
+                            <div class="mb-2">
+                                Copyright &copy; 2020-{{ (new Date()).getFullYear() }} 淡江大學版權所有
+                            </div>
+                            <div class="mb-2">
+                                本網站建議使用 Chrome、FireFox 瀏覽器瀏覽
+                            </div>
+                            <a
+                                class="grey--text text--lighten-1"
+                                href="https://www.tku.edu.tw/privacy.asp"
+                                rel="noopener"
+                                target="_blank"
+                            >
+                                隱私政策
+                            </a>
+
+                            &nbsp;•&nbsp;
+
+                            <a
+                                class="grey--text text--lighten-1"
+                                href="https://www.tku.edu.tw/pdp.asp"
+                                rel="noopener"
+                                target="_blank"
+                            >
+                                個資政策
+                            </a>
+
+                            &nbsp;•&nbsp;
+
+                            <a
+                                class="grey--text text--lighten-1"
+                                href="http://www.ipc.tku.edu.tw/"
+                                rel="noopener"
+                                target="_blank"
+                            >
+                                個資保護聯絡窗口
+                            </a>
+                            <div class="mt-5">
+                                地址：251301 新北市淡水區英專路151號 &nbsp;•&nbsp; 電話：+886-2-2621-5656
+                            </div>
+                        </v-col>
+                    </v-row>
+                </v-container>
+
+                <!-- show when xs -->
+                <v-container class="text-center d-flex d-sm-none">
+                    <v-row>
+                        <v-col cols="12">
+                            <div class="mb-2">
+                                Copyright &copy; 2020-{{ (new Date()).getFullYear() }} 淡江大學版權所有
+                            </div>
+                            <div class="mb-2">
+                                建議使用 Chrome、FireFox 瀏覽器瀏覽
+                            </div>
+                            <a
+                                class="grey--text text--lighten-1"
+                                href="https://www.tku.edu.tw/privacy.asp"
+                                rel="noopener"
+                                target="_blank"
+                            >
+                                隱私政策
+                            </a>
+
+                            &nbsp;•&nbsp;
+
+                            <a
+                                class="grey--text text--lighten-1"
+                                href="https://www.tku.edu.tw/pdp.asp"
+                                rel="noopener"
+                                target="_blank"
+                            >
+                                個資政策
+                            </a>
+
+                            &nbsp;•&nbsp;
+
+                            <a
+                                class="grey--text text--lighten-1"
+                                href="http://www.ipc.tku.edu.tw/"
+                                rel="noopener"
+                                target="_blank"
+                            >
+                                個資保護聯絡窗口
+                            </a>
+                            <div class="mt-5">
+                                地址：251301 新北市淡水區英專路151號
+                            </div>
+                            <div class="mt-2">
+                                電話：+886-2-2621-5656
+                            </div>
+                        </v-col>
+                    </v-row>
+                </v-container>
+            </v-footer>
         </v-main>
     </v-app>
-
 </template>
 
 <script>
@@ -234,60 +325,69 @@
                 sidebar: false,
                 helloworld: 'helloworld',
                 showingNavigationDropdown: false,
-                outsideLinks: [{
-                    label: '排班查詢系統',
-                    url: 'http://agox.tku.edu.tw',
-                    icon: 'mdi-launch ',
-                }, ],
                 leftLinks: [{
-                        label: '學生才會看到',
-                        url: 'meow',
-                        icon: 'mdi-view-dashboard',
-                        role: ['student'],
-                    },
-                    {
-                        label: 'admin才會看到',
+                        label: '首頁',
                         url: 'admin.home',
-                        icon: 'mdi-view-dashboard',
+                        icon: 'mdi-home',
                         role: ['admin'],
                     },
                     {
                         label: '訂單管理',
                         url: 'admin.order',
-                        icon: 'mdi-pencil-outline',
+                        icon: 'mdi-format-list-bulleted-type',
                         role: ['admin'],
                     },
                     {
                         label: '我的訂單',
                         url: 'student.myorder',
-                        icon: 'mdi-pencil-outline',
-                        role: ['admin', 'student'],
+                        icon: 'mdi-format-list-bulleted-type',
+                        role: ['student'],
                     },
                     {
-                        label: 'stu',
-                        url: 'root',
-                        icon: 'mdi-pencil-outline',
-                        role: ['student', 'admin'],
-                    }
+                        label: '新增訂單',
+                        url: 'student.order',
+                        icon: 'mdi-cart-plus ',
+                        role: ['student'],
+                    },
                 ],
                 rightLinks: [{
-                        label: '設定1',
-                        url: 'meow',
-                        icon: 'mdi-cog',
-                        role: ['student', 'admin'],
-                    },
-                    {
-                        label: '設定',
-                        url: 'admin.setting',
-                        icon: 'mdi-cog',
-                        role: ['student', 'admin'],
-                    }
-                ].reverse(),
+                    label: '系統設定',
+                    url: 'admin.setting',
+                    icon: 'mdi-cog',
+                    role: ['admin'],
+                }].reverse(),
                 menuLinks: [{
                     label: '個人設定',
                     url: 'profile.show', // 在 vendor 裡面有 定義
                     icon: 'mdi-account-cog-outline',
-                }, ]
+                }, ],
+                email: '',
+                socials: [{
+                        icon: 'mdi-reddit',
+                        href: 'https://www.reddit.com/r/vuetifyjs',
+                        title: 'Reddit',
+                    },
+                    {
+                        icon: 'mdi-medium',
+                        href: 'https://medium.com/vuetify',
+                        title: 'Medium',
+                    },
+                    {
+                        icon: 'mdi-github-circle',
+                        href: 'https://github.com/vuetifyjs/vuetify',
+                        title: 'Github',
+                    },
+                    {
+                        icon: 'mdi-twitter',
+                        href: 'https://twitter.com/vuetifyjs',
+                        title: 'Twitter',
+                    },
+                    {
+                        icon: 'mdi-discord',
+                        href: 'https://community.vuetifyjs.com',
+                        title: 'Discord Community',
+                    },
+                ],
             }
         },
 

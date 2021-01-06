@@ -456,7 +456,7 @@
         },
         name: "helloworld",
         data: () => ({
-            e6: 4,
+            e6: 1,
             choose: false,
             bachelor_cloths: [],
             bachelor_accessories: [],
