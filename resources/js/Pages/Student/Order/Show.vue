@@ -129,7 +129,7 @@
                                         <v-icon @click="decrement(choose_cloths)">
                                             mdi-minus
                                         </v-icon>
-                                        <span class="subtitle mx-2">{{ choose_cloths.num }}</span>
+                                        <span class="subtitle mx-2">{{ choose_cloths.quantity }}</span>
                                         <v-icon @click="increment(choose_cloths, cloths)">
                                             mdi-plus
                                         </v-icon>
@@ -142,7 +142,7 @@
                                             :disabled="!choose_cloths.spec 
                                                     || (!!cloths.find(x=>x.spec === choose_cloths.spec)
                                                         && cloths.find(x=>x.spec === choose_cloths.spec).remain_quantity === 0)
-                                                    || choose_cloths.num === 0"
+                                                    || choose_cloths.quantity === 0"
                                             @click="push_order(choose_cloths, choose.name)"
                                         >
                                             新增
@@ -186,7 +186,7 @@
                                         <v-icon @click="decrement(choose_accessory)">
                                             mdi-minus
                                         </v-icon>
-                                        <span class="subtitle mx-2">{{ choose_accessory.num }}</span>
+                                        <span class="subtitle mx-2">{{ choose_accessory.quantity }}</span>
                                         <v-icon @click="increment(choose_accessory, accessories)">
                                             mdi-plus
                                         </v-icon>
@@ -201,7 +201,7 @@
                                                         && accessories.find(x=>x.spec ===
                                                         choose_accessory.spec).remain_quantity
                                                         === 0)
-                                                    || choose_accessory.num === 0"
+                                                    || choose_accessory.quantity === 0"
                                             @click="push_order(choose_accessory, choose.accessory)"
                                         >
                                             新增
@@ -243,10 +243,10 @@
                                                     </v-list-item-action>
                                                     <v-list-item-content>
                                                         <v-list-item-title v-if="item.name === (choose.accessory)">
-                                                            {{ i+1 }}.&nbsp;{{ item.name }}&nbsp;&nbsp;顏色：{{ item.spec }}&nbsp;&nbsp;數量：{{ item.num }}
+                                                            {{ i+1 }}.&nbsp;{{ item.name }}&nbsp;&nbsp;顏色：{{ item.spec }}&nbsp;&nbsp;數量：{{ item.quantity }}
                                                         </v-list-item-title>
                                                         <v-list-item-title v-else>
-                                                            {{ i+1 }}.&nbsp;{{ item.name }}&nbsp;&nbsp;尺寸：{{ item.spec }}&nbsp;&nbsp;數量：{{ item.num }}
+                                                            {{ i+1 }}.&nbsp;{{ item.name }}&nbsp;&nbsp;尺寸：{{ item.spec }}&nbsp;&nbsp;數量：{{ item.quantity }}
                                                         </v-list-item-title>
                                                     </v-list-item-content>
                                                 </v-list-item>
@@ -301,7 +301,8 @@
                                     <v-col cols="12"><span>姓名：{{ $page.user.name }}</span></v-col>
                                     <v-col cols="12"><span>學號：{{ $page.user.username }}</span></v-col>
                                     <v-col cols="12"><span>科系：{{ '資訊工程學系(日)' }}</span></v-col>
-                                    <v-col cols="12"><span>年級：{{ '四年級' }}&nbsp;&nbsp;&nbsp;&nbsp;班級：{{ 'B 班' }}</span>
+                                    <v-col cols="12">
+                                        <span>年級：{{ '四年級' }}&nbsp;&nbsp;&nbsp;&nbsp;班級：{{ 'B 班' }}</span>
                                     </v-col>
                                     <v-col cols="12"><span>訂單內容：</span></v-col>
                                     <v-col
@@ -313,7 +314,7 @@
                                             <v-col
                                                 cols="12"
                                                 class="body-1"
-                                            >{{ choose.name }}&nbsp;&nbsp;&nbsp;&nbsp;共：{{ order.filter(x=>x.name === choose.name).reduce((acc, curr) => {return acc + curr.num}, 0) }}&nbsp;件&nbsp;&nbsp;(2300/件)
+                                            >{{ choose.name }}&nbsp;&nbsp;&nbsp;&nbsp;共：{{ order.filter(x=>x.name === choose.name).reduce((acc, curr) => {return acc + curr.quantity}, 0) }}&nbsp;件&nbsp;&nbsp;(2300/件)
                                             </v-col>
                                             <v-col
                                                 cols="12"
@@ -323,7 +324,7 @@
                                                 v-for="(choose_cloths, i) in order.filter(x=>x.name === choose.name)"
                                                 :key="`order-choose_cloths-${i}`"
                                             >
-                                                {{ choose_cloths.spec }}：{{ choose_cloths.num }} 件
+                                                {{ choose_cloths.spec }}：{{ choose_cloths.quantity }} 件
                                             </v-col>
                                         </v-row>
                                     </v-col>
@@ -337,7 +338,7 @@
                                             <v-col
                                                 cols="12"
                                                 class="body-1"
-                                            >{{ choose.accessory }}&nbsp;&nbsp;&nbsp;&nbsp;共：{{ order.filter(x=>x.name === (choose.accessory)).reduce((acc, curr) => {return acc + curr.num}, 0) }}&nbsp;件&nbsp;&nbsp;(300/件)
+                                            >{{ choose.accessory }}&nbsp;&nbsp;&nbsp;&nbsp;共：{{ order.filter(x=>x.name === (choose.accessory)).reduce((acc, curr) => {return acc + curr.quantity}, 0) }}&nbsp;件&nbsp;&nbsp;(300/件)
                                             </v-col>
                                             <v-col
                                                 cols="12"
@@ -348,7 +349,7 @@
                                                 choose.accessory)"
                                                 :key="`order-choose_accessory-${i}`"
                                             >
-                                                {{ choose_accessory.spec }}：{{ choose_accessory.num }} 件
+                                                {{ choose_accessory.spec }}：{{ choose_accessory.quantity }} 件
                                             </v-col>
                                         </v-row>
                                     </v-col>
@@ -386,7 +387,7 @@
                         </v-btn>
                         <v-btn
                             color="primary"
-                            @click="e6 = 4"
+                            @click="submit_order"
                         >
                             完成訂單
                         </v-btn>
@@ -417,6 +418,7 @@
                         outlined
                     >
                         {{ order }}
+                        {{ $page.flash.success }}
                     </v-card>
                     <v-row class="mx-1">
 
@@ -439,6 +441,25 @@
                 </v-stepper-content>
             </v-stepper>
         </v-container>
+        <v-dialog
+            v-model="form.processing"
+            persistent
+            width="300"
+        >
+            <v-card
+                color="primary"
+                dark
+            >
+                <v-card-text>
+                    Loading...
+                    <v-progress-linear
+                        indeterminate
+                        color="white"
+                        class="mb-0"
+                    ></v-progress-linear>
+                </v-card-text>
+            </v-card>
+        </v-dialog>
     </VuetifyLayout>
 </template>
 
@@ -447,71 +468,89 @@
 
     export default {
         props: {
-            name: String
+            name: String,
+            re_order: {
+                type: Object,
+                default () {
+                    return {}
+                }
+            },
+            finish: {
+                type: Boolean,
+                default: false
+            }
         },
         components: {
             VuetifyLayout,
         },
-        name: "helloworld",
-        data: () => ({
-            e6: 1,
-            choose: {
-                type: 1,
-                name: '學士服',
-                accessory: '領巾'
-            },
-            choose_items: [{
+        name: "StudentOrder",
+        data() {
+            return {
+                cancelToken: null,
+                e6: 1,
+                loading: false,
+                choose: {
                     type: 1,
                     name: '學士服',
                     accessory: '領巾'
                 },
-                {
-                    type: 2,
-                    name: '碩士服',
-                    accessory: '帽穗、披肩'
+                choose_items: [{
+                        type: 1,
+                        name: '學士服',
+                        accessory: '領巾'
+                    },
+                    {
+                        type: 2,
+                        name: '碩士服',
+                        accessory: '帽穗、披肩'
+                    },
+                    {
+                        type: 3,
+                        name: '博士服',
+                        accessory: '帽穗、披肩'
+                    }
+                ],
+                bachelor_cloths: [],
+                bachelor_accessories: [],
+                master_cloths: [],
+                master_accessories: [],
+                phd_cloths: [],
+                cloths: [],
+                accessories: [],
+                choose_cloths: {
+                    spec: '',
+                    quantity: 0,
+                    id: -1
                 },
-                {
-                    type: 3,
-                    name: '博士服',
-                    accessory: '帽穗、披肩'
-                }
-            ],
-            bachelor_cloths: [],
-            bachelor_accessories: [],
-            master_cloths: [],
-            master_accessories: [],
-            phd_cloths: [],
-            cloths: [],
-            accessories: [],
-            choose_cloths: {
-                spec: '',
-                num: 0
-            },
-            choose_accessory: {
-                spec: '',
-                num: 0
-            },
-            master_gown: {
-                spec: '',
-                num: 0
-            },
-            master_accessory: {
-                spec: '',
-                num: 0
-            },
-            order: [],
-        }),
+                choose_accessory: {
+                    spec: '',
+                    quantity: 0,
+                    id: -1
+                },
+                order: [],
+                form: this.$inertia.form({
+                    '_method': 'POST',
+                    'username': '',
+                    'items': {}
+                }, {
+                    bag: 'submitOrder',
+                })
+            }
+        },
         computed: {
             total() {
                 let c_num = this.order.filter(x => x.name === this.choose.name).reduce((acc, curr) => {
-                    return acc + curr.num
+                    return acc + curr.quantity
                 }, 0)
                 let a_num = this.order.filter(x => x.name === this.choose.accessory).reduce((acc, curr) => {
-                    return acc + curr.num
+                    return acc + curr.quantity
                 }, 0)
                 console.log(c_num, a_num)
                 return c_num * 1300 + a_num * 300
             },
+            finished_order() {
+                return Object.assign({}, this.re_order)
+            }
         },
         watch: {
             "choose": function (val) {
@@ -527,25 +566,29 @@
                 }
                 this.order = []
             },
-            "choose_cloths.spec": function () {
-                this.choose_cloths.num = 0
+            "choose_cloths.spec": function (val) {
+                this.choose_cloths.quantity = 0
+                this.choose_cloths.id = val ? this.cloths.find(x => x.spec === val).id : -1
             },
-            "choose_accessory.spec": function () {
-                this.choose_accessory.num = 0
+            "choose_accessory.spec": function (val) {
+                this.choose_accessory.quantity = 0
+                this.choose_accessory.id = val ? this.accessories.find(x => x.spec === val).id : -1
             }
         },
         methods: {
             decrement(item) {
-                if (item.spec && item.num > 0) item.num--
+                if (item.spec && item.quantity > 0) item.quantity--
             },
             increment(item, list) {
-                if (item.spec && item.num < 10 && item.num < list.find(x => x.spec === item.spec).remain_quantity)
-                    item.num++
+                if (item.spec && item.quantity < 10 && item.quantity < list.find(x => x.spec === item.spec)
+                    .remain_quantity)
+                    item.quantity++
             },
             push_order(item, name) {
                 let i = this.order.findIndex(x => x.spec === item.spec)
                 if (i >= 0) {
-                    this.order[i].num = item.num
+                    this.order[i].quantity = item.quantity
+                    this.order[i].id = item.id
                 } else {
                     this.order.push({
                         ...item,
@@ -553,7 +596,8 @@
                     })
                 }
                 item.spec = ''
-                item.num = 0
+                item.quantity = 0
+                item.id = -1
             },
             remove_order(index) {
                 this.order.splice(index, 1)
@@ -573,6 +617,27 @@
                 }
                 return true
             },
+            submit_order() {
+                // this.form.post('/order', {
+                //     preserveScroll: true
+                // })
+                if (this.order_check()) {
+                    this.loading = true
+                    // this.order.forEach(x => {
+                    //     delete x.name, delete x.spec
+                    // })
+                    this.form.username = this.$page.user.username
+                    this.form.items = this.order
+                    this.form.post('/order', {
+                        preserveState: true,
+                        onFinish: () => {
+                            this.e6 = 4
+                            this.loading = false
+                        },
+                    })
+
+                }
+            }
         },
         created() {
             this.init_obj()
