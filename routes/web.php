@@ -1,10 +1,17 @@
 <?php
 
+use App\Http\Controllers\AdminStampChangeController;
+use App\Http\Controllers\ItemController;
+use App\Http\Controllers\LocationUpdateController;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\RedirectAfterLoginController;
+use App\Http\Controllers\ReturnOrderController;
+use App\Http\Controllers\SearchOrderController;
+use App\Http\Controllers\TimeRangeController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use App\Http\Controllers\LoginRedirectConroller;
 
 /*
 |--------------------------------------------------------------------------
@@ -41,10 +48,16 @@ Route::group([
     'as' => 'user.' // for naming routes, all routes name in this group is prefix by 'user.'
 ], function () {
     // stamp update
-    Route::post('/stamp', 'App\Http\Controllers\AdminStampChangeController@update')
+    Route::post('/stamp', [AdminStampChangeController::class, 'update'])
         ->name('admin-stamp.update')
         ->middleware('can:admin');
 });
+
+Route::apiResource('order', OrderController::class, ['only' => ['index', 'store', 'update']])
+    ->middleware(['auth:sanctum']);
+
+Route::apiResource('item', ItemController::class, ['only' => ['index']])
+    ->middleware(['auth:sanctum']);
 
 // Admin routes group
 Route::group([
@@ -52,6 +65,12 @@ Route::group([
     'middleware' => ['auth:sanctum', 'can:admin'],
     'as' => 'admin.'
 ], function () {
+
+    Route::get('/search_order', SearchOrderController::class)
+        ->name('search_order');
+
+    Route::get('/return_order', ReturnOrderController::class)
+        ->name('return_order');
 
     Route::get('/meow', fn() => Inertia::render('Test', ['name' => 'Test meow']))
         ->name('meow'); // routes name as 'admin.meow'
@@ -65,10 +84,14 @@ Route::group([
     Route::get('/admin/setting', fn() => Inertia::render('Admin/Setting/Show'))
         ->name('setting'); // routes name as 'admin.setting'
 
-    Route::resource('time', 'App\Http\Controllers\TimeRangeController',
-        ['except' => ['create', 'edit', 'show', 'destroy', 'store']]);
+    Route::apiResource('order', OrderController::class, ['except' => ['index', 'store', 'update']]);
 
-    Route::post('/location', 'App\Http\Controllers\LocationUpdateController')
+    Route::apiResource('item', ItemController::class, ['except' => ['index']]);
+
+    Route::apiResource('time', TimeRangeController::class,
+        ['except' => ['index', 'show', 'destroy', 'store']]);
+
+    Route::post('/location', LocationUpdateController::class)
         ->name('location');
 });
 
@@ -79,7 +102,7 @@ Route::group([
     'as' => 'student.'
 ], function () {
     Route::get('/student/order', fn() => Inertia::render('Student/Order/Show'))
-        ->name('order'); 
+        ->name('order');
     Route::get('/student/myorder', fn() => Inertia::render('Student/MyOrder/Show'))
         ->name('myorder');
 });
@@ -88,4 +111,4 @@ Route::middleware(['auth:sanctum'])->get('/meow', function () {
     return Inertia::render('Test', ['name' => 'Test meow']);
 })->name('meow'); // new dashboard
 
-Route::middleware(['auth:sanctum'])->get('index', [LoginRedirectConroller::class, 'redirectTo']);
+Route::middleware(['auth:sanctum'])->get('index', RedirectAfterLoginController::class);

@@ -9,6 +9,11 @@ class Item extends Model
 {
     use HasFactory;
 
+    const BACHELOR = '學士';
+    const MASTER = '碩士';
+    const DOCTOR = '博士';
+
+
     /**
      * The attributes that should be hidden for serialization.
      *
