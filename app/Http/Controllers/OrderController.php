@@ -12,6 +12,10 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
+
 
 class OrderController extends Controller
 {
@@ -73,8 +77,11 @@ class OrderController extends Controller
         $this->createItems($order, $request->items);
 
         $this->saveLog($order, "{$request->username} 建立新的訂單。");
-
-        return $order->fresh();
+        $order->fresh();
+        
+        // return Inertia::render('Student/Order/Show', ['re_order'=> $order, 'finish'=> true]);
+        return redirect()->back()->with('success', $order);
+        // return $order->fresh();
     }
 
     /**
