@@ -5,7 +5,7 @@
                 訂購流程
             </h2>
         </template>
-        <v-container class="py-2 m-0">
+        <v-container class="py-2 ma-0">
             <v-stepper
                 v-model="e6"
                 vertical
@@ -129,7 +129,7 @@
                                         <v-icon @click="decrement(choose_cloths)">
                                             mdi-minus
                                         </v-icon>
-                                        <span class="subtitle mx-2">{{ choose_cloths.quantity }}</span>
+                                        <span class="subtitle mx-2">{{ choose_cloths.request_quantity }}</span>
                                         <v-icon @click="increment(choose_cloths, cloths)">
                                             mdi-plus
                                         </v-icon>
@@ -142,7 +142,7 @@
                                             :disabled="!choose_cloths.spec 
                                                     || (!!cloths.find(x=>x.spec === choose_cloths.spec)
                                                         && cloths.find(x=>x.spec === choose_cloths.spec).remain_quantity === 0)
-                                                    || choose_cloths.quantity === 0"
+                                                    || choose_cloths.request_quantity === 0"
                                             @click="push_order(choose_cloths, choose.name)"
                                         >
                                             新增
@@ -186,7 +186,7 @@
                                         <v-icon @click="decrement(choose_accessory)">
                                             mdi-minus
                                         </v-icon>
-                                        <span class="subtitle mx-2">{{ choose_accessory.quantity }}</span>
+                                        <span class="subtitle mx-2">{{ choose_accessory.request_quantity }}</span>
                                         <v-icon @click="increment(choose_accessory, accessories)">
                                             mdi-plus
                                         </v-icon>
@@ -201,7 +201,7 @@
                                                         && accessories.find(x=>x.spec ===
                                                         choose_accessory.spec).remain_quantity
                                                         === 0)
-                                                    || choose_accessory.quantity === 0"
+                                                    || choose_accessory.request_quantity === 0"
                                             @click="push_order(choose_accessory, choose.accessory)"
                                         >
                                             新增
@@ -243,10 +243,10 @@
                                                     </v-list-item-action>
                                                     <v-list-item-content>
                                                         <v-list-item-title v-if="item.name === (choose.accessory)">
-                                                            {{ i+1 }}.&nbsp;{{ item.name }}&nbsp;&nbsp;顏色：{{ item.spec }}&nbsp;&nbsp;數量：{{ item.quantity }}
+                                                            {{ i+1 }}.&nbsp;{{ item.name }}&nbsp;&nbsp;顏色：{{ item.spec }}&nbsp;&nbsp;數量：{{ item.request_quantity }}
                                                         </v-list-item-title>
                                                         <v-list-item-title v-else>
-                                                            {{ i+1 }}.&nbsp;{{ item.name }}&nbsp;&nbsp;尺寸：{{ item.spec }}&nbsp;&nbsp;數量：{{ item.quantity }}
+                                                            {{ i+1 }}.&nbsp;{{ item.name }}&nbsp;&nbsp;尺寸：{{ item.spec }}&nbsp;&nbsp;數量：{{ item.request_quantity }}
                                                         </v-list-item-title>
                                                     </v-list-item-content>
                                                 </v-list-item>
@@ -314,7 +314,7 @@
                                             <v-col
                                                 cols="12"
                                                 class="body-1"
-                                            >{{ choose.name }}&nbsp;&nbsp;&nbsp;&nbsp;共：{{ order.filter(x=>x.name === choose.name).reduce((acc, curr) => {return acc + curr.quantity}, 0) }}&nbsp;件&nbsp;&nbsp;(2300/件)
+                                            >{{ choose.name }}&nbsp;&nbsp;&nbsp;&nbsp;共：{{ order.filter(x=>x.name === choose.name).reduce((acc, curr) => {return acc + curr.request_quantity}, 0) }}&nbsp;件&nbsp;&nbsp;(2300/件)
                                             </v-col>
                                             <v-col
                                                 cols="12"
@@ -324,7 +324,7 @@
                                                 v-for="(choose_cloths, i) in order.filter(x=>x.name === choose.name)"
                                                 :key="`order-choose_cloths-${i}`"
                                             >
-                                                {{ choose_cloths.spec }}：{{ choose_cloths.quantity }} 件
+                                                {{ choose_cloths.spec }}：{{ choose_cloths.request_quantity }} 件
                                             </v-col>
                                         </v-row>
                                     </v-col>
@@ -338,7 +338,7 @@
                                             <v-col
                                                 cols="12"
                                                 class="body-1"
-                                            >{{ choose.accessory }}&nbsp;&nbsp;&nbsp;&nbsp;共：{{ order.filter(x=>x.name === (choose.accessory)).reduce((acc, curr) => {return acc + curr.quantity}, 0) }}&nbsp;件&nbsp;&nbsp;(300/件)
+                                            >{{ choose.accessory }}&nbsp;&nbsp;&nbsp;&nbsp;共：{{ order.filter(x=>x.name === (choose.accessory)).reduce((acc, curr) => {return acc + curr.request_quantity}, 0) }}&nbsp;件&nbsp;&nbsp;(300/件)
                                             </v-col>
                                             <v-col
                                                 cols="12"
@@ -349,7 +349,7 @@
                                                 choose.accessory)"
                                                 :key="`order-choose_accessory-${i}`"
                                             >
-                                                {{ choose_accessory.spec }}：{{ choose_accessory.quantity }} 件
+                                                {{ choose_accessory.spec }}：{{ choose_accessory.request_quantity }} 件
                                             </v-col>
                                         </v-row>
                                     </v-col>
@@ -569,12 +569,12 @@
                 accessories: [],
                 choose_cloths: {
                     spec: '',
-                    quantity: 0,
+                    request_quantity: 0,
                     id: -1
                 },
                 choose_accessory: {
                     spec: '',
-                    quantity: 0,
+                    request_quantity: 0,
                     id: -1
                 },
                 order: [],
@@ -590,10 +590,10 @@
         computed: {
             total() {
                 let c_num = this.order.filter(x => x.name === this.choose.name).reduce((acc, curr) => {
-                    return acc + curr.quantity
+                    return acc + curr.request_quantity
                 }, 0)
                 let a_num = this.order.filter(x => x.name === this.choose.accessory).reduce((acc, curr) => {
-                    return acc + curr.quantity
+                    return acc + curr.request_quantity
                 }, 0)
                 console.log(c_num, a_num)
                 return c_num * 1300 + a_num * 300
@@ -617,27 +617,28 @@
                 this.order = []
             },
             "choose_cloths.spec": function (val) {
-                this.choose_cloths.quantity = 0
+                this.choose_cloths.request_quantity = 0
                 this.choose_cloths.id = val ? this.cloths.find(x => x.spec === val).id : -1
             },
             "choose_accessory.spec": function (val) {
-                this.choose_accessory.quantity = 0
+                this.choose_accessory.request_quantity = 0
                 this.choose_accessory.id = val ? this.accessories.find(x => x.spec === val).id : -1
             }
         },
         methods: {
             decrement(item) {
-                if (item.spec && item.quantity > 0) item.quantity--
+                if (item.spec && item.request_quantity > 0) item.request_quantity--
             },
             increment(item, list) {
-                if (item.spec && item.quantity < 10 && item.quantity < list.find(x => x.spec === item.spec)
+                if (item.spec && item.request_quantity < 10 && item.request_quantity < list.find(x => x.spec === item
+                        .spec)
                     .remain_quantity)
-                    item.quantity++
+                    item.request_quantity++
             },
             push_order(item, name) {
                 let i = this.order.findIndex(x => x.spec === item.spec)
                 if (i >= 0) {
-                    this.order[i].quantity = item.quantity
+                    this.order[i].request_quantity = item.request_quantity
                     this.order[i].id = item.id
                 } else {
                     this.order.push({
@@ -646,7 +647,7 @@
                     })
                 }
                 item.spec = ''
-                item.quantity = 0
+                item.request_quantity = 0
                 item.id = -1
             },
             remove_order(index) {

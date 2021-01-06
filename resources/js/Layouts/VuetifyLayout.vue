@@ -204,7 +204,7 @@
                         <slot name="header"></slot>
                     </v-card-title>
                     <v-divider class="mx-5 v-divider-bold" />
-                    <div class="px-5">
+                    <div class="md:px-5 sm:px-2">
                         <slot></slot>
                     </div>
                 </v-card>

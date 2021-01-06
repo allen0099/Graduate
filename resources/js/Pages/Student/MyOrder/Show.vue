@@ -124,6 +124,22 @@
                                     </v-col>
                                 </v-row>
                             </v-card-text>
+                            <!-- <v-card-actions v-if="order.status_code === 0">
+                                <v-spacer></v-spacer>
+                                <v-btn
+                                    depressed
+                                    small
+                                    color="error"
+                                >
+                                    申請取消
+                                    <v-icon
+                                        right
+                                        dark
+                                    >
+                                        mdi-close
+                                    </v-icon>
+                                </v-btn>
+                            </v-card-actions> -->
                         </v-card>
                     </v-col>
                 </v-row>
