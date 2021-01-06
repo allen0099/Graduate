@@ -50,7 +50,7 @@ class OrderController extends Controller
             ],
             'items' => 'required',
             'items.*.id' => 'required|distinct|exists:items,id',
-            'items.*.quantity' => [
+            'items.*.request_quantity' => [
                 'required',
                 'gt:0',
                 'numeric',
@@ -138,7 +138,7 @@ class OrderController extends Controller
                 ],
                 'items' => 'required',
                 'items.*.id' => 'required|distinct|exists:items,id',
-                'items.*.quantity' => [
+                'items.*.request_quantity' => [
                     'required',
                     'gt:0',
                     'numeric',
@@ -179,7 +179,7 @@ class OrderController extends Controller
                 ],
                 'items' => 'required',
                 'items.*.id' => 'required|distinct|exists:items,id',
-                'items.*.quantity' => [
+                'items.*.request_quantity' => [
                     'required',
                     'gt:0',
                     'numeric',
@@ -215,7 +215,7 @@ class OrderController extends Controller
             $this->saveLog($order, "{$user->username} 要求取消訂單。");
         }
 
-        return $order->fresh();
+        return redirect()->back()->with('success', $order->fresh());
     }
 
     /**
@@ -250,7 +250,7 @@ class OrderController extends Controller
     {
         foreach ($items as $item) {
             $id = $item['id'];
-            $quantity = $item['quantity'];
+            $quantity = $item['request_quantity'];
 
             $order_item = new OrderItem();
             $order_item->item_id = $id;

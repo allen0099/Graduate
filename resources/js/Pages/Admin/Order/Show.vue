@@ -323,14 +323,14 @@
                         <v-btn
                             color="primary"
                             text
-                            @click="dialog3 = false"
+                            @click="edit_cancel"
                         >
                             取消
                         </v-btn>
                         <v-btn
                             color="primary"
                             text
-                            @click="dialog3 = false"
+                            @click="edit_save"
                         >
                             儲存
                         </v-btn>
@@ -357,6 +357,21 @@
                 </v-card-text>
             </v-card>
         </v-dialog>
+        <v-snackbar v-model="snackbar">
+            {{ msg }}
+
+            <template v-slot:action="{ attrs }">
+                <v-btn
+                    color="primary"
+                    text
+                    v-bind="attrs"
+                    @click="snackbar = false"
+                    class="font-weight-bold"
+                >
+                    關閉
+                </v-btn>
+            </template>
+        </v-snackbar>
     </VuetifyLayout>
 </template>
 
@@ -375,178 +390,76 @@
             VuetifyLayout,
         },
         name: "AdminOrder",
-        data: () => ({
-            pageLoading: false,
-            show: [],
-            statusFilterSelected: -1,
-            edit_toggle: false,
-            valid: false,
-            baseorder: {
-                document_id: "",
-                payment_id: '',
-                created_at: "",
-                total: 0,
-                status_code: 0,
-                logs: [],
-                owner: {}
-            },
-            order: {
-                document_id: "",
-                payment_id: '',
-                created_at: "",
-                total: 0,
-                status_code: 0,
-                logs: [],
-                owner: {}
-            },
-            orderList: [{
-                owner: {
-                    name: '學生一',
-                    username: '406410232',
-                    department: '電機喵喵喵喵組',
+        data() {
+            return {
+                msg: '',
+                snackbar: false,
+                pageLoading: false,
+                show: [],
+                statusFilterSelected: -1,
+                edit_toggle: false,
+                valid: false,
+                baseorder: {
+                    document_id: "",
+                    payment_id: '',
+                    created_at: "",
+                    total: 0,
+                    status_code: 0,
+                    logs: [],
+                    owner: {}
                 },
-                document_id: "20201116990146",
-                created_at: "2020-11-28 14:29",
-                total: 1111,
-                status_code: 3,
-                payment_id: '2020-1000-4658-444',
-                logs: [{
-                        status: 1,
-                        logName: '已付款',
-                        date: '2020-11-29 14:29'
+                order: {
+                    document_id: "",
+                    payment_id: '',
+                    created_at: "",
+                    total: 0,
+                    status_code: 0,
+                    logs: [],
+                    owner: {}
+                },
+                orderList: [],
+                colorList: [{
+                        bg: '#fef9ef',
+                        detail: '#d48344',
                     },
                     {
-                        status: 2,
-                        logName: '已領取衣服',
-                        date: '2020-11-30 14:29'
+                        bg: '#fef9ef',
+                        detail: '#d48344',
                     },
                     {
-                        status: 3,
-                        logName: '已歸還衣服',
-                        date: '2020-12-01 14:29'
+                        bg: '#fef9ef',
+                        detail: '#d48344',
+                    },
+                    {
+                        bg: 'green lighten-5',
+                        detail: 'green darken-2',
+                    },
+                    {
+                        bg: 'red lighten-5',
+                        detail: 'red accent-2',
+                    },
+                    {
+                        bg: 'red lighten-5',
+                        detail: 'red accent-2',
                     }
-                ]
-            }, {
-                owner: {
-                    name: '學生一',
-                    username: '406410232',
-                    department: '電機喵喵喵喵組',
+                ],
+                statusMsg: ["未付款", "已付款，未領取衣服", "未歸還衣服", "已歸還衣服", "已申請訂單取消", "已取消訂單"],
+                // statusMsg2: ["未付款", "已付款", "已領取衣服", "已歸還衣服", "已申請訂單取消", "已取消訂單"]
+                windowSize: {
+                    x: 0,
+                    y: 0,
                 },
-                document_id: "20201116990147",
-                created_at: "2020-11-28 14:29",
-                total: 1111,
-                status_code: 2,
-                payment_id: 'payment-2020-1000-4658-444',
-                logs: [{
-                        status: 1,
-                        logName: '已付款',
-                        date: '2020-11-29 14:29'
-                    },
-                    {
-                        status: 2,
-                        logName: '已領取衣服',
-                        date: '2020-11-30 14:29'
-                    },
-                ]
-            }, {
-                owner: {
-                    name: '學生一',
-                    username: '406410232',
-                    department: '電機喵喵喵喵組',
-                },
-                document_id: "20201116990148",
-                created_at: "2020-11-28 14:29",
-                payment_id: 'payment-2020-1000-4658-444',
-                total: 1111,
-                status_code: 1,
-                logs: [{
-                    status: 1,
-                    logName: '已付款',
-                    date: '2020-11-29 14:29'
-                }]
-            }, {
-                owner: {
-                    name: '學生一',
-                    username: '406410232',
-                    department: '電機喵喵喵喵組',
-                },
-                document_id: "20201116990149",
-                created_at: "2020-11-28 14:29",
-                payment_id: '',
-                total: 1111,
-                status_code: 0,
-                logs: []
-            }, {
-                owner: {
-                    name: '學生一',
-                    username: '406410232',
-                    department: '電機喵喵喵喵組',
-                },
-                document_id: "20201116990150",
-                created_at: "2020-11-28 14:29",
-                payment_id: null,
-                total: 1111,
-                status_code: 4,
-                logs: [{
-                    status: 4,
-                    logName: '已申請訂單取消',
-                    date: '2020-11-29 14:29'
-                }]
-            }, {
-                owner: {
-                    name: '學生一',
-                    username: '406410232',
-                    department: '電機喵喵喵喵組',
-                },
-                document_id: "20201116990151",
-                created_at: "2020-11-28 14:29",
-                payment_id: null,
-                total: 1111,
-                status_code: 5,
-                logs: [{
-                        status: 4,
-                        logName: '已申請訂單取消',
-                        date: '2020-11-29 14:29'
-                    },
-                    {
-                        status: 5,
-                        logName: '已取消訂單',
-                        date: '2020-11-29 14:29'
-                    }
-                ]
-            }, ],
-            colorList: [{
-                    bg: '#fef9ef',
-                    detail: '#d48344',
-                },
-                {
-                    bg: '#fef9ef',
-                    detail: '#d48344',
-                },
-                {
-                    bg: '#fef9ef',
-                    detail: '#d48344',
-                },
-                {
-                    bg: 'green lighten-5',
-                    detail: 'green darken-2',
-                },
-                {
-                    bg: 'red lighten-5',
-                    detail: 'red accent-2',
-                },
-                {
-                    bg: 'red lighten-5',
-                    detail: 'red accent-2',
-                }
-            ],
-            statusMsg: ["未付款", "已付款，未領取衣服", "未歸還衣服", "已歸還衣服", "已申請訂單取消", "已取消訂單"],
-            // statusMsg2: ["未付款", "已付款", "已領取衣服", "已歸還衣服", "已申請訂單取消", "已取消訂單"]
-            windowSize: {
-                x: 0,
-                y: 0,
-            },
-        }),
+                form: this.$inertia.form({
+                    '_method': 'PUT',
+                    'document_id': '',
+                    'owner_username': '',
+                    'items': [],
+                    'status_code': -1,
+                }, {
+                    bag: 'updateOrder',
+                })
+            }
+        },
         methods: {
             onResize() {
                 this.windowSize = {
@@ -560,55 +473,6 @@
                     this.item_height = 160
                 }
             },
-            getOrderDetial() {
-                let item = [{
-                    "spec": "L",
-                    "num": 10,
-                    "name": "學士服",
-                    "price": 100
-                }, {
-                    "spec": "M",
-                    "num": 10,
-                    "name": "學士服",
-                    "price": 100
-                }, {
-                    "spec": "XL",
-                    "num": 10,
-                    "name": "學士服",
-                    "price": 100
-                }, {
-                    "spec": "白",
-                    "num": 10,
-                    "name": "帽穗、披肩",
-                    "price": 100
-                }, {
-                    "spec": "黃",
-                    "num": 10,
-                    "name": "帽穗、披肩",
-                    "price": 100
-                }, {
-                    "spec": "橘",
-                    "num": 10,
-                    "name": "帽穗、披肩",
-                    "price": 100
-                }, {
-                    "spec": "灰",
-                    "num": 10,
-                    "name": "帽穗、披肩",
-                    "price": 100
-                }, {
-                    "spec": "藍",
-                    "num": 10,
-                    "name": "帽穗、披肩",
-                    "price": 100
-                }, {
-                    "spec": "紫",
-                    "num": 10,
-                    "name": "帽穗、披肩",
-                    "price": 100
-                }]
-                return item
-            },
             orderFilter(order) {
                 if (this.statusFilterSelected !== null && this.statusFilterSelected !== -1) {
                     return order.status_code === this.statusFilterSelected
@@ -618,6 +482,23 @@
             edit_order(order) {
                 this.edit_toggle = true
                 this.order = Object.assign({}, order);
+            },
+            edit_cancel() {
+                this.edit_toggle = false
+                this.order = Object.assign({}, this.baseorder);
+            },
+            edit_save() {
+                this.pageLoading = true
+                this.form.status_code = this.order.status_code
+                this.form.document_id = this.order.document_id
+                this.form.owner_username = this.order.owner.username
+                this.form.items = this.order.items
+                this.form.put('/order/' + this.order.id).then(() => {
+                    this.edit_cancel()
+                    this.msg = this.$page.errorBags.length > 0 ? '發生錯誤' : ''
+                    this.snackbar = this.$page.errorBags.length > 0
+                    this.search_submit()
+                });
             },
             search_submit() {
                 this.pageLoading = true
