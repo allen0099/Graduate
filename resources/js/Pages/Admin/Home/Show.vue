@@ -31,6 +31,7 @@
                     :items="cancel_order_list"
                     bench="5"
                 >
+
                     <template v-slot:default="{ item }">
                         <v-list-item style="background-color: #FFCDD2">
                             <v-list-item-content>
@@ -69,6 +70,9 @@
                                         depressed
                                         small
                                         color="success"
+                                        class="mr-2"
+                                        @click="approve(item)"
+                                        :loading="cancel_choose === item.orderNumber"
                                     >
                                         批准
                                         <v-icon
@@ -82,6 +86,7 @@
                                         depressed
                                         small
                                         color="error"
+                                        @click="cancel(item)"
                                     >
                                         取消
                                         <v-icon
@@ -356,6 +361,7 @@
         },
         name: "AdminHome",
         data: () => ({
+            cancel_choose: null,
             bachelor_cloths: [],
             bachelor_accessories: [],
             master_cloths: [],
@@ -405,7 +411,7 @@
                 name: '學生一',
                 stu_id: '406410232',
                 department: '電機喵喵喵喵組',
-                orderNumber: "20201116990146",
+                orderNumber: "20201116990147",
                 orderDate: "2020-11-28 14:29",
                 cancelDate: "2020-11-28 18:29",
                 order_content: "訂單內容",
@@ -414,7 +420,7 @@
                 name: '學生一',
                 stu_id: '406410232',
                 department: '電機喵喵喵喵組',
-                orderNumber: "20201116990146",
+                orderNumber: "20201116990148",
                 orderDate: "2020-11-28 14:29",
                 cancelDate: "2020-11-28 18:29",
                 order_content: "訂單內容",
@@ -423,7 +429,7 @@
                 name: '學生一',
                 stu_id: '406410232',
                 department: '電機喵喵喵喵組',
-                orderNumber: "20201116990146",
+                orderNumber: "20201116990149",
                 orderDate: "2020-11-28 14:29",
                 cancelDate: "2020-11-28 18:29",
                 order_content: "訂單內容",
@@ -432,7 +438,7 @@
                 name: '學生一',
                 stu_id: '406410232',
                 department: '電機喵喵喵喵組',
-                orderNumber: "20201116990146",
+                orderNumber: "20201116990150",
                 orderDate: "2020-11-28 14:29",
                 cancelDate: "2020-11-28 18:29",
                 order_content: "訂單內容",
@@ -441,7 +447,7 @@
                 name: '學生一',
                 stu_id: '406410232',
                 department: '電機喵喵喵喵組',
-                orderNumber: "20201116990146",
+                orderNumber: "20201116990151",
                 orderDate: "2020-11-28 14:29",
                 cancelDate: "2020-11-28 18:29",
                 order_content: "訂單內容",
@@ -450,7 +456,7 @@
                 name: '學生一',
                 stu_id: '406410232',
                 department: '電機喵喵喵喵組',
-                orderNumber: "20201116990146",
+                orderNumber: "20201116990152",
                 orderDate: "2020-11-28 14:29",
                 cancelDate: "2020-11-28 18:29",
                 order_content: "訂單內容",
@@ -459,7 +465,7 @@
                 name: '學生一',
                 stu_id: '406410232',
                 department: '電機喵喵喵喵組',
-                orderNumber: "20201116990146",
+                orderNumber: "20201116990153",
                 orderDate: "2020-11-28 14:29",
                 cancelDate: "2020-11-28 18:29",
                 order_content: "訂單內容",
@@ -468,7 +474,7 @@
                 name: '學生一',
                 stu_id: '406410232',
                 department: '電機喵喵喵喵組',
-                orderNumber: "20201116990146",
+                orderNumber: "20201116990154",
                 orderDate: "2020-11-28 14:29",
                 cancelDate: "2020-11-28 18:29",
                 order_content: "訂單內容",
@@ -477,7 +483,7 @@
                 name: '學生一',
                 stu_id: '406410232',
                 department: '電機喵喵喵喵組',
-                orderNumber: "20201116990146",
+                orderNumber: "20201116990155",
                 orderDate: "2020-11-28 14:29",
                 cancelDate: "2020-11-28 18:29",
                 order_content: "訂單內容",
@@ -506,6 +512,20 @@
                 this.master_accessories = this.$page.inventory.slice(2, 8)
                 this.bachelor_cloths = this.$page.inventory.slice(8, 12)
                 this.master_cloths = this.$page.inventory.slice(12, 15)
+            },
+            async approve(item) {
+                this.cancel_choose = item.orderNumber
+                await new Promise(r => setTimeout(r, 3000))
+                this.cancel_order_list = this.cancel_order_list.filter(x => x.orderNumber !== item
+                    .orderNumber)
+                this.cancel_choose = null
+            },
+            async cancel(item) {
+                this.cancel_choose = item.orderNumber
+                await new Promise(r => setTimeout(r, 3000))
+                this.cancel_order_list = this.cancel_order_list.filter(x => x.orderNumber !== item
+                    .orderNumber)
+                this.cancel_choose = null
             }
         },
         created() {

@@ -28,12 +28,13 @@
                     >
                         <v-card outlined>
                             <v-card-title>
-                                <span>{{ !choose ? '學士服' : '碩士服' }}</span>
-                                <v-spacer></v-spacer>
-                                <v-switch
+                                <v-select
+                                    label="畢業學位"
                                     v-model="choose"
-                                    label="切換成碩士服"
-                                ></v-switch>
+                                    :items="choose_items"
+                                    item-text="name"
+                                    return-object
+                                ></v-select>
                             </v-card-title>
                             <v-card-text class="text--primary">
                                 <v-row>
@@ -56,7 +57,7 @@
                                     <v-col
                                         cols="12"
                                         class="body-1"
-                                    >{{ !choose ? '領巾' : '帽穗、披肩' }} 剩餘件數</v-col>
+                                    >{{ choose.accessory }} 剩餘件數</v-col>
                                     <v-col
                                         cols="12"
                                         md="2"
@@ -106,7 +107,7 @@
                                         cols="12"
                                         md="2"
                                     >
-                                        <span>{{ !choose ? '學士服' : '碩士服' }}</span>
+                                        <span>{{ choose.name }}</span>
                                     </v-col>
                                     <v-col
                                         cols="12"
@@ -142,7 +143,7 @@
                                                     || (!!cloths.find(x=>x.spec === choose_cloths.spec)
                                                         && cloths.find(x=>x.spec === choose_cloths.spec).remain_quantity === 0)
                                                     || choose_cloths.num === 0"
-                                            @click="push_order(choose_cloths, !choose ? '學士服' : '碩士服')"
+                                            @click="push_order(choose_cloths, choose.name)"
                                         >
                                             新增
                                         </v-btn>
@@ -163,7 +164,7 @@
                                         cols="12"
                                         md="2"
                                     >
-                                        <span>{{ !choose ? '領巾' : '帽穗、披肩' }}</span>
+                                        <span>{{ choose.accessory }}</span>
                                     </v-col>
                                     <v-col
                                         cols="12"
@@ -201,7 +202,7 @@
                                                         choose_accessory.spec).remain_quantity
                                                         === 0)
                                                     || choose_accessory.num === 0"
-                                            @click="push_order(choose_accessory, !choose ? '領巾' : '帽穗、披肩')"
+                                            @click="push_order(choose_accessory, choose.accessory)"
                                         >
                                             新增
                                         </v-btn>
@@ -241,9 +242,7 @@
                                                         </v-icon>
                                                     </v-list-item-action>
                                                     <v-list-item-content>
-                                                        <v-list-item-title
-                                                            v-if="item.name === (!choose ? '領巾' : '帽穗、披肩')"
-                                                        >
+                                                        <v-list-item-title v-if="item.name === (choose.accessory)">
                                                             {{ i+1 }}.&nbsp;{{ item.name }}&nbsp;&nbsp;顏色：{{ item.spec }}&nbsp;&nbsp;數量：{{ item.num }}
                                                         </v-list-item-title>
                                                         <v-list-item-title v-else>
@@ -308,21 +307,20 @@
                                     <v-col
                                         cols="12"
                                         offset="1"
-                                        v-show="order.filter(x=>x.name === (!choose ? '學士服' : '碩士服')).length > 0"
+                                        v-show="order.filter(x=>x.name === choose.name).length > 0"
                                     >
                                         <v-row dense>
                                             <v-col
                                                 cols="12"
                                                 class="body-1"
-                                            >{{ !choose ? '學士服' : '碩士服' }}&nbsp;&nbsp;&nbsp;&nbsp;共：{{ order.filter(x=>x.name === (!choose ? '學士服' : '碩士服')).reduce((acc, curr) => {return acc + curr.num}, 0) }}&nbsp;件&nbsp;&nbsp;(2300/件)
+                                            >{{ choose.name }}&nbsp;&nbsp;&nbsp;&nbsp;共：{{ order.filter(x=>x.name === choose.name).reduce((acc, curr) => {return acc + curr.num}, 0) }}&nbsp;件&nbsp;&nbsp;(2300/件)
                                             </v-col>
                                             <v-col
                                                 cols="12"
                                                 md="2"
                                                 sm="4"
                                                 class="body-1"
-                                                v-for="(choose_cloths, i) in order.filter(x=>x.name === (!choose ? '學士服'
-                                                : '碩士服'))"
+                                                v-for="(choose_cloths, i) in order.filter(x=>x.name === choose.name)"
                                                 :key="`order-choose_cloths-${i}`"
                                             >
                                                 {{ choose_cloths.spec }}：{{ choose_cloths.num }} 件
@@ -333,21 +331,21 @@
                                     <v-col
                                         cols="12"
                                         offset="1"
-                                        v-show="order.filter(x=>x.name === (!choose ? '領巾' : '帽穗、披肩')).length > 0"
+                                        v-show="order.filter(x=>x.name === choose.accessory).length > 0"
                                     >
                                         <v-row dense>
                                             <v-col
                                                 cols="12"
                                                 class="body-1"
-                                            >{{ !choose ? '領巾' : '帽穗、披肩' }}&nbsp;&nbsp;&nbsp;&nbsp;共：{{ order.filter(x=>x.name === (!choose ? '領巾' : '帽穗、披肩')).reduce((acc, curr) => {return acc + curr.num}, 0) }}&nbsp;件&nbsp;&nbsp;(300/件)
+                                            >{{ choose.accessory }}&nbsp;&nbsp;&nbsp;&nbsp;共：{{ order.filter(x=>x.name === (choose.accessory)).reduce((acc, curr) => {return acc + curr.num}, 0) }}&nbsp;件&nbsp;&nbsp;(300/件)
                                             </v-col>
                                             <v-col
                                                 cols="12"
                                                 md="2"
                                                 sm="4"
                                                 class="body-1"
-                                                v-for="(choose_accessory, i) in order.filter(x=>x.name === (!choose ?
-                                                '領巾' : '帽穗、披肩'))"
+                                                v-for="(choose_accessory, i) in order.filter(x=>x.name ===
+                                                choose.accessory)"
                                                 :key="`order-choose_accessory-${i}`"
                                             >
                                                 {{ choose_accessory.spec }}：{{ choose_accessory.num }} 件
@@ -457,11 +455,32 @@
         name: "helloworld",
         data: () => ({
             e6: 1,
-            choose: false,
+            choose: {
+                type: 1,
+                name: '學士服',
+                accessory: '領巾'
+            },
+            choose_items: [{
+                    type: 1,
+                    name: '學士服',
+                    accessory: '領巾'
+                },
+                {
+                    type: 2,
+                    name: '碩士服',
+                    accessory: '帽穗、披肩'
+                },
+                {
+                    type: 3,
+                    name: '博士服',
+                    accessory: '帽穗、披肩'
+                }
+            ],
             bachelor_cloths: [],
             bachelor_accessories: [],
             master_cloths: [],
             master_accessories: [],
+            phd_cloths: [],
             cloths: [],
             accessories: [],
             choose_cloths: {
@@ -484,12 +503,10 @@
         }),
         computed: {
             total() {
-                let c_num = this.order.filter(x => x.name === (!this.choose ? '學士服' :
-                    '碩士服')).reduce((acc, curr) => {
+                let c_num = this.order.filter(x => x.name === this.choose.name).reduce((acc, curr) => {
                     return acc + curr.num
                 }, 0)
-                let a_num = this.order.filter(x => x.name === (!this.choose ? '領巾' :
-                    '帽穗、披肩')).reduce((acc, curr) => {
+                let a_num = this.order.filter(x => x.name === this.choose.accessory).reduce((acc, curr) => {
                     return acc + curr.num
                 }, 0)
                 console.log(c_num, a_num)
@@ -498,11 +515,14 @@
         },
         watch: {
             "choose": function (val) {
-                if (!val) {
+                if (val.type === 1) {
                     this.cloths = this.bachelor_cloths
                     this.accessories = this.bachelor_accessories
-                } else {
+                } else if (val.type === 2) {
                     this.cloths = this.master_cloths
+                    this.accessories = this.master_accessories
+                } else {
+                    this.cloths = this.phd_cloths
                     this.accessories = this.master_accessories
                 }
                 this.order = []
@@ -543,6 +563,7 @@
                 this.master_accessories = this.$page.inventory.slice(2, 8)
                 this.bachelor_cloths = this.$page.inventory.slice(8, 12)
                 this.master_cloths = this.$page.inventory.slice(12, 15)
+                this.phd_cloths = this.$page.inventory.slice(15)
                 this.cloths = this.bachelor_cloths
                 this.accessories = this.bachelor_accessories
             },
