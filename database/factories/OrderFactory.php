@@ -25,7 +25,8 @@ class OrderFactory extends Factory
         return [
             'document_id' => $this->faker->uuid,
             'owner_id' => $this->faker->randomElement(User::all()->where('role', User::STUDENT))->id,
-            'status_code' => '0',
+            'total_price' => 0,
+            'status_code' => Order::code_created,
         ];
     }
 }

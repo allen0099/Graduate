@@ -8,13 +8,9 @@ use App\Models\OrderItem;
 use App\Models\OrderLog;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
-use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
 
 class OrderController extends Controller
@@ -70,7 +66,9 @@ class OrderController extends Controller
 
         $order->document_id = Str::uuid(); // todo: replace with document id generate method
         $order->owner_id = User::where('username', $request->username)->first()->id;
-        $order->status_code = Order::code_0;
+        $order->status_code = Order::code_created;
+
+        $order->total_price = $this->calculateTotalPrice($request->items);
 
         $order->save();
 
@@ -200,6 +198,8 @@ class OrderController extends Controller
         $order->owner_id = User::where('username', $request->owner_username)->first()->id;
         $order->status_code = $request->status_code;
 
+        $order->total_price = $this->calculateTotalPrice($request->items);
+
         $order->save();
 
         $old_items = $order->items()->get()->makeVisible(['pivot']);
@@ -275,5 +275,18 @@ class OrderController extends Controller
         $log->log_time = now();
 
         $log->save();
+    }
+
+    private function calculateTotalPrice($items)
+    {
+        $total_price = 0;
+        foreach ($items as $item) {
+            $id = $item['id'];
+            $quantity = $item['request_quantity'];
+
+            $_item = Item::find($id);
+            $total_price += $_item->price * $quantity;
+        }
+        return $total_price;
     }
 }

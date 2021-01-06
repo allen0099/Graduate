@@ -32,28 +32,12 @@ class ItemController extends Controller
         $item->type = $request->type;
         $item->name = $request->name;
         $item->spec = $request->property;
+        $item->price = $request->price;
         $item->quantity = $request->total_amount;
 
         $item->save();
 
         return $item->fresh();
-    }
-
-    private function validateForm($request)
-    {
-        $request->validate([
-            'type' => [
-                'required',
-                Rule::in([
-                    Item::BACHELOR,
-                    Item::MASTER,
-                    Item::DOCTOR
-                ])
-            ],
-            'name' => 'required',
-            'property' => 'required',
-            'total_amount' => 'required|numeric',
-        ]);
     }
 
     /**
@@ -83,6 +67,7 @@ class ItemController extends Controller
         $item->type = $request->type;
         $item->name = $request->name;
         $item->spec = $request->property;
+        $item->price = $request->price;
         $item->quantity = $request->total_amount;
 
         $item->save();
@@ -101,5 +86,23 @@ class ItemController extends Controller
         $item->delete();
 
         return response()->noContent();
+    }
+
+    private function validateForm($request)
+    {
+        $request->validate([
+            'type' => [
+                'required',
+                Rule::in([
+                    Item::BACHELOR,
+                    Item::MASTER,
+                    Item::DOCTOR
+                ])
+            ],
+            'name' => 'required',
+            'property' => 'required',
+            'price' => 'required|numeric',
+            'total_amount' => 'required|numeric',
+        ]);
     }
 }
