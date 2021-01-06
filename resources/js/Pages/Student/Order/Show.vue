@@ -416,9 +416,59 @@
                         class="mb-6"
                         min-height="350px"
                         outlined
+                        color="#fef9ef"
                     >
-                        {{ order }}
-                        {{ $page.flash.success }}
+                        <v-card-text
+                            class="font-weight-bold body-1"
+                            v-if="$page.flash.success"
+                        >
+                            <v-row dense>
+                                <v-col cols="12">學生：{{ $page.flash.success.owner.name }}
+                                </v-col>
+                                <v-col cols="12">班級：{{ 'meow' }}</v-col>
+                                <v-col cols="12">學號：{{ $page.flash.success.owner.username }}</v-col>
+                                <v-col cols="12">訂單編號：{{ $page.flash.success.document_id }}</v-col>
+                                <v-col cols="12">訂單日期：{{ $page.flash.success.created_at.slice(0, 16) }}</v-col>
+                                <v-col cols="12">總金額：{{ '10000' }}</v-col>
+                                <v-col cols="12">
+                                    <v-simple-table
+                                        dense
+                                        fixed-header
+                                    >
+                                        <template v-slot:default>
+                                            <thead>
+                                                <tr>
+                                                    <th class="text-left">
+                                                        品項
+                                                    </th>
+                                                    <th class="text-left">
+                                                        規格
+                                                    </th>
+                                                    <th class="text-left">
+                                                        單價
+                                                    </th>
+                                                    <th class="text-left">
+                                                        數量/件
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr
+                                                    v-for="(item, index) in $page.flash.success.items"
+                                                    :key="`detial-${index}`"
+                                                >
+                                                    <td>{{ item.name }}</td>
+                                                    <td>{{ item.spec }}</td>
+                                                    <td>{{ '1000' }}</td>
+                                                    <td>{{ item.request_quantity }}
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </template>
+                                    </v-simple-table>
+                                </v-col>
+                            </v-row>
+                        </v-card-text>
                     </v-card>
                     <v-row class="mx-1">
 
