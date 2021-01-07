@@ -152,7 +152,7 @@
                 >
                     <v-card
                         color="#FFF5EB"
-                        :class="{'breathe-div' : bc_item.remain_quantity < bc_item.quantity * 0.1}"
+                        :class="{'breathe-div' : !bc_item.remain_quantity || bc_item.remain_quantity < bc_item.quantity * 0.1}"
                     >
                         <v-card-title
                             class="body2 pb-1 font-weight-bold"
@@ -169,7 +169,7 @@
                                 cols="12"
                             >
                                 <span
-                                    :style="{color: bc_item.remain_quantity < bc_item.quantity * 0.1 ? '#D19999' : '#8FB69B'}"
+                                    :style="{color: !bc_item.remain_quantity || bc_item.remain_quantity < bc_item.quantity * 0.1 ? '#D19999' : '#8FB69B'}"
                                 >
                                     {{ bc_item.remain_quantity }}</span>
                                 /
@@ -196,7 +196,7 @@
                 >
                     <v-card
                         :color="card_color[ba_item.spec] ? card_color[ba_item.spec].bg : '#ffffff'"
-                        :class="{'breathe-div' : ba_item.remain_quantity < ba_item.quantity * 0.1}"
+                        :class="{'breathe-div' : !ba_item.remain_quantity || ba_item.remain_quantity < ba_item.quantity * 0.1}"
                     >
                         <v-card-title
                             class="body2 pb-1 font-weight-bold"
@@ -239,7 +239,7 @@
                 >
                     <v-card
                         color="#FFF5EB"
-                        :class="{'breathe-div' : mc_item.remain_quantity < mc_item.quantity * 0.1}"
+                        :class="{'breathe-div' : !mc_item.remain_quantity || mc_item.remain_quantity < mc_item.quantity * 0.1}"
                     >
                         <v-card-title
                             class="body2 pb-1 font-weight-bold"
@@ -256,11 +256,55 @@
                                 cols="12"
                             >
                                 <span
-                                    :style="{color: mc_item.remain_quantity < mc_item.quantity * 0.1 ? '#D19999' : '#8FB69B'}"
+                                    :style="{color: !mc_item.remain_quantity || mc_item.remain_quantity < mc_item.quantity * 0.1 ? '#D19999' : '#8FB69B'}"
                                 >
                                     {{ mc_item.remain_quantity }}
                                 </span> /
                                 <span>{{ mc_item.quantity }}</span>
+                            </v-col>
+                        </v-row>
+                    </v-card>
+                </v-col>
+            </v-row>
+        </v-card>
+        <!-- 博士服 -->
+        <v-card
+            class="mt-3"
+            flat
+        >
+            <v-card-title>博士服品項數量 (剩餘/總數)</v-card-title>
+            <v-row dense>
+                <v-col
+                    v-for="(pc_item, index) in phd_cloths"
+                    :key="`phd_cloths-${index}`"
+                    cols="6"
+                    lg="2"
+                    sm="4"
+                >
+                    <v-card
+                        color="#FFF5EB"
+                        :class="{'breathe-div' : !pc_item.remain_quantity || pc_item.remain_quantity < pc_item.quantity * 0.1}"
+                    >
+                        <v-card-title
+                            class="body2 pb-1 font-weight-bold"
+                            style="color: #968C83"
+                        >{{ pc_item.spec }}</v-card-title>
+                        <v-row
+                            class="pb-1 ml-7"
+                            no-gutters
+                            justify="space-between"
+                            align="center"
+                        >
+                            <v-col
+                                class="text-h6 font-weight-bold"
+                                cols="12"
+                            >
+                                <span
+                                    :style="{color: !pc_item.remain_quantity || pc_item.remain_quantity < pc_item.quantity * 0.1 ? '#D19999' : '#8FB69B'}"
+                                >
+                                    {{ pc_item.remain_quantity }}
+                                </span> /
+                                <span>{{ pc_item.quantity }}</span>
                             </v-col>
                         </v-row>
                     </v-card>
@@ -272,7 +316,7 @@
             class="mt-3"
             flat
         >
-            <v-card-title>碩士服披肩、帽穗數量 (剩餘/總數)</v-card-title>
+            <v-card-title>披肩、帽穗數量 (剩餘/總數)</v-card-title>
             <v-row dense>
                 <v-col
                     v-for="(ma_item, index) in master_accessories"
@@ -283,7 +327,10 @@
                 >
                     <v-card
                         :color="card_color[ma_item.spec] ? card_color[ma_item.spec].bg : '#ffffff'"
-                        :class="{'breathe-div' : ma_item.remain_quantity < ma_item.quantity * 0.1}"
+                        :class="{'breathe-div' : !ma_item.remain_quantity || ma_item.remain_quantity <
+                            ma_item.quantity
+                            *
+                            0.1}"
                     >
                         <v-card-title
                             class="body2 pb-1 font-weight-bold"
@@ -366,6 +413,7 @@
             bachelor_accessories: [],
             master_cloths: [],
             master_accessories: [],
+            phd_cloths: [],
             card_color: {
                 '白': {
                     bg: '#FFFFFF',
@@ -512,6 +560,7 @@
                 this.master_accessories = this.$page.inventory.slice(2, 8)
                 this.bachelor_cloths = this.$page.inventory.slice(8, 12)
                 this.master_cloths = this.$page.inventory.slice(12, 15)
+                this.phd_cloths = this.$page.inventory.slice(15)
             },
             async approve(item) {
                 this.cancel_choose = item.orderNumber

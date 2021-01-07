@@ -314,7 +314,7 @@
                                             <v-col
                                                 cols="12"
                                                 class="body-1"
-                                            >{{ choose.name }}&nbsp;&nbsp;&nbsp;&nbsp;共：{{ order.filter(x=>x.name === choose.name).reduce((acc, curr) => {return acc + curr.request_quantity}, 0) }}&nbsp;件&nbsp;&nbsp;(2300/件)
+                                            >{{ choose.name }}&nbsp;&nbsp;&nbsp;&nbsp;共：{{ order.filter(x=>x.name === choose.name).reduce((acc, curr) => {return acc + curr.request_quantity}, 0) }}&nbsp;件&nbsp;&nbsp;({{ cloths[0].price }}/件)
                                             </v-col>
                                             <v-col
                                                 cols="12"
@@ -338,7 +338,7 @@
                                             <v-col
                                                 cols="12"
                                                 class="body-1"
-                                            >{{ choose.accessory }}&nbsp;&nbsp;&nbsp;&nbsp;共：{{ order.filter(x=>x.name === (choose.accessory)).reduce((acc, curr) => {return acc + curr.request_quantity}, 0) }}&nbsp;件&nbsp;&nbsp;(300/件)
+                                            >{{ choose.accessory }}&nbsp;&nbsp;&nbsp;&nbsp;共：{{ order.filter(x=>x.name === (choose.accessory)).reduce((acc, curr) => {return acc + curr.request_quantity}, 0) }}&nbsp;件&nbsp;&nbsp;({{ accessories[0].price }}/件)
                                             </v-col>
                                             <v-col
                                                 cols="12"
@@ -429,7 +429,7 @@
                                 <v-col cols="12">學號：{{ $page.flash.success.owner.username }}</v-col>
                                 <v-col cols="12">訂單編號：{{ $page.flash.success.document_id }}</v-col>
                                 <v-col cols="12">訂單日期：{{ $page.flash.success.created_at.slice(0, 16) }}</v-col>
-                                <v-col cols="12">總金額：{{ '10000' }}</v-col>
+                                <v-col cols="12">總金額：{{ $page.flash.success.total_price }}</v-col>
                                 <v-col cols="12">
                                     <v-simple-table
                                         dense
@@ -459,7 +459,7 @@
                                                 >
                                                     <td>{{ item.name }}</td>
                                                     <td>{{ item.spec }}</td>
-                                                    <td>{{ '1000' }}</td>
+                                                    <td>{{ item.price }}</td>
                                                     <td>{{ item.request_quantity }}
                                                     </td>
                                                 </tr>
@@ -570,12 +570,14 @@
                 choose_cloths: {
                     spec: '',
                     request_quantity: 0,
-                    id: -1
+                    id: -1,
+                    price: 0
                 },
                 choose_accessory: {
                     spec: '',
                     request_quantity: 0,
-                    id: -1
+                    id: -1,
+                    price: 0
                 },
                 order: [],
                 form: this.$inertia.form({
@@ -596,10 +598,7 @@
                     return acc + curr.request_quantity
                 }, 0)
                 console.log(c_num, a_num)
-                return c_num * 1300 + a_num * 300
-            },
-            finished_order() {
-                return Object.assign({}, this.re_order)
+                return c_num * this.cloths[0].price + a_num * this.accessories[0].price
             }
         },
         watch: {

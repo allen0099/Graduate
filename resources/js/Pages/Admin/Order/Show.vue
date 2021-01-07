@@ -126,7 +126,7 @@
                                     <v-col
                                         cols="12"
                                         md="4"
-                                    >總金額：{{ '10000' }}</v-col>
+                                    >總金額：{{ order.total_price }}</v-col>
                                     <!-- <v-col
                                         v-if="order.payment_id"
                                         cols="12"
@@ -238,6 +238,9 @@
                                                 規格
                                             </th>
                                             <th class="text-left">
+                                                單價
+                                            </th>
+                                            <th class="text-left">
                                                 數量/件
                                             </th>
                                         </tr>
@@ -249,6 +252,7 @@
                                         >
                                             <td>{{ item.name }}</td>
                                             <td>{{ item.spec }}</td>
+                                            <td>{{ item.price }}</td>
                                             <td>{{ item.request_quantity }}</td>
                                         </tr>
                                     </tbody>
@@ -296,7 +300,7 @@
                             <v-col
                                 cols="12"
                                 md="4"
-                            >總金額：{{ '100000' }}</v-col>
+                            >總金額：{{ order.total_price }}</v-col>
                             <!-- <v-col clos="12">
                                 <v-text-field
                                     v-model="order.payment_id"
