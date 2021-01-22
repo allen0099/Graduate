@@ -19,7 +19,6 @@ class CreateItemsTable extends Migration
             $table->char('type', 5)->comment('學 / 碩 / 博');
             $table->string('name', 15);
             $table->string('spec', 20);
-            $table->integer('price');
             $table->unsignedInteger('quantity'); // total
 
             $table->timestamps();

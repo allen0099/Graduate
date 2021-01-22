@@ -18,10 +18,13 @@ class CreateOrdersTable extends Migration
             $table->string('document_id')->unique();
             $table->string('payment_id')->unique()->nullable();
 
-            $table->foreignId('owner_id')->references('id')->on('users')->cascadeOnDelete();
+            $table->foreignId('owner_id')
+                ->constrained('users')
+                ->cascadeOnDelete();
 
             $table->integer('total_price');
             $table->integer('status_code');
+            $table->date('preserve')->nullable();
             $table->timestamps();
         });
     }

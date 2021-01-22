@@ -2,10 +2,10 @@
 
 namespace Database\Seeders;
 
-use App\Models\OrderItem;
+use App\Models\Set;
 use Illuminate\Database\Seeder;
 
-class OrderItemSeeder extends Seeder
+class SetSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -15,10 +15,10 @@ class OrderItemSeeder extends Seeder
     public function run()
     {
         for ($i = 0; $i < 10; $i++) {
-            OrderItem::factory()->create();
+            Set::factory()->create();
         }
         for ($i = 0; $i < 10; $i++) {
-            OrderItem::factory()
+            Set::factory()
                 ->appendData()
                 ->create();
         }

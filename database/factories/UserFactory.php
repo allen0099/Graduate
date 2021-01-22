@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\DepartmentClass;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
@@ -33,7 +34,7 @@ class UserFactory extends Factory
     public function admin()
     {
         return $this->state(fn(array $attributes) => [
-            'username' => 'admin' . $this->faker->unique()->numberBetween($min = 1000, $max = 9999),  // 預設帳號
+            'username' => 'admin' . str_pad($this->faker->unique()->numberBetween($min = 0, $max = 9999), 4, '0', STR_PAD_LEFT),  // 預設帳號
             'email' => fn(array $attributes) => $attributes['username'] . '@aaa.aaa',
             'role' => User::ADMIN,
             'stamp' => ''
@@ -43,13 +44,10 @@ class UserFactory extends Factory
     public function student()
     {
         return $this->state(fn(array $attributes) => [
-            'username' => '40641' . $this->faker->unique()->numberBetween($min = 1000, $max = 9999),          // 預設帳號
+            'username' => '40641' . str_pad($this->faker->unique()->numberBetween($min = 0, $max = 9999), 4, '0', STR_PAD_LEFT),          // 預設帳號
             'email' => fn(array $attributes) => $attributes['username'] . '@gms.tku.edu.tw',
             'role' => User::STUDENT,
-            'school_year_id' => 1,
-            'department_id' => 25,
-            'grade' => '四',
-            'class' => $this->faker->randomElement(['A', 'B', 'C'])
+            'class_id' => $this->faker->randomElement(DepartmentClass::all())->id,
         ]);
     }
 }

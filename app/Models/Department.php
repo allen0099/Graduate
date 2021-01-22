@@ -29,8 +29,8 @@ class Department extends Model
         'id'
     ];
 
-    public function students()
+    public function classes()
     {
-        return $this->hasMany('App\Models\User');
+        return $this->hasMany('App\Models\DepartmentClass');
     }
 }

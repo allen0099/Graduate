@@ -23,7 +23,7 @@ class OrderFactory extends Factory
     public function definition()
     {
         return [
-            'document_id' => $this->faker->uuid,
+            'document_id' => now()->format('Ymdhis') . str_pad($this->faker->unique()->numberBetween($min = 0, $max = 99999), 5, '0', STR_PAD_LEFT),
             'owner_id' => $this->faker->randomElement(User::all()->where('role', User::STUDENT))->id,
             'total_price' => 0,
             'status_code' => Order::code_created,
