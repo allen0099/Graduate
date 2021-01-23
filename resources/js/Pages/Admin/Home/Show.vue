@@ -3,139 +3,6 @@
         <template #header>
             首頁
         </template>
-        <v-card
-            class="mt-3 mb-10"
-            flat
-            v-show="cancel_order_list.length > 0"
-        >
-            <v-card-title>
-                <v-badge
-                    color="error"
-                    :content="cancel_order_list.length"
-                    offset-x="0"
-                    offset-y="13"
-                >
-                    取消訂單申請
-                </v-badge>
-            </v-card-title>
-
-            <v-card
-                class="pa-3"
-                outlined
-            >
-                <v-virtual-scroll
-                    v-resize="onResize"
-                    height="300"
-                    min-height="300"
-                    :item-height="item_height"
-                    :items="cancel_order_list"
-                    bench="5"
-                >
-
-                    <template v-slot:default="{ item }">
-                        <v-list-item style="background-color: #FFCDD2">
-                            <v-list-item-content>
-                                <v-row dense>
-                                    <v-col
-                                        cols="12"
-                                        md="4"
-                                    >班級：{{ item.department }}</v-col>
-                                    <v-col
-                                        cols="12"
-                                        md="4"
-                                    >學生：{{ item.name }}</v-col>
-                                    <v-col
-                                        cols="12"
-                                        md="4"
-                                    >學號：{{ item.stu_id }}</v-col>
-                                    <v-col
-                                        cols="12"
-                                        md="4"
-                                    >訂單編號：{{ item.orderNumber }}</v-col>
-                                    <v-col
-                                        cols="12"
-                                        md="4"
-                                    >訂單日期：{{ item.orderDate }}</v-col>
-                                    <v-col
-                                        cols="12"
-                                        md="4"
-                                    >取消日期：{{ item.cancelDate }}</v-col>
-                                    <v-col cols="12">取消原因：{{ item.reason }}</v-col>
-                                </v-row>
-                                <v-col
-                                    cols="12"
-                                    class="d-flex justify-end pa-0 pt-1"
-                                >
-                                    <v-btn
-                                        depressed
-                                        small
-                                        color="success"
-                                        class="mr-2"
-                                        @click="approve(item)"
-                                        :loading="cancel_choose === item.orderNumber"
-                                    >
-                                        批准
-                                        <v-icon
-                                            right
-                                            dark
-                                        >
-                                            mdi-check
-                                        </v-icon>
-                                    </v-btn>
-                                    <v-btn
-                                        depressed
-                                        small
-                                        color="error"
-                                        @click="cancel(item)"
-                                    >
-                                        取消
-                                        <v-icon
-                                            right
-                                            dark
-                                        >
-                                            mdi-close
-                                        </v-icon>
-                                    </v-btn>
-                                </v-col>
-                            </v-list-item-content>
-
-                            <!-- <v-list-item-action>
-                                <v-btn
-                                    depressed
-                                    small
-                                    color="success"
-                                >
-                                    批准
-                                    <v-icon
-                                        right
-                                        dark
-                                    >
-                                        mdi-check
-                                    </v-icon>
-                                </v-btn>
-                                <v-btn
-                                    depressed
-                                    small
-                                    color="error"
-                                    class="mt-2"
-                                >
-                                    取消
-                                    <v-icon
-                                        right
-                                        dark
-                                    >
-                                        mdi-close
-                                    </v-icon>
-                                </v-btn>
-                                <v-spacer></v-spacer>
-                            </v-list-item-action> -->
-                        </v-list-item>
-                    </template>
-                </v-virtual-scroll>
-            </v-card>
-        </v-card>
-
-        <v-divider></v-divider>
         <!-- 學士服 -->
         <v-card
             class="mt-3"
@@ -267,50 +134,6 @@
                 </v-col>
             </v-row>
         </v-card>
-        <!-- 博士服 -->
-        <v-card
-            class="mt-3"
-            flat
-        >
-            <v-card-title>博士服品項數量 (剩餘/總數)</v-card-title>
-            <v-row dense>
-                <v-col
-                    v-for="(pc_item, index) in phd_cloths"
-                    :key="`phd_cloths-${index}`"
-                    cols="6"
-                    lg="2"
-                    sm="4"
-                >
-                    <v-card
-                        color="#FFF5EB"
-                        :class="{'breathe-div' : !pc_item.remain_quantity || pc_item.remain_quantity < pc_item.quantity * 0.1}"
-                    >
-                        <v-card-title
-                            class="body2 pb-1 font-weight-bold"
-                            style="color: #968C83"
-                        >{{ pc_item.spec }}</v-card-title>
-                        <v-row
-                            class="pb-1 ml-7"
-                            no-gutters
-                            justify="space-between"
-                            align="center"
-                        >
-                            <v-col
-                                class="text-h6 font-weight-bold"
-                                cols="12"
-                            >
-                                <span
-                                    :style="{color: !pc_item.remain_quantity || pc_item.remain_quantity < pc_item.quantity * 0.1 ? '#D19999' : '#8FB69B'}"
-                                >
-                                    {{ pc_item.remain_quantity }}
-                                </span> /
-                                <span>{{ pc_item.quantity }}</span>
-                            </v-col>
-                        </v-row>
-                    </v-card>
-                </v-col>
-            </v-row>
-        </v-card>
         <!-- 碩士服配件 -->
         <v-card
             class="mt-3"
@@ -359,7 +182,6 @@
 
     </VuetifyLayout>
 </template>
-
 
 <style>
     .breathe-div {
@@ -413,7 +235,6 @@
             bachelor_accessories: [],
             master_cloths: [],
             master_accessories: [],
-            phd_cloths: [],
             card_color: {
                 '白': {
                     bg: '#FFFFFF',
@@ -560,7 +381,6 @@
                 this.master_accessories = this.$page.inventory.slice(2, 8)
                 this.bachelor_cloths = this.$page.inventory.slice(8, 12)
                 this.master_cloths = this.$page.inventory.slice(12, 15)
-                this.phd_cloths = this.$page.inventory.slice(15)
             },
             async approve(item) {
                 this.cancel_choose = item.orderNumber
