@@ -5,21 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class OrderLog extends Model
+class Set extends Model
 {
     use HasFactory;
 
-    public $timestamps = false;
-
     /**
-     * The attributes that should be hidden for serialization.
+     * Indicates if the model should be timestamped.
      *
-     * @var array
+     * @var bool
      */
-    protected $hidden = [
-        'id',
-        'order_id',
-    ];
+    public $timestamps = false;
 
     public function order()
     {

@@ -39,7 +39,7 @@ class UserSeeder extends Seeder
                 'username' => '406410001',          // 預設帳號
             ]);
         User::factory()
-            ->count(5)
+            ->count(25)
             ->student()
             ->create();
     }

@@ -13,6 +13,8 @@ class Item extends Model
     const MASTER = '碩士';
     const DOCTOR = '博士';
 
+    const COLOR_ITEMS = ['領巾', '披肩、帽穗'];
+    const SIZE_ITEMS = ['學士服', '碩士服', '博士服'];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -23,38 +25,7 @@ class Item extends Model
         'pivot',
     ];
 
-    /**
-     * The accessors to append to the model's array form.
-     *
-     * @var array
-     */
-    protected $appends = [
-        'remain_quantity',
-        'request_quantity',
-    ];
-
-    public function getRemainQuantityAttribute()
-    {
-        if (OrderItem::where('item_id', $this->id)->count() > 0) {
-            // todo: check returned items
-            $ordered_sum = OrderItem::where('item_id', $this->id)
-                ->get()
-                ->map->only('quantity')
-                ->flatten()
-                ->sum();
-            return $this->quantity - $ordered_sum;
-        }
-        return $this->quantity;
-    }
-
-    public function getRequestQuantityAttribute()
-    {
-        if ($this->pivot !== null) {
-            return $this->pivot->quantity;
-        }
-        return null;
-    }
-
+    // todo: getRemainQuantity, Attribute rewrite
     public function Orders()
     {
         return $this->belongsToMany('App\Models\Order', 'order_items')

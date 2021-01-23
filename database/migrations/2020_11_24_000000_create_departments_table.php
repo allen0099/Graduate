@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateSchoolYearsTable extends Migration
+class CreateDepartmentsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,11 @@ class CreateSchoolYearsTable extends Migration
      */
     public function up()
     {
-        Schema::create('school_years', function (Blueprint $table) {
+        Schema::create('departments', function (Blueprint $table) {
             $table->id();
-            $table->unsignedInteger('year')->unique();
+            $table->string('department_id')->unique();
+            $table->string('name');
+            $table->string('default_color')->nullable();
         });
     }
 
@@ -26,6 +28,6 @@ class CreateSchoolYearsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('school_years');
+        Schema::dropIfExists('departments');
     }
 }

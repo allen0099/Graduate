@@ -63,23 +63,13 @@ class User extends Authenticatable
         'profile_photo_url',
     ];
 
-    public function owned_orders()
+    public function school_class()
+    {
+        return $this->belongsTo('App\Models\DepartmentClass', 'class_id');
+    }
+
+    public function orders()
     {
         return $this->hasMany('App\Models\Order', 'owner_id');
-    }
-
-    public function shared_orders()
-    {
-        return $this->belongsToMany('App\Models\Order', 'orders_share');
-    }
-
-    public function school_year()
-    {
-        return $this->belongsTo('App\Models\SchoolYear');
-    }
-
-    public function department()
-    {
-        return $this->belongsTo('App\Models\Department');
     }
 }

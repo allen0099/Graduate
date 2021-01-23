@@ -22,10 +22,7 @@ class Order extends Model
      * @var array
      */
     protected $with = [
-        'shared_users',
         'owner',
-        'items',
-        'logs',
     ];
 
     /**
@@ -42,19 +39,8 @@ class Order extends Model
         return $this->belongsTo('App\Models\User');
     }
 
-    public function items()
+    public function sets()
     {
-        return $this->belongsToMany('App\Models\Item', 'order_items')
-            ->withPivot('quantity');
-    }
-
-    public function shared_users()
-    {
-        return $this->belongsToMany('App\Models\User', 'orders_share');
-    }
-
-    public function logs()
-    {
-        return $this->hasMany('App\Models\OrderLog');
+        return $this->hasMany('App\Models\Set');
     }
 }
