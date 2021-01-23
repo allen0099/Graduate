@@ -77,6 +77,12 @@ Route::group([
     Route::get('/admin/order', SearchOrderController::class)
         ->name('order'); // routes name as 'admin.setting'
 
+    Route::get('/admin/return', fn() => Inertia::render('Admin/Return/Show'))
+        ->name('return');
+
+    Route::get('/admin/receive', fn() => Inertia::render('Admin/Receive/Show'))
+        ->name('receive'); 
+
     Route::get('/admin/setting', fn() => Inertia::render('Admin/Setting/Show'))
         ->name('setting'); // routes name as 'admin.setting'
 
