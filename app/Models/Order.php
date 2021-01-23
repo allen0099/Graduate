@@ -23,6 +23,7 @@ class Order extends Model
      */
     protected $with = [
         'owner',
+        'sets',
     ];
 
     /**
