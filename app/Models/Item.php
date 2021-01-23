@@ -25,7 +25,30 @@ class Item extends Model
         'pivot',
     ];
 
-    // todo: getRemainQuantity, Attribute rewrite
+    /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array
+     */
+    protected $appends = [
+        'remain_quantity',
+    ];
+
+    public function getRemainQuantityAttribute()
+    {
+        $color_out = Set::all()
+            ->where('color_item', $this->id)
+            ->where('returned', false)
+            ->count();
+
+        $size_out = Set::all()
+            ->where('size_item', $this->id)
+            ->where('returned', false)
+            ->count();
+
+        return $this->quantity - $color_out - $size_out;
+    }
+
     public function Orders()
     {
         return $this->belongsToMany('App\Models\Order', 'order_items')
