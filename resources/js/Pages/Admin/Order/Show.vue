@@ -40,7 +40,7 @@
                     {{ '全部' }}
                 </v-btn>
                 <v-btn
-                    v-for="(filter, index) in statusMsg"
+                    v-for="(filter, index) in statusMsg.slice(1)"
                     :value="index"
                     :key="`filter-${index}`"
                     text
@@ -127,23 +127,23 @@
                                         cols="12"
                                         md="4"
                                     >總金額：{{ order.total_price }}</v-col>
-                                    <!-- <v-col
+                                    <v-col
                                         v-if="order.payment_id"
                                         cols="12"
                                     >付款單據編號：{{ windowSize.x >= 430 ? order.payment_id :'' }}</v-col>
                                     <v-col
                                         v-if="order.payment_id && windowSize.x < 430"
                                         cols="12"
-                                    >{{order.payment_id }}</v-col> -->
-                                    <v-col cols="12">{{ '訂單狀態：' }}</v-col>
+                                    >{{order.payment_id }}</v-col>
+                                    <v-col cols="12">{{ '訂單狀態：' }} {{ order.status_code }}</v-col>
                                     <v-col cols="12">
-                                        <span :class="order.status_code === 3 ? 'green--text text--accent--3' :
+                                        <span :class="order.status_code === 4 ? 'green--text text--accent--3' :
                                             'red--text'">{{ statusMsg[order.status_code] }}</span>
-                                        <span
-                                            v-if="order.status_code === 4 || order.status_code === 5"
-                                            :class="order.status_code === 3 ? 'green--text text--accent--3' :
+                                        <!-- <span
+                                            v-if="order.status_code === 5 || order.status_code === 6"
+                                            :class="order.status_code === 4 ? 'green--text text--accent--3' :
                                             'red--text'"
-                                        >{{'(品項或數量錯誤)'}}</span>
+                                        >{{'(品項或數量錯誤)'}}</span> -->
                                         <span v-if="order.logs.find(x => x.status ===
                                             3)">({{ order.logs[2].date }})</span>
                                     </v-col>
@@ -151,14 +151,14 @@
                                         v-for="log in order.logs.slice().reverse()"
                                         :key="`${order.document_id}-${log.status}`"
                                         cols="12"
-                                        v-if="log.status <= order.status_code && log.status < 3"
+                                        v-if="log.status <= order.status_code && log.status < 5"
                                     >
                                         <span class="green--text text--accent--3">{{ log.logName }}</span>
                                         <span>({{ log.date }})</span>
                                     </v-col>
                                 </v-row>
                             </v-card-text>
-                            <v-card-actions v-if="order.status_code === 4">
+                            <v-card-actions v-if="order.status_code === 5">
                                 <v-spacer></v-spacer>
                                 <v-btn
                                     depressed
@@ -301,15 +301,18 @@
                                 cols="12"
                                 md="4"
                             >總金額：{{ order.total_price }}</v-col>
-                            <!-- <v-col clos="12">
+                            <v-col clos="12">
                                 <v-text-field
                                     v-model="order.payment_id"
                                     label="付款單據編號"
                                     single-line
                                     hide-details
                                 ></v-text-field>
-                            </v-col> -->
-                            <v-col cols="12">
+                            </v-col>
+                            <v-col
+                                cols="12"
+                                class="mt-3"
+                            >
                                 <v-select
                                     v-model="order.status_code"
                                     :items="statusMsgObj.slice(1)"
@@ -425,6 +428,9 @@
                 colorList: [{
                         bg: '#fef9ef',
                         detail: '#d48344',
+                    }, {
+                        bg: '#fef9ef',
+                        detail: '#d48344',
                     },
                     {
                         bg: '#fef9ef',
@@ -447,7 +453,7 @@
                         detail: 'red accent-2',
                     }
                 ],
-                statusMsg: ["未付款", "已付款，未領取衣服", "未歸還衣服", "已歸還衣服", "已申請訂單取消", "已取消訂單"],
+                statusMsg: ["已結單", "未付款", "已付款，未領取衣服", "未歸還衣服", "已歸還衣服", "已申請訂單取消", "已取消訂單"],
                 // statusMsg2: ["未付款", "已付款", "已領取衣服", "已歸還衣服", "已申請訂單取消", "已取消訂單"]
                 windowSize: {
                     x: 0,
@@ -457,6 +463,7 @@
                     '_method': 'PUT',
                     'document_id': '',
                     'owner_username': '',
+                    'payment_id': '',
                     'items': [],
                     'status_code': -1,
                 }, {
@@ -495,6 +502,7 @@
                 this.pageLoading = true
                 this.form.status_code = this.order.status_code
                 this.form.document_id = this.order.document_id
+                this.form.payment_id = this.order.payment_id
                 this.form.owner_username = this.order.owner.username
                 this.form.items = this.order.items
                 this.form.put('/order/' + this.order.id).then(() => {
@@ -534,7 +542,7 @@
         },
         computed: {
             statusMsgObj() {
-                return this.statusMsg.reduce((res, item, index) => {
+                return this.statusMsg.slice(1).reduce((res, item, index) => {
                     var obj = {
                         'text': item,
                         'value': index
