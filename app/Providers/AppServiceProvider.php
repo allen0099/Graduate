@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Http\Controllers\OrderController;
+use App\Models\Config;
 use App\Models\Item;
 use App\Models\Order;
 use App\Models\TimeRange;
@@ -48,6 +49,8 @@ class AppServiceProvider extends ServiceProvider
                     if (Auth::user()->role === User::ADMIN) {
                         return [
                             'time_range' => TimeRange::all(),
+                            'location' => Config::getReturnLocationValue(),
+                            'one_set_price' => Config::getOneSetPriceValue(),
                         ];
                     }
                 }

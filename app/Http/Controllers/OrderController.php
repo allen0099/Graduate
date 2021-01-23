@@ -360,7 +360,7 @@ class OrderController extends Controller
 
     private function calculateTotalPrice($sets)
     {
-        $basic_price = Config::getOneSetPrice();
+        $basic_price = Config::getOneSetPriceValue();
         $total_price = count($sets) * $basic_price;
         return $total_price;
     }

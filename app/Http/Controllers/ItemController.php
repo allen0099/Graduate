@@ -31,8 +31,8 @@ class ItemController extends Controller
         $item = new Item();
         $item->type = $request->type;
         $item->name = $request->name;
-        $item->spec = $request->property;
-        $item->quantity = $request->total_amount;
+        $item->spec = $request->spec;
+        $item->quantity = $request->quantity;
 
         $item->save();
 
@@ -65,8 +65,8 @@ class ItemController extends Controller
         $item = Item::find($id);
         $item->type = $request->type;
         $item->name = $request->name;
-        $item->spec = $request->property;
-        $item->quantity = $request->total_amount;
+        $item->spec = $request->spec;
+        $item->quantity = $request->quantity;
 
         $item->save();
         return $item->fresh();
@@ -98,8 +98,8 @@ class ItemController extends Controller
                 ])
             ],
             'name' => 'required',
-            'property' => 'required',
-            'total_amount' => 'required|numeric',
+            'spec' => 'required',
+            'quantity' => 'required|numeric',
         ]);
     }
 }

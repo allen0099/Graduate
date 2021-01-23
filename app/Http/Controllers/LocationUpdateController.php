@@ -33,7 +33,7 @@ class LocationUpdateController extends Controller
 
     private function saveLocation(Request $request)
     {
-        $location = Config::where('key', '歸還地點')->first();
+        $location = Config::getReturnLocation();
         $location->value = $request->input('location');
         $location->save();
     }
