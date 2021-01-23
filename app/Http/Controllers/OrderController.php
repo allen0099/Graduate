@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Config;
 use App\Models\Item;
 use App\Models\Order;
-use App\Models\OrderItem;
-use App\Models\OrderLog;
+use App\Models\Set;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -37,26 +37,53 @@ class OrderController extends Controller
             'username' => [
                 'required',
                 'exists:users,username',
-                function ($attribute, $value, $fail) {
-                    $user = \request()->user();
+                function ($attribute, $value, $fail) use ($request) {
+                    $user = $request->user();
                     if ($user->role !== User::ADMIN && $user->username !== $value) {
                         $fail($attribute . ' not match.');
                     }
                 },
             ],
-            'items' => 'required',
-            'items.*.id' => 'required|distinct|exists:items,id',
-            'items.*.request_quantity' => [
+            'sets' => 'required',
+            'sets.*.set_owner' => [
                 'required',
-                'gt:0',
-                'numeric',
-                function ($attribute, $request_value, $fail) {
-                    $loc = Str::between($attribute, '.', '.');
-                    $id = request()->items[$loc]['id'];
+                'distinct',
+                'exists:users,username',
+                function ($attribute, $value, $fail) use ($request) {
+                    $user = User::where('username', $value)->first();
+                    $stu_ids = Set::getHaveSetIds();
 
-                    $target = Item::find($id);
-                    if ($target->remain_quantity < $request_value) {
-                        $fail($attribute . ' is too much.');
+                    if (in_array($user->id, $stu_ids)) {
+                        $fail(__('validation.student_had_set'));
+                    }
+                },
+            ],
+            'sets.*.accessory' => [
+                'exists:items,id',
+                function ($attribute, $value, $fail) use ($request) {
+                    $index = explode('.', $attribute)[1];
+
+                    $username = $request->sets[$index]['set_owner'];
+
+                    $user = User::where('username', $username)->first();
+                    $department = $user->school_class->department;
+
+                    $accessory = Item::find($value)->first();
+
+                    if (!is_null($department->default_color) && $accessory->spec !== $department->default_color) {
+                        $fail(__('validation.color_not_match'));
+                    }
+
+                    if (!in_array($value, Item::accessoryIds())) {
+                        $fail(__('validation.item_set_wrong'));
+                    }
+                },
+            ],
+            'sets.*.cloth' => [
+                'exists:items,id',
+                function ($attribute, $value, $fail) use ($request) {
+                    if (!in_array($value, Item::clothIds())) {
+                        $fail(__('validation.item_set_wrong'));
                     }
                 },
             ],
@@ -64,17 +91,15 @@ class OrderController extends Controller
 
         $order = new Order();
 
-        $order->document_id = Str::uuid(); // todo: replace with document id generate method
+        $order->document_id = Order::createDocumentId();
         $order->owner_id = User::where('username', $request->username)->first()->id;
-        $order->status_code = Order::code_created;
 
-        $order->total_price = $this->calculateTotalPrice($request->items);
+        $order->status_code = Order::code_created;
+        $order->total_price = $this->calculateTotalPrice($request->sets);
 
         $order->save();
 
-        $this->createItems($order, $request->items);
-
-        $this->saveLog($order, "{$request->username} 建立新的訂單。");
+        $this->saveSets($order, $request->sets);
 
         // return Inertia::render('Student/Order/Show', ['re_order'=> $order, 'finish'=> true]);
         return redirect()->back()->with('success', $order->fresh());
@@ -104,6 +129,10 @@ class OrderController extends Controller
     {
         $order = Order::find($id);
         $user = Auth::user();
+
+        if (is_null($order))
+            abort(404);
+
         if ($user->role === User::STUDENT) {
             // role student, only cancel
             $this->checkBelongToStudent($order);
@@ -126,27 +155,63 @@ class OrderController extends Controller
                     Rule::in([
                         Order::code_requestCancel
                     ]),
-                    function ($attribute, $value, $fail) {
-                        $order = Order::where('document_id', \request()->document_id)->first();
-                        if ($order->status_code === Order::code_canceled)
+                    function ($attribute, $value, $fail) use ($request) {
+                        // todo: change fail, or not changed code
+                        $order = Order::where('document_id', $request->document_id)->first();
+                        if (!is_null($order) && $order->status_code === Order::code_canceled)
                             $fail($order->document_id . ' has been cancelled, contact admin for more help.');
-                        if ($order->status_code === Order::code_requestCancel)
+                        if (!is_null($order) && $order->status_code === Order::code_requestCancel)
                             $fail($order->document_id . ' has been cancelled successfully.');
                     },
                 ],
-                'items' => 'required',
-                'items.*.id' => 'required|distinct|exists:items,id',
-                'items.*.request_quantity' => [
+                'sets' => 'required',
+                'sets.*.set_owner' => [
                     'required',
-                    'gt:0',
-                    'numeric',
-                    function ($attribute, $request_value, $fail) {
-                        $loc = Str::between($attribute, '.', '.');
-                        $id = request()->items[$loc]['id'];
+                    'distinct',
+                    'exists:users,username',
+                    function ($attribute, $value, $fail) use ($request) {
+                        $user = User::where('username', $value)->first();
+                        $stu_ids = Set::getHaveSetIds();
 
-                        $target = Item::find($id);
-                        if ($target->remain_quantity < $request_value) {
-                            $fail($attribute . ' is too much.');
+                        $order = Order::where('document_id', $request->document_id)->first();
+                        if (!is_null($order)) {
+                            $sets = $order->sets;
+                            $set_ids = $sets->map->only('student_id')->flatten()->all();
+
+                            $other_ids = array_diff($stu_ids, $set_ids);
+
+                            if (in_array($user->id, $other_ids)) {
+                                $fail(__('validation.student_had_set'));
+                            }
+                        }
+                    },
+                ],
+                'sets.*.accessory' => [
+                    'exists:items,id',
+                    function ($attribute, $value, $fail) use ($request) {
+                        $index = explode('.', $attribute)[1];
+
+                        $username = $request->sets[$index]['set_owner'];
+
+                        $user = User::where('username', $username)->first();
+                        $department = $user->school_class->department;
+
+                        $accessory = Item::find($value)->first();
+
+                        if (!is_null($department->default_color) && $accessory->spec !== $department->default_color) {
+                            $fail(__('validation.color_not_match'));
+                        }
+
+                        if (!in_array($value, Item::accessoryIds())) {
+                            $fail(__('validation.item_set_wrong'));
+                        }
+                    },
+                ],
+                'sets.*.cloth' => [
+                    'exists:items,id',
+                    function ($attribute, $value, $fail) use ($request) {
+                        if (!in_array($value, Item::clothIds())) {
+                            $fail(__('validation.item_set_wrong'));
                         }
                     },
                 ],
@@ -175,19 +240,54 @@ class OrderController extends Controller
                         Order::code_canceled,
                     ]),
                 ],
-                'items' => 'required',
-                'items.*.id' => 'required|distinct|exists:items,id',
-                'items.*.request_quantity' => [
+                'sets' => 'required',
+                'sets.*.set_owner' => [
                     'required',
-                    'gt:0',
-                    'numeric',
-                    function ($attribute, $request_value, $fail) {
-                        $loc = Str::between($attribute, '.', '.');
-                        $id = request()->items[$loc]['id'];
+                    'distinct',
+                    'exists:users,username',
+                    function ($attribute, $value, $fail) use ($request) {
+                        $user = User::where('username', $value)->first();
+                        $stu_ids = Set::getHaveSetIds();
 
-                        $target = Item::find($id);
-                        if ($target->remain_quantity < $request_value) {
-                            $fail($attribute . ' is too much.');
+                        $order = Order::where('document_id', $request->document_id)->first();
+                        if (!is_null($order)) {
+                            $sets = $order->sets;
+                            $set_ids = $sets->map->only('student_id')->flatten()->all();
+
+                            $other_ids = array_diff($stu_ids, $set_ids);
+
+                            if (in_array($user->id, $other_ids)) {
+                                $fail(__('validation.student_had_set'));
+                            }
+                        }
+                    },
+                ],
+                'sets.*.accessory' => [
+                    'exists:items,id',
+                    function ($attribute, $value, $fail) use ($request) {
+                        $index = explode('.', $attribute)[1];
+
+                        $username = $request->sets[$index]['set_owner'];
+
+                        $user = User::where('username', $username)->first();
+                        $department = $user->school_class->department;
+
+                        $accessory = Item::find($value)->first();
+
+                        if (!is_null($department->default_color) && $accessory->spec !== $department->default_color) {
+                            $fail(__('validation.color_not_match'));
+                        }
+
+                        if (!in_array($value, Item::accessoryIds())) {
+                            $fail(__('validation.item_set_wrong'));
+                        }
+                    },
+                ],
+                'sets.*.cloth' => [
+                    'exists:items,id',
+                    function ($attribute, $value, $fail) use ($request) {
+                        if (!in_array($value, Item::clothIds())) {
+                            $fail(__('validation.item_set_wrong'));
                         }
                     },
                 ],
@@ -198,22 +298,14 @@ class OrderController extends Controller
         $order->owner_id = User::where('username', $request->owner_username)->first()->id;
         $order->status_code = $request->status_code;
 
-        $order->total_price = $this->calculateTotalPrice($request->items);
+        $order->total_price = $this->calculateTotalPrice($request->sets);
 
         $order->save();
 
-        $old_items = $order->items()->get()->makeVisible(['pivot']);
-        $old_items->each(function ($item, $key) {
-            $item->pivot->delete();
-        });
-
-        $this->createItems($order, $request->items);
-
-        if ($user->role === User::ADMIN) {
-            $this->saveLog($order, "{$user->username} 更新了訂單狀態。");
-        } else {
-            $this->saveLog($order, "{$user->username} 要求取消訂單。");
+        if ($order->sets()->delete()) {
+            // delete success
         }
+        $this->saveSets($order, $request->sets);
 
         return redirect()->back()->with('success', $order->fresh());
     }
@@ -239,24 +331,24 @@ class OrderController extends Controller
                 return Order::all();
             }
             return [
-                'own' => User::find(Auth::id())->owned_orders,
-                'shared' => User::find(Auth::id())->shared_orders,
+                'own' => User::find(Auth::id())->orders,
+                'set' => User::find(Auth::id())->set,
             ];
         }
         return [];
     }
 
-    private function createItems($order, $items)
+    private function saveSets($order, $sets)
     {
-        foreach ($items as $item) {
-            $id = $item['id'];
-            $quantity = $item['request_quantity'];
-
-            $order_item = new OrderItem();
-            $order_item->item_id = $id;
-            $order_item->order_id = $order->id;
-            $order_item->quantity = $quantity;
-            $order_item->save();
+        foreach ($sets as $set) {
+            $username = $set['set_owner'];
+            $user = User::where('username', $username)->first();
+            $ordered_set = new Set();
+            $ordered_set->student_id = $user->id;
+            $ordered_set->order_id = $order->id;
+            $ordered_set->color_item = $set['accessory'];
+            $ordered_set->size_item = $set['cloth'];
+            $ordered_set->save();
         }
     }
 
@@ -266,27 +358,10 @@ class OrderController extends Controller
             abort(403);
     }
 
-    private function saveLog($order, $message)
+    private function calculateTotalPrice($sets)
     {
-        $log = new OrderLog();
-        $log->order_id = $order->id;
-        $log->status_code = $order->status_code;
-        $log->description = $message;
-        $log->log_time = now();
-
-        $log->save();
-    }
-
-    private function calculateTotalPrice($items)
-    {
-        $total_price = 0;
-        foreach ($items as $item) {
-            $id = $item['id'];
-            $quantity = $item['request_quantity'];
-
-            $_item = Item::find($id);
-            $total_price += $_item->price * $quantity;
-        }
+        $basic_price = Config::getOneSetPrice();
+        $total_price = count($sets) * $basic_price;
         return $total_price;
     }
 }

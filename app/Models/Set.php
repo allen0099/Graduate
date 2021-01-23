@@ -48,6 +48,11 @@ class Set extends Model
         'size_item',
     ];
 
+    public static function getHaveSetIds()
+    {
+        return Set::all()->map->only('student_id')->flatten()->all();
+    }
+
     public function order()
     {
         return $this->belongsTo('App\Models\Order');

@@ -18,5 +18,9 @@ class ConfigSeeder extends Seeder
             'key' => '歸還地點',
             'value' => '守謙會議中心 HC308',
         ]);
+        DB::table('configs')->insert([
+            'key' => 'one_set_price',
+            'value' => '500',
+        ]);
     }
 }
