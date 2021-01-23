@@ -13,8 +13,8 @@ class Order extends Model
     const code_paid = 2; // 　　　　 完成繳費 尚未領取衣服
     const code_received = 3; // 　　　　 　　　　 完成領取衣服 尚未歸還衣服
     const code_returned = 4; // 　　　　 　　　　 　　　　　　 完成歸還衣服 完成歸還保證金
-    const code_requestCancel = 50; // 已申請訂單取消
-    const code_canceled = 100; // 已取消訂單
+    const code_requestCancel = 5; // 已申請訂單取消
+    const code_canceled = 6; // 已取消訂單
 
     /**
      * The relations to eager load on every query.
