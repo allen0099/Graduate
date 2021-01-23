@@ -149,4 +149,17 @@ return [
 
     'attributes' => [],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Added values
+    |--------------------------------------------------------------------------
+    |
+    | Meow meow language
+    |
+    */
+
+    'student_had_set' => 'The :attribute student had a set before.',
+    'color_not_match' => 'The :attribute color does not match default department color.',
+    'item_set_wrong' => 'Item :attribute is not a valid type.',
+
 ];

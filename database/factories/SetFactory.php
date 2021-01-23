@@ -26,10 +26,10 @@ class SetFactory extends Factory
     {
         $student = User::all()
             ->where('role', User::STUDENT)
-            ->whereNotIn('id', Set::all()->map->only('student_id')->flatten()->all());
+            ->whereNotIn('id', Set::getHaveSetIds());
 
-        $color_item = Item::all()->whereIn('name', Item::COLOR_ITEMS);
-        $size_item = Item::all()->whereIn('name', Item::SIZE_ITEMS);
+        $color_item = Item::accessories();
+        $size_item = Item::clothes();
         return [
             'student_id' => $this->faker->randomElement($student)->id,
             'order_id' => Order::factory(),

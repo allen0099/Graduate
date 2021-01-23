@@ -49,6 +49,26 @@ class Item extends Model
         return $this->quantity - $color_out - $size_out;
     }
 
+    public static function accessories()
+    {
+        return Item::all()->whereIn('name', Item::COLOR_ITEMS);
+    }
+
+    public static function accessoryIds()
+    {
+        return Item::accessories()->map->only('id')->flatten()->all();
+    }
+
+    public static function clothes()
+    {
+        return Item::all()->whereIn('name', Item::SIZE_ITEMS);
+    }
+
+    public static function clothIds()
+    {
+        return Item::clothes()->map->only('id')->flatten()->all();
+    }
+
     public function Orders()
     {
         return $this->belongsToMany('App\Models\Order', 'order_items')

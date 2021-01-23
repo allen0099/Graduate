@@ -8,4 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Config extends Model
 {
     use HasFactory;
+
+    public static function getOneSetPrice()
+    {
+        return Config::where('key', 'one_set_price')->first()->value;
+    }
 }

@@ -72,4 +72,9 @@ class User extends Authenticatable
     {
         return $this->hasMany('App\Models\Order', 'owner_id');
     }
+
+    public function set()
+    {
+        return $this->hasOne('App\Models\Set', 'student_id');
+    }
 }

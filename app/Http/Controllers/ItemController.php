@@ -32,7 +32,6 @@ class ItemController extends Controller
         $item->type = $request->type;
         $item->name = $request->name;
         $item->spec = $request->property;
-        $item->price = $request->price;
         $item->quantity = $request->total_amount;
 
         $item->save();
@@ -67,7 +66,6 @@ class ItemController extends Controller
         $item->type = $request->type;
         $item->name = $request->name;
         $item->spec = $request->property;
-        $item->price = $request->price;
         $item->quantity = $request->total_amount;
 
         $item->save();
@@ -101,7 +99,6 @@ class ItemController extends Controller
             ],
             'name' => 'required',
             'property' => 'required',
-            'price' => 'required|numeric',
             'total_amount' => 'required|numeric',
         ]);
     }

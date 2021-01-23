@@ -23,6 +23,7 @@ class Order extends Model
      */
     protected $with = [
         'owner',
+        'sets',
     ];
 
     /**
@@ -33,6 +34,12 @@ class Order extends Model
     protected $hidden = [
         'owner_id',
     ];
+
+    public static function createDocumentId()
+    {
+        // todo: replace with document id generate method
+        return now()->format('Ymdhis') . str_pad(rand($min = 0, $max = 99999), 5, '0', STR_PAD_LEFT);
+    }
 
     public function owner()
     {
