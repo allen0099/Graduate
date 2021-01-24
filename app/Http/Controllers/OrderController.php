@@ -164,9 +164,7 @@ class OrderController extends Controller
                             $fail($order->document_id . ' has been cancelled successfully.');
                     },
                 ],
-                'sets' => 'required',
                 'sets.*.set_owner' => [
-                    'required',
                     'distinct',
                     'exists:users,username',
                     function ($attribute, $value, $fail) use ($request) {
@@ -240,9 +238,7 @@ class OrderController extends Controller
                         Order::code_canceled,
                     ]),
                 ],
-                'sets' => 'required',
                 'sets.*.set_owner' => [
-                    'required',
                     'distinct',
                     'exists:users,username',
                     function ($attribute, $value, $fail) use ($request) {
@@ -298,14 +294,15 @@ class OrderController extends Controller
         $order->owner_id = User::where('username', $request->owner_username)->first()->id;
         $order->status_code = $request->status_code;
 
-        $order->total_price = $this->calculateTotalPrice($request->sets);
+        if (!is_null($request->sets))
+            $order->total_price = $this->calculateTotalPrice($request->sets);
 
         $order->save();
 
-        if ($order->sets()->delete()) {
-            // delete success
+        if (!is_null($request->sets)) {
+            $order->sets()->delete();
+            $this->saveSets($order, $request->sets);
         }
-        $this->saveSets($order, $request->sets);
 
         return redirect()->back()->with('success', $order->fresh());
     }
@@ -360,8 +357,17 @@ class OrderController extends Controller
 
     private function calculateTotalPrice($sets)
     {
-        $basic_price = Config::getOneSetPriceValue();
-        $total_price = count($sets) * $basic_price;
+        $total_price = 0;
+        foreach ($sets as $set) {
+            $username = $set['set_owner'];
+            if (str_starts_with($username, '2') || str_starts_with($username, '4')) {
+                $total_price += Config::getBachelorSetPriceValue();
+            } else if (str_starts_with($username, '6') || str_starts_with($username, '7')) {
+                $total_price += Config::getMasterSetPriceValue();
+            } else {
+                // who are you?
+            }
+        }
         return $total_price;
     }
 }
