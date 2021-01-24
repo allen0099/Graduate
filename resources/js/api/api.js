@@ -12,5 +12,9 @@ export const apiInventoryUpdate = (id, res) =>
     Request.patch(`/item/${id}`, res);
 
 // Admin order
-export const apiRoomAirQualityValue = search =>
-    Request.get(`/order?search=${search}`);
+export const apiOrderUpdate = (order_id, order) =>
+    Request.patch(`/order/${order_id}`, order);
+
+// Admin Return & Receive
+export const apiSearchOrder = search =>
+    Request.get(`/search_order?search=${search}`);

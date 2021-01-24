@@ -21,7 +21,7 @@
                         >
                             <v-text-field
                                 v-model="order_id"
-                                label="訂單編號"
+                                label="訂單編號或購買人學號"
                                 outlined
                                 clearable
                                 dense
@@ -177,14 +177,92 @@
                     </v-row>
                 </v-card>
             </v-card>
-
         </v-card>
+
+        <v-dialog
+            v-model="dialog"
+            max-width="850px"
+            persistent
+        >
+            <v-card v-if="order">
+                <v-card-title>
+                    <span>衣服領取確認-{{ order.owner.username[0] > "5" ? '碩士服' : '學士服'}}</span>
+                </v-card-title>
+                <v-card-text class="font-weight-bold">
+                    <v-row dense>
+                        <v-col
+                            cols="12"
+                            md="4"
+                        >班級：{{ order.owner.class_id }}</v-col>
+                        <v-col
+                            cols="12"
+                            md="4"
+                        >學生：{{ order.owner.name }}</v-col>
+                        <v-col
+                            cols="12"
+                            md="4"
+                        >學號：{{ order.owner.username }}</v-col>
+                        <v-col
+                            cols="12"
+                            md="4"
+                        >訂單編號：{{ order.document_id }}</v-col>
+                        <v-col
+                            cols="12"
+                            md="4"
+                        >訂單日期：{{ order.created_at.slice(0, 16) }}</v-col>
+                        <v-col
+                            cols="12"
+                            md="4"
+                        >總金額：{{ order.total_price }}</v-col>
+                        <v-col cols="12">付款單據編號：{{ order.payment_id }}</v-col>
+                        <v-col
+                            cols="12"
+                            md="4"
+                        >訂單當前狀態：{{ statusMsg[order.status_code] }}</v-col>
+                        <v-col cols="12">訂單內容：</v-col>
+                        <v-col cols="12">
+                            <v-data-table
+                                :headers="headers"
+                                :items="order.sets"
+                                class="elevation-1 mt-2"
+                                mobile-breakpoint="770"
+                                hide-default-footer
+                            >
+                            </v-data-table>
+                        </v-col>
+                    </v-row>
+                </v-card-text>
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn
+                        color="error"
+                        text
+                        @click="cancel"
+                    >
+                        取消
+                    </v-btn>
+                    <v-btn
+                        color="primary"
+                        text
+                        @click="save"
+                        :disabled="order.status_code != 2"
+                    >
+                        領取
+                    </v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
+
 
     </VuetifyLayout>
 </template>
 
 <script>
     import VuetifyLayout from '@/Layouts/VuetifyLayout'
+    import {
+        apiSearchOrder,
+        apiOrderUpdate
+    } from '@/api/api'
 
     export default {
         components: {
@@ -192,16 +270,46 @@
         },
         name: "AdminReturn",
         data: () => ({
-            stuid: '',
+            order_id: '',
+            order: null,
             msg: '',
             show_msg: false,
+            dialog: false,
             error: false,
-            student: {
-                stuid: '',
-                department: '',
-                name: ''
-            },
             choose_file: null,
+            statusMsg: ["已結單", "未付款", "已付款，未領取衣服", "未歸還衣服", "已歸還衣服", "已申請訂單取消", "已取消訂單"],
+            headers: [{
+                    text: '學號',
+                    align: 'start',
+                    value: 'student.username',
+                    width: 100,
+                    sortable: false,
+                },
+                {
+                    text: '姓名',
+                    value: 'student.name',
+                    width: 100,
+                    sortable: false,
+                },
+                {
+                    text: '班級',
+                    value: 'student.class_id',
+                    sortable: false,
+                    width: 100,
+                },
+                {
+                    text: '顏色',
+                    value: 'accessory.spec',
+                    align: 'center',
+                    width: 20,
+                },
+                {
+                    text: '尺寸',
+                    value: 'cloth.spec',
+                    align: 'center',
+                    width: 20,
+                }
+            ],
             file_list: [{
                     filename: '今日預約領取簽到表-學士',
                     path: '123'
@@ -263,26 +371,67 @@
                 this.bachelor_cloths = this.$page.inventory.slice(8, 12)
                 this.master_cloths = this.$page.inventory.slice(12, 15)
             },
-            receive_submit() {
-                if (/^([0-9]){9}$/.test(this.stuid) === false) {
-                    this.stuid = ''
-                    this.msg = '查無此學號'
+            async receive_submit() {
+                await apiSearchOrder(this.order_id).then((res) => {
+                    if (res.status === 200 && res.data.length > 0) {
+                        this.order = res.data[0]
+                        this.order_id = ''
+                        this.dialog = true
+                    } else {
+                        this.order_id = ''
+                        this.msg = '查無此訂單編號'
+                        this.error = true
+                        this.show_msg = true
+                    }
+                }).catch((err) => {
+                    console.log(err)
+                    this.order_id = ''
+                    this.msg = '查無此訂單編號'
                     this.error = true
                     this.show_msg = true
-                } else {
-                    this.stuid = ''
-                    this.msg = '已歸還'
-                    this.error = false
-                    this.show_msg = true
-                    this.student = {
-                        stuid: '406410232',
-                        department: '資工XXXXX組',
-                        name: 'Rex Weng ABCDD'
-                    }
-                }
+                })
+
                 setTimeout(() => {
                     this.show_msg = false
                 }, 2000)
+            },
+            async save() {
+                // this.form.document_id = this.order.document_id
+                // this.form.owner_username = this.order.owner.username
+                // this.form.status_code = 3
+
+                // await this.form.patch('/order/' + this.order.id).then(() => {
+                //     this.cancel()
+                //     this.msg = '已領取'
+                //     this.error = false
+                //     this.show_msg = true
+                // });
+                await this.$inertia.patch(`/order/${this.order.id}`, {
+                    document_id: this.order.document_id,
+                    owner_username: this.order.owner.username,
+                    status_code: 3
+                }, {
+                    onSuccess: (page) => {
+                        console.log(page)
+                        this.msg = '已領取'
+                        this.error = false
+                        this.show_msg = true
+                    },
+                    onError: (errors) => {
+                        this.msg = '發生錯誤'
+                        this.error = true
+                        this.show_msg = true
+                    },
+                    onFinish: () => {
+                        this.show_msg = true
+                    },
+                })
+                await this.cancel()
+            },
+            cancel() {
+                this.order_id = ''
+                this.order = null
+                this.dialog = false
             },
             download() {
                 alert(this.choose_file.filename)

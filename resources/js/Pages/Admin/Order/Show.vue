@@ -461,12 +461,11 @@
                     y: 0,
                 },
                 form: this.$inertia.form({
-                    '_method': 'PUT',
+                    '_method': 'PATCH',
                     'document_id': '',
                     'owner_username': '',
                     'payment_id': '',
                     'status_code': -1,
-                    'sets': []
                 }, {
                     bag: 'updateOrder',
                 })
@@ -505,8 +504,7 @@
                 this.form.document_id = this.order.document_id
                 this.form.payment_id = this.order.payment_id
                 this.form.owner_username = this.order.owner.username
-                this.form.sets = this.order.sets
-                this.form.put('/order/' + this.order.id).then(() => {
+                this.form.patch('/order/' + this.order.id).then(() => {
                     this.edit_cancel()
                     this.msg = this.$page.errorBags.length > 0 ? '發生錯誤' : ''
                     this.snackbar = this.$page.errorBags.length > 0
