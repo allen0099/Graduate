@@ -9,6 +9,13 @@ class Config extends Model
 {
     use HasFactory;
 
+    /**
+     * Indicates if the model should be timestamped.
+     *
+     * @var bool
+     */
+    public $timestamps = false;
+
     public static function getOneSetPriceValue()
     {
         return Config::where('key', 'one_set_price')->first()->value;

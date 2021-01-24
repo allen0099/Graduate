@@ -28,6 +28,10 @@ class SearchOrderController extends Controller
 
             if ($find_owner->count() > 0) {
                 $result = $find_owner->first()->orders()->get();
+
+                if ($result->count() === 0) {
+                    $result = $find_owner->first()->set()->first()->order()->get();
+                }
             }
 
             if ($find_document->count() > 0) {
