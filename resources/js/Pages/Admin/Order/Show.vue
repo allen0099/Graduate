@@ -67,7 +67,8 @@
                 label="Standard"
                 hide-details
                 solo
-            ></v-select>
+            >
+            </v-select>
 
             <v-card
                 v-for="(order, order_index) in orderList"
@@ -144,10 +145,10 @@
                                             :class="order.status_code === 4 ? 'green--text text--accent--3' :
                                             'red--text'"
                                         >{{'(品項或數量錯誤)'}}</span> -->
-                                        <span v-if="order.logs.find(x => x.status ===
-                                            3)">({{ order.logs[2].date }})</span>
+                                        <!-- <span v-if="order.logs.find(x => x.status ===
+                                            3)">({{ order.logs[2].date }})</span> -->
                                     </v-col>
-                                    <v-col
+                                    <!-- <v-col
                                         v-for="log in order.logs.slice().reverse()"
                                         :key="`${order.document_id}-${log.status}`"
                                         cols="12"
@@ -155,7 +156,7 @@
                                     >
                                         <span class="green--text text--accent--3">{{ log.logName }}</span>
                                         <span>({{ log.date }})</span>
-                                    </v-col>
+                                    </v-col> -->
                                 </v-row>
                             </v-card-text>
                             <v-card-actions v-if="order.status_code === 5">
@@ -232,28 +233,24 @@
                                     <thead>
                                         <tr>
                                             <th class="text-left">
-                                                品項
+                                                學號
                                             </th>
                                             <th class="text-left">
-                                                規格
+                                                尺寸
                                             </th>
                                             <th class="text-left">
-                                                單價
-                                            </th>
-                                            <th class="text-left">
-                                                數量/件
+                                                顏色
                                             </th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr
-                                            v-for="(item, index) in order.items"
+                                            v-for="(item, index) in order.sets"
                                             :key="`${order.document_id}-detial-${index}`"
                                         >
-                                            <td>{{ item.name }}</td>
-                                            <td>{{ item.spec }}</td>
-                                            <td>{{ item.price }}</td>
-                                            <td>{{ item.request_quantity }}</td>
+                                            <td>{{ item.student.username }}</td>
+                                            <td>{{ item.cloth.spec }}</td>
+                                            <td>{{ item.accessory.spec }}</td>
                                         </tr>
                                     </tbody>
                                 </template>
@@ -266,6 +263,7 @@
         <v-dialog
             v-model="edit_toggle"
             max-width="850px"
+            persistent
         >
             <v-form
                 ref="form"
@@ -315,12 +313,14 @@
                             >
                                 <v-select
                                     v-model="order.status_code"
-                                    :items="statusMsgObj.slice(1)"
+                                    :value="order.status_code-1"
+                                    :items="statusMsgObj2"
                                     item-text="text"
                                     item-value="value"
                                     label="訂單當前狀態"
                                     required
-                                ></v-select>
+                                >
+                                </v-select>
                                 <!-- <span>{{ statusMsg[order.status_code] }}</span> -->
                             </v-col>
                         </v-row>
@@ -328,7 +328,7 @@
                     <v-card-actions>
                         <v-spacer></v-spacer>
                         <v-btn
-                            color="primary"
+                            color="error"
                             text
                             @click="edit_cancel"
                         >
@@ -391,6 +391,7 @@
 
 <script>
     import VuetifyLayout from '@/Layouts/VuetifyLayout'
+    import apiRoomAirQualityValue from '@/api/api'
 
     export default {
         components: {
@@ -464,8 +465,8 @@
                     'document_id': '',
                     'owner_username': '',
                     'payment_id': '',
-                    'items': [],
                     'status_code': -1,
+                    'sets': []
                 }, {
                     bag: 'updateOrder',
                 })
@@ -486,7 +487,7 @@
             },
             orderFilter(order) {
                 if (this.statusFilterSelected !== null && this.statusFilterSelected !== -1) {
-                    return order.status_code === this.statusFilterSelected
+                    return order.status_code === this.statusFilterSelected + 1
                 }
                 return true
             },
@@ -504,7 +505,7 @@
                 this.form.document_id = this.order.document_id
                 this.form.payment_id = this.order.payment_id
                 this.form.owner_username = this.order.owner.username
-                this.form.items = this.order.items
+                this.form.sets = this.order.sets
                 this.form.put('/order/' + this.order.id).then(() => {
                     this.edit_cancel()
                     this.msg = this.$page.errorBags.length > 0 ? '發生錯誤' : ''
@@ -538,7 +539,7 @@
             },
             show_handle(order_index) {
                 this.show[order_index] = true
-            }
+            },
         },
         computed: {
             statusMsgObj() {
@@ -553,10 +554,17 @@
                     'text': '全部',
                     'value': -1
                 }])
+            },
+            statusMsgObj2() {
+                return this.statusMsg.slice(1).reduce((res, item, index) => {
+                    var obj = {
+                        'text': item,
+                        'value': index + 1
+                    }
+                    res.push(obj)
+                    return res
+                }, [])
             }
-        },
-        created() {
-            console.log(this.$page)
         },
         async mounted() {
             await this.onResize()
