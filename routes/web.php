@@ -8,6 +8,7 @@ use App\Http\Controllers\RedirectAfterLoginController;
 use App\Http\Controllers\ReturnOrderController;
 use App\Http\Controllers\AdminShowOrderController;
 use App\Http\Controllers\SearchOrderController;
+use App\Http\Controllers\SearchUserController;
 use App\Http\Controllers\TimeRangeController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
@@ -71,6 +72,9 @@ Route::group([
 
     Route::get('/search_order', SearchOrderController::class)
         ->name('search_order');
+
+    Route::get('/search_user', SearchUserController::class)
+        ->name('search_user');
 
     Route::get('/meow', fn() => Inertia::render('Test', ['name' => 'Test meow']))
         ->name('meow'); // routes name as 'admin.meow'
