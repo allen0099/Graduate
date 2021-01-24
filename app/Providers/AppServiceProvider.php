@@ -50,7 +50,8 @@ class AppServiceProvider extends ServiceProvider
                         return [
                             'time_range' => TimeRange::all(),
                             'location' => Config::getReturnLocationValue(),
-                            'one_set_price' => Config::getOneSetPriceValue(),
+                            'bachelor_set_price' => Config::getBachelorSetPriceValue(),
+                            'master_set_price' => Config::getMasterSetPriceValue(),
                         ];
                     }
                 }

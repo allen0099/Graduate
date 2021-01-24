@@ -6,6 +6,7 @@ use App\Http\Controllers\LocationUpdateController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\RedirectAfterLoginController;
 use App\Http\Controllers\ReturnOrderController;
+use App\Http\Controllers\AdminShowOrderController;
 use App\Http\Controllers\SearchOrderController;
 use App\Http\Controllers\TimeRangeController;
 use Illuminate\Support\Facades\Auth;
@@ -68,20 +69,23 @@ Route::group([
     Route::get('/return_order', ReturnOrderController::class)
         ->name('return_order');
 
+    Route::get('/search_order', SearchOrderController::class)
+        ->name('search_order');
+
     Route::get('/meow', fn() => Inertia::render('Test', ['name' => 'Test meow']))
         ->name('meow'); // routes name as 'admin.meow'
 
     Route::get('/admin/home', fn() => Inertia::render('Admin/Home/Show'))
         ->name('home');
 
-    Route::get('/admin/order', SearchOrderController::class)
+    Route::get('/admin/order', AdminShowOrderController::class)
         ->name('order'); // routes name as 'admin.setting'
 
     Route::get('/admin/return', fn() => Inertia::render('Admin/Return/Show'))
         ->name('return');
 
     Route::get('/admin/receive', fn() => Inertia::render('Admin/Receive/Show'))
-        ->name('receive'); 
+        ->name('receive');
 
     Route::get('/admin/setting', fn() => Inertia::render('Admin/Setting/Show'))
         ->name('setting'); // routes name as 'admin.setting'

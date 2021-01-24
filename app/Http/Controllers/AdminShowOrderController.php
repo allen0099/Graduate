@@ -5,8 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Order;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
-class SearchOrderController extends Controller
+class AdminShowOrderController extends Controller
 {
     /**
      * Handle the incoming request.
@@ -18,7 +19,7 @@ class SearchOrderController extends Controller
     {
         $search = $request->search;
 
-        if (!is_null($search)) {
+        if ($search !== null) {
             $find_owner = User::where('username', $search);
             $find_document = Order::where('document_id', $search);
 
@@ -29,19 +30,16 @@ class SearchOrderController extends Controller
                 $result = $find_owner->first()->orders()->get();
 
                 if ($result->count() === 0) {
-                    $set = $find_owner->first()->set()->first();
-                    if (!is_null($set))
-                        $result = $set->order()->get();
+                    $result = $find_owner->first()->set()->first()->order()->get();
                 }
             }
 
             if ($find_document->count() > 0) {
                 $result = $find_document->get();
             }
-
-            return $result;
+        } else {
+            $result = OrderController::showOrders();
         }
-
-        abort(404);
+        return Inertia::render('Admin/Order/Show', ['search' => $search, 'orders' => $result]);
     }
 }

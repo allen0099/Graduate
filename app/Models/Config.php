@@ -16,9 +16,24 @@ class Config extends Model
      */
     public $timestamps = false;
 
-    public static function getOneSetPriceValue()
+    public static function getBachelorSetPrice()
     {
-        return Config::where('key', 'one_set_price')->first()->value;
+        return Config::where('key', 'bachelor_set_price')->first();
+    }
+
+    public static function getBachelorSetPriceValue()
+    {
+        return Config::where('key', 'bachelor_set_price')->first()->value;
+    }
+
+    public static function getMasterSetPrice()
+    {
+        return Config::where('key', 'master_set_price')->first();
+    }
+
+    public static function getMasterSetPriceValue()
+    {
+        return Config::where('key', 'master_set_price')->first()->value;
     }
 
     public static function getReturnLocation()

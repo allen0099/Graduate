@@ -19,8 +19,12 @@ class ConfigSeeder extends Seeder
             'value' => '守謙會議中心 HC308',
         ]);
         DB::table('configs')->insert([
-            'key' => 'one_set_price',
-            'value' => '500',
+            'key' => 'bachelor_set_price',
+            'value' => '900',
+        ]);
+        DB::table('configs')->insert([
+            'key' => 'master_set_price',
+            'value' => '1300',
         ]);
     }
 }
