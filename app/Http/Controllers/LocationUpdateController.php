@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Config;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
 
 class LocationUpdateController extends Controller
 {
@@ -18,10 +19,9 @@ class LocationUpdateController extends Controller
         // flash?
         // https://github.com/inertiajs/pingcrm/commit/f61d969aa59fc89255f26f55e4dbe5f6eea1eefb
         $this->validateLocation($request);
-
         $this->saveLocation($request);
 
-        return redirect()->route('home')->with('success', '歸還地點更新成功！');
+        return Redirect::route('admin.setting')->with('success', '歸還地點更新成功！');
     }
 
     private function validateLocation(Request $request)
