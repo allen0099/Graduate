@@ -1,59 +1,33 @@
 <!-- vuetify fixed -->
 <template>
     <jet-form-section
-        @submitted="updateTimeRange"
+        @submitted="updateLocation"
         class="mt-5"
     >
         <template #title>
-            {{ time.content + '設定' }}
-            {{ $page.errors.length }}
+            {{ '領取與歸還地點設定' }}
         </template>
 
         <!-- form grid-cols-6 -->
         <template #form>
             <div class="col-span-6 sm:col-span-4">
-                <v-menu
-                    ref="menu"
-                    v-model="show"
-                    :close-on-content-click="false"
-                    transition="scale-transition"
-                    offset-y
-                    min-width="290px"
-                >
-                    <template v-slot:activator="{ on, attrs }">
-                        <v-text-field
-                            v-model="dateRangeText"
-                            label="選擇日期"
-                            prepend-icon="mdi-calendar"
-                            readonly
-                            v-bind="attrs"
-                            v-on="on"
-                        ></v-text-field>
-                    </template>
-                    <v-date-picker
-                        v-model="dates"
-                        no-title
-                        scrollable
-                        range
-                        locale="zh-cn"
-                    >
-                        <v-spacer></v-spacer>
-                        <v-btn
-                            text
-                            color="primary"
-                            @click="show = false"
-                        >
-                            Cancel
-                        </v-btn>
-                        <v-btn
-                            text
-                            color="primary"
-                            @click="$refs.menu.save(dates)"
-                        >
-                            OK
-                        </v-btn>
-                    </v-date-picker>
-                </v-menu>
+                <div class="col-span-6 sm:col-span-4">
+                    <jet-label
+                        for="location"
+                        value="地點"
+                    />
+                    <jet-input
+                        id="location"
+                        type="text"
+                        class="mt-1 block w-full"
+                        v-model="location"
+                        ref="location"
+                    />
+                    <jet-input-error
+                        :message="form.error('location')"
+                        class="mt-2"
+                    />
+                </div>
             </div>
         </template>
         <template #actions>
@@ -90,42 +64,33 @@
             JetButton,
             JetFormSection,
             JetLabel,
+            JetInputError,
+            JetInput,
         },
-        props: ['time'],
         data() {
             return {
                 dates: [], // new Date().toISOString().substr(0, 10)
                 show: false,
+                location: '',
                 form: this.$inertia.form({
-                    '_method': 'PATCH',
-                    start_time: '',
-                    end_time: '',
+                    '_method': 'POST',
+                    location: '',
                 }, {
-                    bag: 'updateTimeRange',
+                    bag: 'updateLocation',
                 }),
             }
         },
-        computed: {
-            dateRangeText() {
-                return this.dates.join(' ~ ')
-            },
-        },
         methods: {
-            updateTimeRange() {
-                this.form.start_time = this.dates[0]
-                this.form.end_time = this.dates[1]
-                // this.form.content = this.time.content
-                this.form.patch('/time/' + this.time.id);
+            updateLocation() {
+                this.form.location = this.location
+                this.form.post('/location');
             },
-            initTime() {
-                this.dates = [this.time.start_time, this.time.end_time]
-                this.content = this.time.content
-                this.form.start_time = this.dates[0]
-                this.form.end_time = this.dates[1]
+            init() {
+                this.location = this.$page.configs.location
             }
         },
         mounted() {
-            this.initTime()
+            this.init()
         },
     }
 

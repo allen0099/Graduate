@@ -42,8 +42,8 @@
                             >
                                 <TimeSetting :time="time"></TimeSetting>
                                 <jet-section-border />
-
                             </div>
+                            <LocationSetting></LocationSetting>
                         </v-card-text>
                     </v-card>
                 </v-tab-item>
@@ -220,7 +220,10 @@
     import UploadStudentData from '@/Pages/Admin/Setting/UploadStudentData'
     import UploadStampImg from '@/Pages/Admin/Setting/UploadStampImg'
     import TimeSetting from '@/Pages/Admin/Setting/TimeSetting'
-    // import LocationSetting from '@/Pages/Admin/Setting/LocationSetting'
+    import LocationSetting from '@/Pages/Admin/Setting/LocationSetting'
+    import {
+        apiInventoryUpdate
+    } from '@/api/api'
 
     export default {
         components: {
@@ -229,7 +232,7 @@
             UploadStudentData,
             UploadStampImg,
             TimeSetting,
-            // LocationSetting
+            LocationSetting
         },
         name: "AdminSetting",
         data: () => ({
@@ -254,22 +257,46 @@
                 this.bachelor_cloths = this.$page.inventory.slice(8, 12)
                 this.master_cloths = this.$page.inventory.slice(12, 15)
             },
-            save_inventory(item) {
+            async save_inventory(item) {
                 this.snackbar = false
+                item.quantity = parseInt(item.quantity)
                 if (!!item.quantity && /^[0-9]*$/.test(item.quantity)) {
-                    this.snackbar_true = true
-                    this.msg = '修改成功'
+
+                    await apiInventoryUpdate(item.id, item).then((res) => {
+                        if (res.status === 200) {
+                            this.snackbar_true = true
+                            this.msg = '修改成功'
+                        } else {
+                            this.snackbar_true = false
+                            this.msg = '修改失敗'
+                        }
+                    }).catch((err) => {
+                        console.log(err)
+                        this.snackbar_true = false
+                        this.msg = '修改失敗'
+                    })
                 } else {
                     this.snackbar_true = false
                     this.msg = '修改失敗'
                 }
                 this.snackbar = true
             },
-            save_price(item) {
+            async save_price(item) {
                 this.snackbar = false
                 if (!!item.quantity && /^[0-9]*$/.test(item.quantity)) {
-                    this.snackbar_true = true
-                    this.msg = '修改成功'
+                    await apiInventoryUpdate(item.id, item).then((res) => {
+                        if (res.status === 200) {
+                            this.snackbar_true = true
+                            this.msg = '修改成功'
+                        } else {
+                            this.snackbar_true = false
+                            this.msg = '修改失敗'
+                        }
+                    }).catch((err) => {
+                        console.log(err)
+                        this.snackbar_true = false
+                        this.msg = '修改失敗'
+                    })
                 } else {
                     this.snackbar_true = false
                     this.msg = '修改失敗'
