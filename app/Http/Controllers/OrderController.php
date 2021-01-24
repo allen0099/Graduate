@@ -274,6 +274,7 @@ class OrderController extends Controller
                     Rule::unique('orders', 'document_id')
                         ->ignore($order->document_id, 'document_id'),
                 ],
+                'payment_id' => 'unique:orders,payment_id',
                 'owner_username' => [
                     'required',
                     'exists:users,username',
@@ -344,6 +345,9 @@ class OrderController extends Controller
         $order->document_id = $request->document_id;
         $order->owner_id = User::where('username', $request->owner_username)->first()->id;
         $order->status_code = $request->status_code;
+
+        if (!is_null($request->payment_id))
+            $order->payment_id = $request->payment_id;
 
         if (!is_null($request->sets))
             $order->total_price = $this->calculateTotalPrice($request->sets);
