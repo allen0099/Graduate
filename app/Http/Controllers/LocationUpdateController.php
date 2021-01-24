@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Config;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Redirect;
 
 class LocationUpdateController extends Controller
 {
@@ -21,7 +20,7 @@ class LocationUpdateController extends Controller
         $this->validateLocation($request);
         $this->saveLocation($request);
 
-        return Redirect::route('admin.setting')->with('success', '歸還地點更新成功！');
+        return redirect()->back()->with('success', '歸還地點更新成功！');
     }
 
     private function validateLocation(Request $request)
