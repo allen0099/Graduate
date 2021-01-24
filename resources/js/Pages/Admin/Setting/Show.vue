@@ -91,7 +91,7 @@
                                     cols="6"
                                 >
                                     <v-text-field
-                                        v-model="price"
+                                        v-model="bachelor_price"
                                         value="10.00"
                                         prefix="$"
                                         outlined
@@ -103,6 +103,7 @@
                                     md="3"
                                     cols="3"
                                     class="ml-3"
+                                    @click="save_price(bachelor_price)"
                                 >
                                     <v-btn>儲存</v-btn>
                                 </v-col>
@@ -195,7 +196,7 @@
                                     cols="6"
                                 >
                                     <v-text-field
-                                        v-model="price"
+                                        v-model="master_price"
                                         value="10.00"
                                         prefix="$"
                                         outlined
@@ -207,6 +208,7 @@
                                     md="3"
                                     cols="3"
                                     class="ml-3"
+                                    @click="save_price(master_price)"
                                 >
                                     <v-btn>儲存</v-btn>
                                 </v-col>
@@ -337,7 +339,8 @@
             msg: '',
             tab: 0,
             toggle_btn: 0,
-            price: 1000,
+            bachelor_price: 900,
+            master_price: 1300,
             bachelor_cloths: [],
             bachelor_accessories: [],
             master_cloths: [],
@@ -372,6 +375,8 @@
                 this.master_accessories = this.$page.inventory.slice(2, 8)
                 this.bachelor_cloths = this.$page.inventory.slice(8, 12)
                 this.master_cloths = this.$page.inventory.slice(12, 15)
+                this.bachelor_price = this.configs.bachelor_set_price
+                this.master_price = this.configs.master_set_price
             },
             async save_inventory(item) {
                 this.snackbar = false
@@ -396,22 +401,22 @@
                 }
                 this.snackbar = true
             },
-            async save_price(item) {
+            async save_price(price) {
                 this.snackbar = false
-                if (!!item.quantity && /^[0-9]*$/.test(item.quantity)) {
-                    await apiInventoryUpdate(item.id, item).then((res) => {
-                        if (res.status === 200) {
-                            this.snackbar_true = true
-                            this.msg = '修改成功'
-                        } else {
-                            this.snackbar_true = false
-                            this.msg = '修改失敗'
-                        }
-                    }).catch((err) => {
-                        console.log(err)
-                        this.snackbar_true = false
-                        this.msg = '修改失敗'
-                    })
+                if (!!price && /^[0-9]*$/.test(price)) {
+                    // await apiUpdate(item.id, item).then((res) => {
+                    //     if (res.status === 200) {
+                    //         this.snackbar_true = true
+                    //         this.msg = '修改成功'
+                    //     } else {
+                    //         this.snackbar_true = false
+                    //         this.msg = '修改失敗'
+                    //     }
+                    // }).catch((err) => {
+                    //     console.log(err)
+                    //     this.snackbar_true = false
+                    //     this.msg = '修改失敗'
+                    // })
                 } else {
                     this.snackbar_true = false
                     this.msg = '修改失敗'
