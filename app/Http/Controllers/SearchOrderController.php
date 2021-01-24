@@ -21,8 +21,9 @@ class SearchOrderController extends Controller
         if (!is_null($search)) {
             $find_owner = User::where('username', $search);
             $find_document = Order::where('document_id', $search);
+            $find_payment_id = Order::where('payment_id', $search);
 
-            if ($find_owner->count() === 0 && $find_document->count() === 0)
+            if ($find_owner->count() === 0 && $find_document->count() === 0 && $find_payment_id->count() === 0)
                 $result = [];
 
             if ($find_owner->count() > 0) {
@@ -37,6 +38,10 @@ class SearchOrderController extends Controller
 
             if ($find_document->count() > 0) {
                 $result = $find_document->get();
+            }
+
+            if ($find_payment_id->count() > 0) {
+                $result = $find_payment_id->get();
             }
 
             return $result;
