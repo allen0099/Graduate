@@ -178,15 +178,13 @@ class OrderController extends Controller
                 'status_code' => [
                     'required',
                     Rule::in([
-                        Order::code_requestCancel
+                        Order::code_canceled,
                     ]),
                     function ($attribute, $value, $fail) use ($request) {
                         // todo: change fail, or not changed code
                         $order = Order::where('document_id', $request->document_id)->first();
                         if (!is_null($order) && $order->status_code === Order::code_canceled)
-                            $fail($order->document_id . ' has been cancelled, contact admin for more help.');
-                        if (!is_null($order) && $order->status_code === Order::code_requestCancel)
-                            $fail($order->document_id . ' has been cancelled successfully.');
+                            $fail(__('validation.order_canceled'));
                     },
                 ],
                 'sets.*.set_owner' => [
@@ -286,8 +284,9 @@ class OrderController extends Controller
                         Order::code_paid,
                         Order::code_received,
                         Order::code_returned,
-                        Order::code_requestCancel,
                         Order::code_canceled,
+                        Order::code_refunding,
+                        Order::code_refunded,
                     ]),
                 ],
                 'sets.*.set_owner' => [

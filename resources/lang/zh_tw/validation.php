@@ -163,5 +163,6 @@ return [
     'item_set_wrong' => 'Item :attribute is not a valid type.',
     'item_not_enough' => 'Item not enough.',
     'student_returned' => 'This set had returned.',
+    'order_canceled' => 'This order is canceled.',
 
 ];
