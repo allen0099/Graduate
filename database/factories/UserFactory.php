@@ -44,7 +44,7 @@ class UserFactory extends Factory
     public function student()
     {
         return $this->state(fn(array $attributes) => [
-            'username' => '40641' . str_pad($this->faker->unique()->numberBetween($min = 0, $max = 9999), 4, '0', STR_PAD_LEFT),          // 預設帳號
+            'username' => '40641' . str_pad($this->faker->unique()->numberBetween($min = 2, $max = 9999), 4, '0', STR_PAD_LEFT),          // 預設帳號
             'email' => fn(array $attributes) => $attributes['username'] . '@gms.tku.edu.tw',
             'role' => User::STUDENT,
             'class_id' => $this->faker->randomElement(DepartmentClass::all())->id,

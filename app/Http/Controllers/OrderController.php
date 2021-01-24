@@ -9,7 +9,6 @@ use App\Models\Set;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
 
@@ -78,12 +77,38 @@ class OrderController extends Controller
                         $fail(__('validation.item_set_wrong'));
                     }
                 },
+                function ($attribute, $value, $fail) use ($request) {
+                    $sets = $request->sets;
+                    $return = array();
+                    array_walk($sets, function ($a) use (&$return) {
+                        $return[] = $a['accessory'];
+                        $return[] = $a['cloth'];
+                    });
+                    foreach (array_count_values($return) as $key => $value) {
+                        $item = Item::find($key);
+                        if ($item->remainQuantity - $value < 0)
+                            $fail(__('validation.item_not_enough'));
+                    }
+                },
             ],
             'sets.*.cloth' => [
                 'exists:items,id',
                 function ($attribute, $value, $fail) use ($request) {
                     if (!in_array($value, Item::clothIds())) {
                         $fail(__('validation.item_set_wrong'));
+                    }
+                },
+                function ($attribute, $value, $fail) use ($request) {
+                    $sets = $request->sets;
+                    $return = array();
+                    array_walk($sets, function ($a) use (&$return) {
+                        $return[] = $a['accessory'];
+                        $return[] = $a['cloth'];
+                    });
+                    foreach (array_count_values($return) as $key => $value) {
+                        $item = Item::find($key);
+                        if ($item->remainQuantity - $value < 0)
+                            $fail(__('validation.item_not_enough'));
                     }
                 },
             ],
@@ -204,12 +229,38 @@ class OrderController extends Controller
                             $fail(__('validation.item_set_wrong'));
                         }
                     },
+                    function ($attribute, $value, $fail) use ($request) {
+                        $sets = $request->sets;
+                        $return = array();
+                        array_walk($sets, function ($a) use (&$return) {
+                            $return[] = $a['accessory'];
+                            $return[] = $a['cloth'];
+                        });
+                        foreach (array_count_values($return) as $key => $value) {
+                            $item = Item::find($key);
+                            if ($item->remainQuantity - $value < 0)
+                                $fail(__('validation.item_not_enough'));
+                        }
+                    },
                 ],
                 'sets.*.cloth' => [
                     'exists:items,id',
                     function ($attribute, $value, $fail) use ($request) {
                         if (!in_array($value, Item::clothIds())) {
                             $fail(__('validation.item_set_wrong'));
+                        }
+                    },
+                    function ($attribute, $value, $fail) use ($request) {
+                        $sets = $request->sets;
+                        $return = array();
+                        array_walk($sets, function ($a) use (&$return) {
+                            $return[] = $a['accessory'];
+                            $return[] = $a['cloth'];
+                        });
+                        foreach (array_count_values($return) as $key => $value) {
+                            $item = Item::find($key);
+                            if ($item->remainQuantity - $value < 0)
+                                $fail(__('validation.item_not_enough'));
                         }
                     },
                 ],
