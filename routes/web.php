@@ -53,6 +53,9 @@ Route::group([
     Route::post('/stamp', [AdminStampChangeController::class, 'update'])
         ->name('admin-stamp.update')
         ->middleware('can:admin');
+
+    Route::get('/search_user', SearchUserController::class)
+        ->name('search_user');
 });
 
 Route::apiResource('order', OrderController::class, ['only' => ['index', 'store', 'update']])
@@ -72,9 +75,6 @@ Route::group([
 
     Route::get('/search_order', SearchOrderController::class)
         ->name('search_order');
-
-    Route::get('/search_user', SearchUserController::class)
-        ->name('search_user');
 
     Route::get('/meow', fn() => Inertia::render('Test', ['name' => 'Test meow']))
         ->name('meow'); // routes name as 'admin.meow'
