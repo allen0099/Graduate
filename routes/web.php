@@ -11,6 +11,7 @@ use App\Http\Controllers\RedirectAfterLoginController;
 use App\Http\Controllers\ReturnOrderController;
 use App\Http\Controllers\AdminShowOrderController;
 use App\Http\Controllers\SearchOrderController;
+use App\Http\Controllers\SearchUserController;
 use App\Http\Controllers\TimeRangeController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
@@ -55,6 +56,9 @@ Route::group([
     Route::post('/stamp', [AdminStampChangeController::class, 'update'])
         ->name('admin-stamp.update')
         ->middleware('can:admin');
+
+    Route::get('/search_user', SearchUserController::class)
+        ->name('search_user');
 });
 
 Route::apiResource('order', OrderController::class, ['only' => ['index', 'store', 'update']])
