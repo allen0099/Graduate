@@ -5,8 +5,10 @@
         </template>
         <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
             <v-tabs
+                v-model="tab"
                 centered
                 grow
+                show-arrows
             >
                 <v-tab>
                     <v-icon left>mdi-account</v-icon>
@@ -73,7 +75,7 @@
                             flat
                             v-if="toggle_btn === 0"
                         >
-                            <v-card-title>價格設定</v-card-title>
+                            <v-card-title>學士服價格設定</v-card-title>
                             <v-row
                                 class="mx-5"
                                 dense
@@ -177,9 +179,103 @@
                             flat
                             v-else
                         >
-                            <v-card-title>價格設定</v-card-title>
+                            <v-card-title>碩士服價格設定</v-card-title>
+                            <v-row
+                                class="mx-5"
+                                dense
+                            >
+                                <v-col
+                                    cols="2"
+                                    class="mt-2"
+                                >
+                                    價格
+                                </v-col>
+                                <v-col
+                                    md="4"
+                                    cols="6"
+                                >
+                                    <v-text-field
+                                        v-model="price"
+                                        value="10.00"
+                                        prefix="$"
+                                        outlined
+                                        dense
+                                        :rules="numberRules"
+                                    ></v-text-field>
+                                </v-col>
+                                <v-col
+                                    md="3"
+                                    cols="3"
+                                    class="ml-3"
+                                >
+                                    <v-btn>儲存</v-btn>
+                                </v-col>
+                            </v-row>
+                            <v-divider class="mx-5 v-divider-bold" />
                             <v-card-title>尺寸數量設定</v-card-title>
+                            <v-row
+                                v-for="(item, index) in master_cloths"
+                                :key="`master_cloths-${index}`"
+                                class="mx-5"
+                                dense
+                            >
+                                <v-col
+                                    cols="2"
+                                    class="mt-2"
+                                >
+                                    {{ item.spec }}
+                                </v-col>
+                                <v-col
+                                    md="4"
+                                    cols="6"
+                                >
+                                    <v-text-field
+                                        v-model="item.quantity"
+                                        outlined
+                                        dense
+                                        :rules="numberRules"
+                                    ></v-text-field>
+                                </v-col>
+                                <v-col
+                                    md="3"
+                                    cols="3"
+                                    class="ml-3"
+                                >
+                                    <v-btn @click="save_inventory(item)">儲存</v-btn>
+                                </v-col>
+                            </v-row>
                             <v-card-title>帽穗、披肩數量設定</v-card-title>
+                            <v-row
+                                v-for="(item, index) in master_accessories"
+                                :key="`master_accessories-${index}`"
+                                class="mx-5"
+                                dense
+                            >
+                                <v-col
+                                    cols="2"
+                                    class="mt-2"
+                                >
+                                    {{ item.spec }}
+                                </v-col>
+                                <v-col
+                                    md="4"
+                                    cols="6"
+                                >
+                                    <v-text-field
+                                        v-model="item.quantity"
+                                        outlined
+                                        dense
+                                        :rules="numberRules"
+                                    ></v-text-field>
+                                </v-col>
+                                <v-col
+                                    md="3"
+                                    cols="3"
+                                    class="ml-3"
+                                >
+                                    <v-btn @click="save_inventory(item)">儲存</v-btn>
+                                </v-col>
+                            </v-row>
                         </v-card>
                     </v-card>
                 </v-tab-item>
@@ -239,6 +335,7 @@
             snackbar: false,
             snackbar_true: false,
             msg: '',
+            tab: 0,
             toggle_btn: 0,
             price: 1000,
             bachelor_cloths: [],
@@ -250,6 +347,25 @@
                 v => /^[0-9]*$/.test(v) || '只能輸入數字'
             ]
         }),
+        watch: {
+            tab: (val) => {
+                location.hash = (val + 1).toString()
+            }
+        },
+        computed: {
+            hash() {
+                let hash = location.hash
+                if (hash === '#2') {
+                    this.tab = 1
+                } else if (hash === '#3') {
+                    this.tab = 2
+                } else {
+                    this.tab = 0
+                    location.hash = '#1'
+                }
+                return location.hash
+            }
+        },
         methods: {
             init_obj() {
                 this.bachelor_accessories = this.$page.inventory.slice(0, 2)
@@ -259,9 +375,8 @@
             },
             async save_inventory(item) {
                 this.snackbar = false
-                item.quantity = parseInt(item.quantity)
                 if (!!item.quantity && /^[0-9]*$/.test(item.quantity)) {
-
+                    item.quantity = parseInt(item.quantity)
                     await apiInventoryUpdate(item.id, item).then((res) => {
                         if (res.status === 200) {
                             this.snackbar_true = true
