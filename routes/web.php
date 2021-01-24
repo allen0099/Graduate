@@ -1,5 +1,8 @@
 <?php
 
+
+use App\Http\Controllers\PDFController; //test
+
 use App\Http\Controllers\AdminStampChangeController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\LocationUpdateController;
@@ -118,3 +121,7 @@ Route::middleware(['auth:sanctum'])->get('/meow', function () {
 })->name('meow'); // new dashboard
 
 Route::middleware(['auth:sanctum'])->get('index', RedirectAfterLoginController::class);
+
+
+// test
+Route::get('generate-pdf', [PDFController::class, 'meow']);
