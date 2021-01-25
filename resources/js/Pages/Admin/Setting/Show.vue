@@ -28,9 +28,9 @@
                 <v-tab-item>
                     <v-card flat>
                         <v-card-text>
-                            <UploadStudentData></UploadStudentData>
+                            <UploadStudentData class="mt-3"></UploadStudentData>
                             <jet-section-border />
-                            <UploadStampImg></UploadStampImg>
+                            <UploadStampImg class="mt-3"></UploadStampImg>
                         </v-card-text>
                     </v-card>
                 </v-tab-item>
