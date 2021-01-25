@@ -1,12 +1,15 @@
 <?php
 
 
-use App\Http\Controllers\PDFController; //test
+use App\Http\Controllers\PDFController;
+
+//test
 
 use App\Http\Controllers\AdminStampChangeController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\LocationUpdateController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\PreserveOrderController;
 use App\Http\Controllers\RedirectAfterLoginController;
 use App\Http\Controllers\ReturnOrderController;
 use App\Http\Controllers\AdminShowOrderController;
@@ -56,10 +59,15 @@ Route::group([
     Route::post('/stamp', [AdminStampChangeController::class, 'update'])
         ->name('admin-stamp.update')
         ->middleware('can:admin');
-
-    Route::get('/search_user', SearchUserController::class)
-        ->name('search_user');
 });
+
+Route::get('/search_user', SearchUserController::class)
+    ->middleware(['auth:sanctum'])
+    ->name('search_user');
+
+Route::post('/preserve_order', PreserveOrderController::class)
+    ->middleware(['auth:sanctum'])
+    ->name('preserve_order');
 
 Route::apiResource('order', OrderController::class, ['only' => ['index', 'store', 'update']])
     ->middleware(['auth:sanctum']);

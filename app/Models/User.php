@@ -72,6 +72,18 @@ class User extends Authenticatable
         'profile_photo_url',
     ];
 
+    public function isBachelor()
+    {
+        return str_starts_with($this->username, '2') || str_starts_with($this->username, '4') ?
+            true : false;
+    }
+
+    public function isMaster()
+    {
+        return str_starts_with($this->username, '6') || str_starts_with($this->username, '7') ?
+            true : false;
+    }
+
     public function school_class()
     {
         return $this->belongsTo('App\Models\DepartmentClass', 'class_id');

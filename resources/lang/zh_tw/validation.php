@@ -164,5 +164,6 @@ return [
     'item_not_enough' => 'Item not enough.',
     'student_returned' => 'This set had returned.',
     'order_canceled' => 'This order is canceled.',
+    'order_not_found' => 'This order id not found.',
 
 ];

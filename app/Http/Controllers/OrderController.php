@@ -420,10 +420,10 @@ class OrderController extends Controller
     {
         $total_price = 0;
         foreach ($sets as $set) {
-            $username = $set['set_owner'];
-            if (str_starts_with($username, '2') || str_starts_with($username, '4')) {
+            $user = User::where('username', $set['set_owner'])->first();
+            if ($user->isBachelor()) {
                 $total_price += Config::getBachelorSetPriceValue();
-            } else if (str_starts_with($username, '6') || str_starts_with($username, '7')) {
+            } else if ($user->isMaster()) {
                 $total_price += Config::getMasterSetPriceValue();
             } else {
                 // who are you?
