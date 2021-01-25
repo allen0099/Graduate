@@ -18,6 +18,8 @@ export const apiOrderUpdate = (order_id, order) =>
 // Admin Return & Receive
 export const apiSearchOrder = search =>
     Request.get(`/search_order?search=${search}`);
+export const apiReturnCloth = stu_id =>
+    Request.get(`/return_order?stu_id=${stu_id}`);
 
 // Student oreder
 export const apiSearchStudent = stu_id =>

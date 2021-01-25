@@ -272,7 +272,8 @@ class OrderController extends Controller
                     Rule::unique('orders', 'document_id')
                         ->ignore($order->document_id, 'document_id'),
                 ],
-                'payment_id' => 'unique:orders,payment_id',
+                'payment_id' => Rule::unique('orders', 'payment_id')
+                    ->ignore($order->payment_id, 'payment_id'),
                 'owner_username' => [
                     'required',
                     'exists:users,username',

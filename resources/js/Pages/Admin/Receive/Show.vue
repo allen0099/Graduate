@@ -193,7 +193,7 @@
                         <v-col
                             cols="12"
                             md="4"
-                        >班級：{{ order.owner.class_id }}</v-col>
+                        >系級：{{ order.owner.school_class.class_name }}</v-col>
                         <v-col
                             cols="12"
                             md="4"
@@ -251,9 +251,26 @@
                     </v-btn>
                 </v-card-actions>
             </v-card>
+            <v-dialog
+                v-model="pageLoading"
+                persistent
+                width="300"
+            >
+                <v-card
+                    color="primary"
+                    dark
+                >
+                    <v-card-text>
+                        Loading...
+                        <v-progress-linear
+                            indeterminate
+                            color="white"
+                            class="mb-0"
+                        ></v-progress-linear>
+                    </v-card-text>
+                </v-card>
+            </v-dialog>
         </v-dialog>
-
-
     </VuetifyLayout>
 </template>
 
@@ -276,8 +293,9 @@
             show_msg: false,
             dialog: false,
             error: false,
+            pageLoading: false,
             choose_file: null,
-            statusMsg: ["已結單", "未付款", "已付款，未領取衣服", "未歸還衣服", "已歸還衣服", "已申請訂單取消", "已取消訂單"],
+            statusMsg: ["已結單", "未付款", "已付款，未領取衣服", "未歸還衣服", "已歸還衣服", "已取消訂單", "退款中", "已退款"],
             headers: [{
                     text: '學號',
                     align: 'start',
@@ -406,6 +424,7 @@
                 //     this.error = false
                 //     this.show_msg = true
                 // });
+                this.pageLoading = true
                 await this.$inertia.patch(`/order/${this.order.id}`, {
                     document_id: this.order.document_id,
                     owner_username: this.order.owner.username,
@@ -423,6 +442,7 @@
                         this.show_msg = true
                     },
                     onFinish: () => {
+                        this.pageLoading = false
                         this.show_msg = true
                     },
                 })

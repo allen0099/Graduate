@@ -107,7 +107,7 @@
                                     <v-col
                                         cols="12"
                                         md="4"
-                                    >班級：{{ 'meow' }}</v-col>
+                                    >系級：{{ order.owner.school_class.class_name }}</v-col>
                                     <v-col
                                         cols="12"
                                         md="4"
@@ -140,23 +140,7 @@
                                     <v-col cols="12">
                                         <span :class="order.status_code === 4 ? 'green--text text--accent--3' :
                                             'red--text'">{{ statusMsg[order.status_code] }}</span>
-                                        <!-- <span
-                                            v-if="order.status_code === 5 || order.status_code === 6"
-                                            :class="order.status_code === 4 ? 'green--text text--accent--3' :
-                                            'red--text'"
-                                        >{{'(品項或數量錯誤)'}}</span> -->
-                                        <!-- <span v-if="order.logs.find(x => x.status ===
-                                            3)">({{ order.logs[2].date }})</span> -->
                                     </v-col>
-                                    <!-- <v-col
-                                        v-for="log in order.logs.slice().reverse()"
-                                        :key="`${order.document_id}-${log.status}`"
-                                        cols="12"
-                                        v-if="log.status <= order.status_code && log.status < 5"
-                                    >
-                                        <span class="green--text text--accent--3">{{ log.logName }}</span>
-                                        <span>({{ log.date }})</span>
-                                    </v-col> -->
                                 </v-row>
                             </v-card-text>
                             <v-card-actions v-if="order.status_code === 5">
@@ -278,7 +262,7 @@
                             <v-col
                                 cols="12"
                                 md="4"
-                            >班級：{{ order.owner.grade }}</v-col>
+                            >系級：{{ order.owner.school_class.class_name }}</v-col>
                             <v-col
                                 cols="12"
                                 md="4"
@@ -344,6 +328,37 @@
                     </v-card-actions>
                 </v-card>
             </v-form>
+            <v-dialog
+                v-model="checkCancel"
+                persistent
+                max-width="400px"
+            >
+                <v-card>
+                    <v-card-title color="error">
+                        警告
+                    </v-card-title>
+                    <v-card-text>
+                        取消訂單後將無法復原，確定要取消訂單?
+                    </v-card-text>
+                    <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn
+                            color="error"
+                            text
+                            @click="check_cancel"
+                        >
+                            返回
+                        </v-btn>
+                        <v-btn
+                            color="primary"
+                            text
+                            @click="check_save"
+                        >
+                            確定
+                        </v-btn>
+                    </v-card-actions>
+                </v-card>
+            </v-dialog>
         </v-dialog>
         <v-dialog
             v-model="pageLoading"
@@ -403,6 +418,7 @@
                 msg: '',
                 snackbar: false,
                 pageLoading: false,
+                checkCancel: false,
                 show: [],
                 statusFilterSelected: -1,
                 edit_toggle: false,
@@ -414,7 +430,11 @@
                     total: 0,
                     status_code: 0,
                     logs: [],
-                    owner: {}
+                    owner: {
+                        school_class: {
+                            class_name: ''
+                        }
+                    }
                 },
                 order: {
                     document_id: "",
@@ -423,7 +443,11 @@
                     total: 0,
                     status_code: 0,
                     logs: [],
-                    owner: {}
+                    owner: {
+                        school_class: {
+                            class_name: ''
+                        }
+                    }
                 },
                 orderList: [],
                 colorList: [{
@@ -450,11 +474,15 @@
                         detail: 'red accent-2',
                     },
                     {
-                        bg: 'red lighten-5',
-                        detail: 'red accent-2',
-                    }
+                        bg: '#fef9ef',
+                        detail: '#d48344',
+                    },
+                    {
+                        bg: '#fef9ef',
+                        detail: '#d48344',
+                    },
                 ],
-                statusMsg: ["已結單", "未付款", "已付款，未領取衣服", "未歸還衣服", "已歸還衣服", "已申請訂單取消", "已取消訂單"],
+                statusMsg: ["已結單", "未付款", "已付款，未領取衣服", "未歸還衣服", "已歸還衣服", "已取消訂單", "退款中", "已退款"],
                 // statusMsg2: ["未付款", "已付款", "已領取衣服", "已歸還衣服", "已申請訂單取消", "已取消訂單"]
                 windowSize: {
                     x: 0,
@@ -499,17 +527,42 @@
                 this.order = Object.assign({}, this.baseorder);
             },
             edit_save() {
-                this.pageLoading = true
-                this.form.status_code = this.order.status_code
-                this.form.document_id = this.order.document_id
-                this.form.payment_id = this.order.payment_id
-                this.form.owner_username = this.order.owner.username
-                this.form.patch('/order/' + this.order.id).then(() => {
-                    this.edit_cancel()
-                    this.msg = this.$page.errorBags.length > 0 ? '發生錯誤' : ''
-                    this.snackbar = this.$page.errorBags.length > 0
-                    this.search_submit()
-                });
+                if (this.order.status_code === 5) {
+                    this.checkCancel = true
+                } else {
+                    this.pageLoading = true
+                    this.form.status_code = this.order.status_code
+                    this.form.document_id = this.order.document_id
+                    this.form.payment_id = this.order.payment_id
+                    this.form.owner_username = this.order.owner.username
+                    console.log(this.order.status_code)
+                    this.form.patch('/order/' + this.order.id).then(() => {
+                        this.edit_cancel()
+                        this.msg = this.$page.errorBags.length > 0 ? '發生錯誤' : ''
+                        this.snackbar = this.$page.errorBags.length > 0
+                        this.search_submit()
+                    });
+                }
+            },
+            check_cancel() {
+                // this.edit_cancel()
+                this.checkCancel = false
+            },
+            check_save() {
+                if (this.order.status_code === 5) {
+                    this.pageLoading = true
+                    this.form.status_code = this.order.status_code
+                    this.form.document_id = this.order.document_id
+                    this.form.payment_id = this.order.payment_id
+                    this.form.owner_username = this.order.owner.username
+                    console.log(this.order.status_code)
+                    this.form.patch('/order/' + this.order.id).then(() => {
+                        this.check_cancel()
+                        this.msg = this.$page.errorBags.length > 0 ? '發生錯誤' : ''
+                        this.snackbar = this.$page.errorBags.length > 0
+                    });
+                }
+                this.search_submit()
             },
             search_submit() {
                 this.pageLoading = true

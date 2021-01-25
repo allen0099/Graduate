@@ -46,12 +46,12 @@
                 </v-toolbar>
             </v-card-title>
             <v-spacer></v-spacer>
-            <v-alert
-                :color="green"
+            <!-- <v-alert
+                color="green"
                 text
                 :type="error ? 'error' : 'success'"
-                v-show="student.stuid"
-            >{{ student.stuid }} {{ student.department }} {{ student.name }}</v-alert>
+                v-if="student"
+            >{{ student.username }} {{ student.school_class.class_name }} {{ student.name }}</v-alert> -->
             <v-divider class="mx-5 v-divider-bold" />
             <v-card-title>清單下載列印</v-card-title>
             <v-card flat>
@@ -71,12 +71,86 @@
                 </v-card-title>
             </v-card>
         </v-card>
-
+        <v-dialog
+            v-model="dialog"
+            max-width="850px"
+            persistent
+        >
+            <v-card v-if="student">
+                <v-card-title>
+                    <span>衣服歸還確認-{{ student.username[0] > "5" ? '碩士服' : '學士服'}}</span>
+                </v-card-title>
+                <v-card-text class="font-weight-bold">
+                    <v-row dense>
+                        <v-col
+                            cols="12"
+                            md="4"
+                        >系級：{{ student.school_class.class_name }}</v-col>
+                        <v-col
+                            cols="12"
+                            md="4"
+                        >學生：{{ student.name }}</v-col>
+                        <v-col
+                            cols="12"
+                            md="4"
+                        >學號：{{ student.username }}</v-col>
+                        <v-col
+                            cols="12"
+                            md="4"
+                        >尺寸：{{ student.set.cloth.spec }} 號</v-col>
+                        <v-col
+                            cols="12"
+                            md="4"
+                        >顏色：{{ student.set.accessory.spec }} 色</v-col>
+                    </v-row>
+                </v-card-text>
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn
+                        color="error"
+                        text
+                        @click="cancel"
+                    >
+                        取消
+                    </v-btn>
+                    <v-btn
+                        color="primary"
+                        text
+                        @click="save"
+                    >
+                        領取
+                    </v-btn>
+                </v-card-actions>
+            </v-card>
+            <v-dialog
+                v-model="pageLoading"
+                persistent
+                width="300"
+            >
+                <v-card
+                    color="primary"
+                    dark
+                >
+                    <v-card-text>
+                        Loading...
+                        <v-progress-linear
+                            indeterminate
+                            color="white"
+                            class="mb-0"
+                        ></v-progress-linear>
+                    </v-card-text>
+                </v-card>
+            </v-dialog>
+        </v-dialog>
     </VuetifyLayout>
 </template>
 
 <script>
     import VuetifyLayout from '@/Layouts/VuetifyLayout'
+    import {
+        apiSearchStudent,
+        apiReturnCloth
+    } from '@/api/api'
 
     export default {
         components: {
@@ -88,11 +162,9 @@
             msg: '',
             show_msg: false,
             error: false,
-            student: {
-                stuid: '',
-                department: '',
-                name: ''
-            },
+            dialog: false,
+            pageLoading: false,
+            student: null,
             choose_file: null,
             file_list: [{
                     filename: '預約歸還簽到表',
@@ -112,66 +184,46 @@
                     path: '123'
                 }
             ],
-            bachelor_cloths: [],
-            bachelor_accessories: [],
-            master_cloths: [],
-            master_accessories: [],
-            card_color: {
-                '白': {
-                    bg: '#FFFFFF',
-                    q: '#000000',
-                    r: '#000000',
-                },
-                '黃': {
-                    q: '#FFFDE7',
-                    bg: '#F57F17',
-                    r: '#FFFFFF'
-                },
-                '橘': {
-                    q: '#FFF3E0',
-                    bg: '#E65100',
-                    r: '#FFFFFF'
-                },
-                '灰': {
-                    q: '#F5F5F5',
-                    bg: '#424242',
-                    r: '#FFFFFF'
-                },
-                '藍': {
-                    q: '#BBDEFB',
-                    bg: '#0D47A1',
-                    r: '#FFFFFF'
-                },
-                '紫': {
-                    q: '#D1C4E9',
-                    bg: '#311B92',
-                    r: '#FFFFFF'
-                }
-            },
         }),
         methods: {
-            init_obj() {
-                this.bachelor_accessories = this.$page.inventory.slice(0, 2)
-                this.master_accessories = this.$page.inventory.slice(2, 8)
-                this.bachelor_cloths = this.$page.inventory.slice(8, 12)
-                this.master_cloths = this.$page.inventory.slice(12, 15)
-            },
-            return_submit() {
+            async return_submit() {
                 if (/^([0-9]){9}$/.test(this.stuid) === false) {
                     this.stuid = ''
                     this.msg = '查無此學號'
                     this.error = true
                     this.show_msg = true
                 } else {
-                    this.stuid = ''
-                    this.msg = '已歸還'
-                    this.error = false
-                    this.show_msg = true
-                    this.student = {
-                        stuid: '406410232',
-                        department: '資工XXXXX組',
-                        name: 'Rex Weng ABCDD'
-                    }
+                    await apiSearchStudent(this.stuid).then((res) => {
+                        if (res.status == 200) {
+                            this.dialog = true
+                            if (res.data.set) {
+                                if (!res.data.set.returned) {
+                                    this.student = res.data
+                                } else {
+                                    this.stuid = ''
+                                    this.msg = '不可重複歸還'
+                                    this.error = true
+                                    this.show_msg = true
+                                }
+                            } else {
+                                this.stuid = ''
+                                this.msg = '該學生沒有訂購衣服的紀錄'
+                                this.error = true
+                                this.show_msg = true
+                            }
+                        } else {
+                            this.stuid = ''
+                            this.msg = '查無此學號'
+                            this.error = true
+                            this.show_msg = true
+                        }
+                    }).catch((err) => {
+                        console.log(err)
+                        this.stuid = ''
+                        this.msg = '查無此學號'
+                        this.error = true
+                        this.show_msg = true
+                    })
                 }
                 setTimeout(() => {
                     this.show_msg = false
@@ -180,10 +232,32 @@
             download() {
                 alert(this.choose_file.filename)
                 this.choose_file = null
-            }
-        },
-        created() {
-            this.init_obj()
+            },
+            async save() {
+                this.pageLoading = true
+                await apiReturnCloth(this.student.username).then(res => {
+                    if (res.status == 200) {
+                        this.msg = '已歸還'
+                        this.error = false
+                        this.show_msg = true
+                    } else {
+                        this.msg = '發生不明錯誤'
+                        this.error = true
+                        this.show_msg = true
+                    }
+                }).catch((err) => {
+                    console.log(err)
+                    this.msg = '發生不明錯誤'
+                    this.error = true
+                    this.show_msg = true
+                })
+                await this.cancel()
+            },
+            cancel() {
+                this.stuid = ''
+                this.order = null
+                this.dialog = false
+            },
         },
     }
 
