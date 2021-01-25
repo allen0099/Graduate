@@ -29,16 +29,6 @@
                     {{ filter }}
                 </v-btn>
             </v-btn-toggle>
-            <!-- {{ statusFilterSelected }} -->
-            <!-- <v-overflow-btn
-                v-model="statusFilterSelected"
-                :items="statusMsg"
-                label="Select size"
-                hide-details
-                class="hidden-md-and-up"
-                disable-lookup
-            ></v-overflow-btn> -->
-            <!-- {{ statusMsgObj }} -->
             <v-select
                 v-model="statusFilterSelected"
                 class="hidden-md-and-up"
@@ -71,8 +61,38 @@
                                 <v-row dense>
                                     <v-col
                                         cols="12"
+                                        class="d-flex justify-end"
+                                        v-if="order.status_code === 1"
+                                    >
+                                        <v-btn
+                                            outlined
+                                            color="indigo"
+                                            class="mr-3"
+                                            dense
+                                            :href="`${route('order-pdf')}?document_id=${order.document_id}`"
+                                            download
+                                        >
+                                            下載訂單
+                                            <v-icon right>
+                                                mdi-delete
+                                            </v-icon>
+                                        </v-btn>
+                                        <v-btn
+                                            outlined
+                                            color="error"
+                                            @click="cancel_check(order)"
+                                            dense
+                                        >
+                                            取消訂單
+                                            <v-icon right>
+                                                mdi-delete
+                                            </v-icon>
+                                        </v-btn>
+                                    </v-col>
+                                    <v-col
+                                        cols="12"
                                         md="4"
-                                    >班級：{{ 'meow' }}</v-col>
+                                    >系級：{{ order.owner.school_class.class_name }}</v-col>
                                     <v-col
                                         cols="12"
                                         md="4"
@@ -93,59 +113,28 @@
                                         cols="12"
                                         md="4"
                                     >總金額：{{ order.total_price }}</v-col>
-                                    <v-col cols="12">付款單據編號：{{order.payment_id }}</v-col>
-                                    <!-- <v-col
+                                    <v-col
                                         v-if="order.payment_id"
                                         cols="12"
-                                    >付款單據編號：{{ windowSize.x >= 430 ? order.payment_id :'' }}</v-col>
+                                    >付款單據編號：{{ windowSize.x >= 430 ? order.payment_id :'' }}
+                                    </v-col>
                                     <v-col
                                         v-if="order.payment_id && windowSize.x < 430"
                                         cols="12"
-                                    >{{order.payment_id }}</v-col> -->
-                                    <v-col cols="12">{{ '訂單狀態：' }}</v-col>
+                                    >{{order.payment_id }}</v-col>
+                                    <!-- <v-col cols="12">{{ '訂單狀態：' }}</v-col> -->
                                     <v-col cols="12">
+                                        <span>{{ '訂單狀態：' }}</span>
                                         <span :class="order.status_code === 4 ? 'green--text text--accent--3' :
                                             'red--text'">{{ statusMsg[order.status_code] }}</span>
-                                        <!-- <span
-                                            v-if="order.status_code === 5 || order.status_code === 6"
-                                            :class="order.status_code === 4 ? 'green--text text--accent--3' :
-                                            'red--text'"
-                                        >{{'(品項或數量錯誤)'}}</span> -->
-                                        <span v-if="order.logs.find(x => x.status ===
-                                            3)">({{ order.logs[2].date }})</span>
-                                    </v-col>
-                                    <v-col
-                                        v-for="log in order.logs.slice().reverse()"
-                                        :key="`${order.document_id}-${log.status}`"
-                                        cols="12"
-                                        v-if="log.status <= order.status_code && log.status < 4"
-                                    >
-                                        <span class="green--text text--accent--3">{{ log.logName }}</span>
-                                        <span>({{ log.date }})</span>
                                     </v-col>
                                 </v-row>
                             </v-card-text>
-                            <!-- <v-card-actions v-if="order.status_code === 0">
-                                <v-spacer></v-spacer>
-                                <v-btn
-                                    depressed
-                                    small
-                                    color="error"
-                                >
-                                    申請取消
-                                    <v-icon
-                                        right
-                                        dark
-                                    >
-                                        mdi-close
-                                    </v-icon>
-                                </v-btn>
-                            </v-card-actions> -->
                         </v-card>
                     </v-col>
                 </v-row>
 
-                <v-card-actions>
+                <v-card-actions v-show="order.status_code != 5">
                     <v-btn
                         :color="colorList[order.status_code].detail"
                         text
@@ -164,7 +153,7 @@
                         </v-icon>
                     </v-btn>
                 </v-card-actions>
-                <v-expand-transition>
+                <v-expand-transition v-show="order.status_code != 5">
                     <div v-show="order.show">
                         <v-divider></v-divider>
 
@@ -179,28 +168,24 @@
                                     <thead>
                                         <tr>
                                             <th class="text-left">
-                                                品項
+                                                學號
                                             </th>
                                             <th class="text-left">
-                                                規格
+                                                尺寸
                                             </th>
                                             <th class="text-left">
-                                                單價
-                                            </th>
-                                            <th class="text-left">
-                                                數量/件
+                                                顏色
                                             </th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr
-                                            v-for="(item, index) in order.items"
+                                            v-for="(item, index) in order.sets"
                                             :key="`${order.document_id}-detial-${index}`"
                                         >
-                                            <td>{{ item.name }}</td>
-                                            <td>{{ item.spec }}</td>
-                                            <td>{{ item.price }}</td>
-                                            <td>{{ item.request_quantity }}</td>
+                                            <td>{{ item.student.username }}</td>
+                                            <td>{{ item.cloth.spec }}</td>
+                                            <td>{{ item.accessory.spec }}</td>
                                         </tr>
                                     </tbody>
                                 </template>
@@ -210,6 +195,72 @@
                 </v-expand-transition>
             </v-card>
         </v-container>
+        <v-dialog
+            v-model="dialog"
+            max-width="400px"
+            persistent
+        >
+            <v-card>
+                <v-card-title>
+                    警告
+                </v-card-title>
+                <v-card-text>
+                    取消訂單後將無法復原，確定要取消訂單?
+                </v-card-text>
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn
+                        color="error"
+                        text
+                        @click="check_cancel"
+                    >
+                        返回
+                    </v-btn>
+                    <v-btn
+                        color="primary"
+                        text
+                        @click="check_save"
+                    >
+                        確定
+                    </v-btn>
+                </v-card-actions>
+            </v-card>
+            <v-dialog
+                v-model="pageLoading"
+                persistent
+                width="300"
+            >
+                <v-card
+                    color="primary"
+                    dark
+                >
+                    <v-card-text>
+                        Loading...
+                        <v-progress-linear
+                            indeterminate
+                            color="white"
+                            class="mb-0"
+                        ></v-progress-linear>
+                    </v-card-text>
+                </v-card>
+            </v-dialog>
+        </v-dialog>
+        <v-snackbar
+            v-model="snackbar"
+            :timeout="2000"
+        >
+            {{ msg }}
+            <template v-slot:action="{ attrs }">
+                <v-btn
+                    text
+                    v-bind="attrs"
+                    @click="snackbar = false"
+                    color="red"
+                >
+                    關閉
+                </v-btn>
+            </template>
+        </v-snackbar>
     </VuetifyLayout>
 </template>
 
@@ -229,132 +280,13 @@
         },
         name: "StudentMyorder",
         data: () => ({
+            dialog: false,
+            pageLoading: false,
+            snackbar: false,
             statusFilterSelected: -1,
-            order: {
-                document_id: "",
-                payment_id: '',
-                created_at: "",
-                total: 0,
-                status_code: 0,
-                logs: [],
-                owner: {}
-            },
-            orderList: [{
-                owner: {
-                    name: '學生一',
-                    username: '406410232',
-                    department: '電機喵喵喵喵組',
-                },
-                document_id: "20201116990146",
-                created_at: "2020-11-28 14:29",
-                total: 1111,
-                status_code: 3,
-                payment_id: '2020-1000-4658-444',
-                logs: [{
-                        status: 1,
-                        logName: '已付款',
-                        date: '2020-11-29 14:29'
-                    },
-                    {
-                        status: 2,
-                        logName: '已領取衣服',
-                        date: '2020-11-30 14:29'
-                    },
-                    {
-                        status: 3,
-                        logName: '已歸還衣服',
-                        date: '2020-12-01 14:29'
-                    }
-                ]
-            }, {
-                owner: {
-                    name: '學生一',
-                    username: '406410232',
-                    department: '電機喵喵喵喵組',
-                },
-                document_id: "20201116990147",
-                created_at: "2020-11-28 14:29",
-                total: 1111,
-                status_code: 2,
-                payment_id: 'payment-2020-1000-4658-444',
-                logs: [{
-                        status: 1,
-                        logName: '已付款',
-                        date: '2020-11-29 14:29'
-                    },
-                    {
-                        status: 2,
-                        logName: '已領取衣服',
-                        date: '2020-11-30 14:29'
-                    },
-                ]
-            }, {
-                owner: {
-                    name: '學生一',
-                    username: '406410232',
-                    department: '電機喵喵喵喵組',
-                },
-                document_id: "20201116990148",
-                created_at: "2020-11-28 14:29",
-                payment_id: 'payment-2020-1000-4658-444',
-                total: 1111,
-                status_code: 1,
-                logs: [{
-                    status: 1,
-                    logName: '已付款',
-                    date: '2020-11-29 14:29'
-                }]
-            }, {
-                owner: {
-                    name: '學生一',
-                    username: '406410232',
-                    department: '電機喵喵喵喵組',
-                },
-                document_id: "20201116990149",
-                created_at: "2020-11-28 14:29",
-                payment_id: '',
-                total: 1111,
-                status_code: 0,
-                logs: []
-            }, {
-                owner: {
-                    name: '學生一',
-                    username: '406410232',
-                    department: '電機喵喵喵喵組',
-                },
-                document_id: "20201116990150",
-                created_at: "2020-11-28 14:29",
-                payment_id: null,
-                total: 1111,
-                status_code: 4,
-                logs: [{
-                    status: 4,
-                    logName: '已申請訂單取消',
-                    date: '2020-11-29 14:29'
-                }]
-            }, {
-                owner: {
-                    name: '學生一',
-                    username: '406410232',
-                    department: '電機喵喵喵喵組',
-                },
-                document_id: "20201116990151",
-                created_at: "2020-11-28 14:29",
-                payment_id: null,
-                total: 1111,
-                status_code: 5,
-                logs: [{
-                        status: 4,
-                        logName: '已申請訂單取消',
-                        date: '2020-11-29 14:29'
-                    },
-                    {
-                        status: 5,
-                        logName: '已取消訂單',
-                        date: '2020-11-29 14:29'
-                    }
-                ]
-            }, ],
+            order: null,
+            msg: '',
+            orderList: [],
             colorList: [{
                     bg: '#fef9ef',
                     detail: '#d48344',
@@ -379,11 +311,15 @@
                     detail: 'red accent-2',
                 },
                 {
-                    bg: 'red lighten-5',
-                    detail: 'red accent-2',
-                }
+                    bg: '#fef9ef',
+                    detail: '#d48344',
+                },
+                {
+                    bg: '#fef9ef',
+                    detail: '#d48344',
+                },
             ],
-            statusMsg: ["", "未付款", "已付款，未領取衣服", "未歸還衣服", "已歸還衣服", "已申請訂單取消", "已取消訂單"],
+            statusMsg: ["已結單", "未付款", "已付款，未領取衣服", "未歸還衣服", "已歸還衣服", "已取消訂單", "退款中", "已退款"],
             // statusMsg2: ["未付款", "已付款", "已領取衣服", "已歸還衣服", "已申請訂單取消", "已取消訂單"]
             windowSize: {
                 x: 0,
@@ -405,7 +341,7 @@
             },
             orderFilter(order) {
                 if (this.statusFilterSelected !== null && this.statusFilterSelected !== -1) {
-                    return order.status_code === this.statusFilterSelected
+                    return order.status_code === this.statusFilterSelected + 1
                 }
                 return true
             },
@@ -421,6 +357,37 @@
                 // this.show = [...Array(this.$page.orders.length).keys()].map(() => false)
                 // console.log(this.show)
 
+            },
+            cancel_check(order) {
+                this.dialog = true
+                this.order = order
+            },
+            check_cancel() {
+                this.dialog = false
+                this.order = null
+            },
+            async check_save() {
+                this.pageLoading = true
+
+                await this.$inertia.patch(`/order/${this.order.id}`, {
+                    document_id: this.order.document_id,
+                    owner_username: this.order.owner.username,
+                    status_code: 5
+                }, {
+                    onSuccess: (page) => {
+                        this.msg = '已取消'
+                        this.order.status_code = 5
+                        this.order.sets = []
+                    },
+                    onError: (errors) => {
+                        this.msg = '發生錯誤'
+                    },
+                    onFinish: () => {
+                        this.pageLoading = false
+                        this.check_cancel()
+                        this.snackbar = true
+                    },
+                })
             },
         },
         computed: {

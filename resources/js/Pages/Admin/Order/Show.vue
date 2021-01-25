@@ -136,14 +136,15 @@
                                         v-if="order.payment_id && windowSize.x < 430"
                                         cols="12"
                                     >{{order.payment_id }}</v-col>
-                                    <v-col cols="12">{{ '訂單狀態：' }} {{ order.status_code }}</v-col>
+                                    <!-- <v-col cols="12">{{ '訂單狀態：' }} {{ order.status_code }}</v-col> -->
                                     <v-col cols="12">
+                                        <span>{{ '訂單狀態：' }}</span>
                                         <span :class="order.status_code === 4 ? 'green--text text--accent--3' :
                                             'red--text'">{{ statusMsg[order.status_code] }}</span>
                                     </v-col>
                                 </v-row>
                             </v-card-text>
-                            <v-card-actions v-if="order.status_code === 5">
+                            <!-- <v-card-actions v-if="order.status_code === 5">
                                 <v-spacer></v-spacer>
                                 <v-btn
                                     depressed
@@ -171,12 +172,12 @@
                                         mdi-close
                                     </v-icon>
                                 </v-btn>
-                            </v-card-actions>
+                            </v-card-actions> -->
                         </v-card>
                     </v-col>
                 </v-row>
 
-                <v-card-actions>
+                <v-card-actions v-show="order.status_code != 5">
                     <v-btn
                         :color="colorList[order.status_code].detail"
                         text
@@ -195,7 +196,7 @@
                         </v-icon>
                     </v-btn>
                 </v-card-actions>
-                <v-expand-transition>
+                <v-expand-transition v-show="order.status_code != 5">
                     <div v-show="order.show">
                         <v-divider></v-divider>
 
@@ -334,7 +335,7 @@
                 max-width="400px"
             >
                 <v-card>
-                    <v-card-title color="error">
+                    <v-card-title class="headline grey lighten-2">
                         警告
                     </v-card-title>
                     <v-card-text>
