@@ -1,7 +1,10 @@
 <?php
 
 
-use App\Http\Controllers\PDFController; //test
+use App\Http\Controllers\EditSetPriceController;
+use App\Http\Controllers\PDFController;
+
+//test
 
 use App\Http\Controllers\AdminStampChangeController;
 use App\Http\Controllers\ItemController;
@@ -84,6 +87,9 @@ Route::group([
 
     Route::get('/search_order', SearchOrderController::class)
         ->name('search_order');
+
+    Route::post('/edit_set_price', EditSetPriceController::class)
+        ->name('edit_set_price');
 
     Route::get('/meow', fn() => Inertia::render('Test', ['name' => 'Test meow']))
         ->name('meow'); // routes name as 'admin.meow'
