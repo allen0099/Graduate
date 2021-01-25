@@ -217,10 +217,7 @@
                         >
                             <v-col cols="12"><span>訂購人：{{ $page.user.name }}</span></v-col>
                             <v-col cols="12"><span>學號：{{ $page.user.username }}</span></v-col>
-                            <v-col cols="12"><span>科系：{{ '資訊工程學系(日)' }}</span></v-col>
-                            <v-col cols="12">
-                                <span>年級：{{ '四年級' }}&nbsp;&nbsp;&nbsp;&nbsp;班級：{{ 'B 班' }}</span>
-                            </v-col>
+                            <v-col cols="12"><span>系級：{{ $page.user.school_class.class_name }}</span></v-col>
                             <v-col cols="12"><span>訂單內容：</span></v-col>
                             <v-col cols="12">
                                 <v-data-table
@@ -239,7 +236,7 @@
                             <v-col
                                 cols="12"
                                 class="d-flex justify-end"
-                            ><span>共{{ order.length }}套，總金額： {{ order.length * 1000 }} NT$</span></v-col>
+                            ><span>共{{ order.length }}套，總金額： {{ order.length * price }} NT$</span></v-col>
                             <v-col
                                 cols="12"
                                 class="d-flex justify-end"
@@ -248,10 +245,6 @@
                                 cols="12"
                                 class="d-flex justify-end"
                             ><code class="caption">* 實際金額依照繳費機器為主</code></v-col>
-                            <v-col
-                                cols="12"
-                                class="d-flex justify-end"
-                            ><code class="caption">* 請注意 送出訂單後無法自行取消訂單</code></v-col>
                         </v-row>
 
                     </v-card>
@@ -300,77 +293,48 @@
                     >
                         <v-card-text
                             class="font-weight-bold body-1"
-                            v-if="$page.flash.success"
+                            v-if="order_check"
+                            v-show="result"
                         >
                             <v-row dense>
-                                <!-- <v-col cols="12">學生：{{ $page.flash.success.owner.name }}
+                                <v-col cols="12">訂購人：{{ result.owner.name }}
                                 </v-col>
-                                <v-col cols="12">班級：{{ 'meow' }}</v-col>
-                                <v-col cols="12">學號：{{ $page.flash.success.owner.username }}</v-col>
-                                <v-col cols="12">訂單編號：{{ $page.flash.success.document_id }}</v-col>
-                                <v-col cols="12">訂單日期：{{ $page.flash.success.created_at.slice(0, 16) }}</v-col>
-                                <v-col cols="12">總金額：{{ $page.flash.success.total_price }}</v-col> -->
-                                <v-col cols="12">學生：{{ '一二三' }}
-                                </v-col>
-                                <v-col cols="12">班級：{{ '資工XXXXXXX' }}</v-col>
+                                <v-col cols="12">系級：{{ result.owner.school_class.class_name }}</v-col>
                                 <v-col cols="12">
-                                    學號：{{ '123456789' }}</v-col>
+                                    學號：{{ result.owner.username }}</v-col>
                                 <v-col cols="12">
-                                    訂單編號：{{ '123456789123aaa' }}</v-col>
+                                    訂單編號：{{ result.document_id }}</v-col>
                                 <v-col cols="12">
-                                    訂單日期：{{ '20210101T12:55' }}
+                                    訂單日期：{{ result.created_at.slice(0, 16) }}
                                 </v-col>
                                 <v-col cols="12">
-                                    總金額：{{ '99999' }}</v-col>
-                                <v-col cols="12">
-                                    <!-- <v-simple-table
-                                        dense
-                                        fixed-header
-                                    >
-                                        <template v-slot:default>
-                                            <thead>
-                                                <tr>
-                                                    <th class="text-left">
-                                                        品項
-                                                    </th>
-                                                    <th class="text-left">
-                                                        規格
-                                                    </th>
-                                                    <th class="text-left">
-                                                        單價
-                                                    </th>
-                                                    <th class="text-left">
-                                                        數量/件
-                                                    </th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr
-                                                    v-for="(item, index) in $page.flash.success.items"
-                                                    :key="`detial-${index}`"
-                                                >
-                                                    <td>{{ item.name }}</td>
-                                                    <td>{{ item.spec }}</td>
-                                                    <td>{{ item.price }}</td>
-                                                    <td>{{ item.request_quantity }}
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </template>
-                                    </v-simple-table> -->
-                                </v-col>
+                                    總金額：{{ result.total_price }}</v-col>
                             </v-row>
                         </v-card-text>
+                        <v-card-text
+                            class="font-weight-bold body-1"
+                            v-else
+                        >{{ error_msg }}
+                        </v-card-text>
                     </v-card>
-                    <v-row class="mx-1">
 
+                    <v-row class="mx-1">
                         <v-spacer></v-spacer>
                         <v-btn
+                            v-show="!order_check"
                             :href="route(0)"
                             class="mb-3 mr-3"
-                            v-show="!order_check"
                         >
                             重新訂購
+                        </v-btn>
+                        <v-btn
+                            v-if="result"
+                            v-show="order_check"
+                            :href="`${route('order-pdf')}?document_id=${result.document_id}`"
+                            class="mb-3 mr-3"
+                            download
+                        >
+                            下載訂單明細
                         </v-btn>
                         <v-btn
                             color="primary"
@@ -384,7 +348,7 @@
             </v-stepper>
         </v-container>
         <v-dialog
-            v-model="form.processing"
+            v-model="loading"
             persistent
             width="300"
         >
@@ -431,8 +395,11 @@
 </template>
 <script>
     import VuetifyLayout from '@/Layouts/VuetifyLayout'
-
     import * as easings from 'vuetify/es5/services/goto/easing-patterns'
+    import {
+        apiSearchStudent,
+        apiCreateOrder
+    } from '@/api/api'
 
     export default {
         props: {
@@ -480,6 +447,7 @@
                 ],
                 cloths: [],
                 accessories: [],
+                price: 0,
                 student_id: '',
                 headers: [{
                         text: '學號',
@@ -535,7 +503,9 @@
                     'items': {}
                 }, {
                     bag: 'submitOrder',
-                })
+                }),
+                result: null,
+                error_msg: ''
             }
         },
 
@@ -545,20 +515,29 @@
                     this.choose = this.choose_items[0]
                     this.cloths = this.$page.inventory.slice(8, 12)
                     this.accessories = this.$page.inventory.slice(0, 2)
+                    this.price = this.$page.configs.bachelor_set_price
                 } else {
                     this.choose = this.choose_items[1]
                     this.cloths = this.$page.inventory.slice(12, 15)
                     this.accessories = this.$page.inventory.slice(2, 8)
+                    this.price = this.$page.configs.master_set_price
                 }
                 let order_item = Object.assign({}, this.edited_item)
                 order_item.stu_id = this.$page.user.username
                 order_item.name = this.$page.user.name
-                order_item.department = '電機一二三四組'
-                order_item.color = '白'
+                order_item.department = this.$page.user.school_class.class_name
+                order_item.color = this.$page.user.school_class.department.default_color
                 this.order.push(order_item)
+                if (this.$page.orders.set) {
+                    this.step = 4
+                    this.order_check = false
+                    this.error_msg = '您已有訂購紀錄，不可重複訂購，請確認是否自己或是有它人幫您訂購。'
+                }
             },
-            add_stdudent() {
+
+            async add_stdudent() {
                 let order_item = Object.assign({}, this.edited_item)
+
                 if (/^([0-9]){9}$/.test(this.student_id) === false) {
                     this.student_id = ''
                     this.msg = '查無此學號'
@@ -581,14 +560,39 @@
                     return
                 }
 
-                order_item.stu_id = this.student_id
-                order_item.name = this.$page.user.name
-                order_item.department = '電機一二三四組'
-                this.student_id = ''
-                this.order.push(order_item)
-                this.msg = '新增成功'
-                this.snackbar_true = true
-                this.snackbar = true
+                await apiSearchStudent(this.student_id).then((res) => {
+                    if (res.status == 200) {
+                        if (res.data.set) {
+                            this.student_id = ''
+                            this.msg = '此學生已有訂購'
+                            this.snackbar_true = false
+                            this.snackbar = true
+                        } else {
+                            order_item.stu_id = res.data.username
+                            order_item.name = res.data.name
+                            order_item.department = res.data.school_class.class_name
+                            order_item.color =
+                                res.data.school_class.department.default_color
+                            this.order.push(order_item)
+                            this.student_id = ''
+                            this.msg = '新增成功'
+                            this.snackbar_true = true
+                            this.snackbar = true
+                        }
+                    } else {
+                        this.student_id = ''
+                        this.msg = '查無此學號'
+                        this.snackbar_true = false
+                        this.snackbar = true
+                    }
+                }).catch((err) => {
+                    console.log(err)
+                    this.student_id = ''
+                    this.msg = '查無此學號'
+                    this.snackbar_true = false
+                    this.snackbar = true
+                })
+
             },
             delete_item(item) {
                 let index = this.order.indexOf(item)
@@ -599,14 +603,38 @@
                     this.step = 3
                 }
             },
-            submit_order() {
+            async submit_order() {
+                this.loading = true
+                let new_order = {}
+                new_order['username'] = this.$page.user.username
+                let sets = []
+                for (let i of this.order) {
+                    let item = {}
+                    item['accessory'] = this.accessories.find(x => x.spec === i.color).id
+                    item['cloth'] = this.cloths.find(x => x.spec === i.size).id
+                    item['set_owner'] = i.stu_id
+                    sets.push(item)
+                }
+                new_order['sets'] = sets
+                await apiCreateOrder(new_order).then((res) => {
+                    if (res.status == 200) {
+                        this.order_check = true
+                        this.result = res.data
+                    } else {
+                        this.order_check = false
+                        this.error_msg = '發生不明錯誤，請重新再試一次。'
+                    }
+                }).catch((err) => {
+                    this.order_check = false
+                    this.error_msg = '發生不明錯誤，請重新再試一次。'
+                })
                 this.step = 4
-                this.order_check = true
-                this.$vuetify.goTo(0, {
+                await this.$vuetify.goTo(0, {
                     duration: 300,
                     offset: 0,
                     easing: 'easeInOutCubic',
                 })
+                this.loading = false
             }
         },
         created() {

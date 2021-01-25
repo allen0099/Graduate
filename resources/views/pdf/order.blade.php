@@ -97,9 +97,7 @@
                             <p>學號：{{ $order->owner->username }}</p>
                         </th>
                         <th>
-                            {{-- <p>系級：{{ $order->owner->class_id }}</p>
-                            --}}
-                            <p>系級：數學系資統四一</p>
+                            <p>系級：{{ $order->owner->school_class->class_name }}</p>
                         </th>
                         <th>
                             <p>姓名：{{ $order->owner->name }}</p>

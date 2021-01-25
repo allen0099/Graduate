@@ -134,4 +134,4 @@ Route::middleware(['auth:sanctum'])->get('index', RedirectAfterLoginController::
 
 
 // test
-Route::get('order-pdf', [PDFController::class, 'OrderPdf']);
+Route::get('order-pdf', [PDFController::class, 'OrderPdf'])->name('order-pdf');;

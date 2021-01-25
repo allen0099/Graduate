@@ -18,3 +18,9 @@ export const apiOrderUpdate = (order_id, order) =>
 // Admin Return & Receive
 export const apiSearchOrder = search =>
     Request.get(`/search_order?search=${search}`);
+
+// Student oreder
+export const apiSearchStudent = stu_id =>
+    Request.get(`/search_user?search=${stu_id}`);
+
+export const apiCreateOrder = order => Request.post("/order", order);

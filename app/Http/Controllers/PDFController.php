@@ -55,9 +55,9 @@ class PDFController extends Controller
                     'cloth_type' => $cloth_type
                 ];
 
-                $pdf = PDF::loadView('pdf/pdf', $data);
+                $pdf = PDF::loadView('pdf/order', $data);
             
-                return $pdf->stream($result->owner->username.'-order.pdf');
+                return $pdf->stream($result->owner->username.'.pdf');
             }
         }
         return '資料錯誤';

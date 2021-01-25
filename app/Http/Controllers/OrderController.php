@@ -127,8 +127,8 @@ class OrderController extends Controller
         $this->saveSets($order, $request->sets);
 
         // return Inertia::render('Student/Order/Show', ['re_order'=> $order, 'finish'=> true]);
-        return redirect()->back()->with('success', $order->fresh());
-        // return $order->fresh();
+        // return redirect()->back()->with('success', $order->fresh());
+        return $order->fresh();
     }
 
     /**

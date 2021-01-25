@@ -46,14 +46,12 @@ class AppServiceProvider extends ServiceProvider
             ],
             'configs' => function () {
                 if (Auth::check()) {
-                    if (Auth::user()->role === User::ADMIN) {
-                        return [
-                            'time_range' => TimeRange::all(),
-                            'location' => Config::getReturnLocationValue(),
-                            'bachelor_set_price' => Config::getBachelorSetPriceValue(),
-                            'master_set_price' => Config::getMasterSetPriceValue(),
-                        ];
-                    }
+                    return [
+                        'time_range' => TimeRange::all(),
+                        'location' => Config::getReturnLocationValue(),
+                        'bachelor_set_price' => Config::getBachelorSetPriceValue(),
+                        'master_set_price' => Config::getMasterSetPriceValue(),
+                    ];
                 }
                 return null;
             },
