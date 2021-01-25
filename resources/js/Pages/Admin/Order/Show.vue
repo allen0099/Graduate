@@ -13,7 +13,7 @@
                 >
                     <v-text-field
                         v-model="$page.search"
-                        label="訂單搜尋 (學號或訂單編號)"
+                        label="訂單搜尋 (學號、訂單編號或付款單據)"
                         single-line
                         hide-details
                         clearable
