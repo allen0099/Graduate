@@ -103,9 +103,8 @@
                                     md="3"
                                     cols="3"
                                     class="ml-3"
-                                    @click="save_price(bachelor_price)"
                                 >
-                                    <v-btn>儲存</v-btn>
+                                    <v-btn @click="save_price(bachelor_price)">儲存</v-btn>
                                 </v-col>
                             </v-row>
                             <v-divider class="mx-5 v-divider-bold" />
@@ -208,9 +207,8 @@
                                     md="3"
                                     cols="3"
                                     class="ml-3"
-                                    @click="save_price(master_price)"
                                 >
-                                    <v-btn>儲存</v-btn>
+                                    <v-btn @click="save_price(master_price)">儲存</v-btn>
                                 </v-col>
                             </v-row>
                             <v-divider class="mx-5 v-divider-bold" />
@@ -320,7 +318,8 @@
     import TimeSetting from '@/Pages/Admin/Setting/TimeSetting'
     import LocationSetting from '@/Pages/Admin/Setting/LocationSetting'
     import {
-        apiInventoryUpdate
+        apiInventoryUpdate,
+        apiPriceUpdate
     } from '@/api/api'
 
     export default {
@@ -375,8 +374,8 @@
                 this.master_accessories = this.$page.inventory.slice(2, 8)
                 this.bachelor_cloths = this.$page.inventory.slice(8, 12)
                 this.master_cloths = this.$page.inventory.slice(12, 15)
-                this.bachelor_price = this.configs.bachelor_set_price
-                this.master_price = this.configs.master_set_price
+                this.bachelor_price = this.$page.configs.bachelor_set_price
+                this.master_price = this.$page.configs.master_set_price
             },
             async save_inventory(item) {
                 this.snackbar = false
@@ -404,19 +403,20 @@
             async save_price(price) {
                 this.snackbar = false
                 if (!!price && /^[0-9]*$/.test(price)) {
-                    // await apiUpdate(item.id, item).then((res) => {
-                    //     if (res.status === 200) {
-                    //         this.snackbar_true = true
-                    //         this.msg = '修改成功'
-                    //     } else {
-                    //         this.snackbar_true = false
-                    //         this.msg = '修改失敗'
-                    //     }
-                    // }).catch((err) => {
-                    //     console.log(err)
-                    //     this.snackbar_true = false
-                    //     this.msg = '修改失敗'
-                    // })
+                    let cloth = this.toggle_btn === 0 ? 'bachelor' : 'master'
+                    await apiPriceUpdate(cloth, price).then((res) => {
+                        if (res.status === 200) {
+                            this.snackbar_true = true
+                            this.msg = '修改成功'
+                        } else {
+                            this.snackbar_true = false
+                            this.msg = '修改失敗'
+                        }
+                    }).catch((err) => {
+                        console.log(err)
+                        this.snackbar_true = false
+                        this.msg = '修改失敗'
+                    })
                 } else {
                     this.snackbar_true = false
                     this.msg = '修改失敗'
