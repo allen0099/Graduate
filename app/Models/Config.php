@@ -16,6 +16,22 @@ class Config extends Model
      */
     public $timestamps = false;
 
+    public static function editSetPrice($cloth, int $price)
+    {
+        if ($cloth === 'bachelor') {
+            $c = Config::getBachelorSetPrice();
+        } else if ($cloth === 'master') {
+            $c = Config::getMasterSetPrice();
+        } else {
+            return abort(404);
+        }
+
+        $c->value = $price;
+        $c->save();
+
+        return $c;
+    }
+
     public static function getBachelorSetPrice()
     {
         return Config::where('key', 'bachelor_set_price')->first();

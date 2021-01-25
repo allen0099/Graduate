@@ -1,7 +1,10 @@
 <?php
 
 
-use App\Http\Controllers\PDFController; //test
+use App\Http\Controllers\EditSetPriceController;
+use App\Http\Controllers\PDFController;
+
+//test
 
 use App\Http\Controllers\AdminStampChangeController;
 use App\Http\Controllers\ItemController;
@@ -63,6 +66,10 @@ Route::get('/search_user', SearchUserController::class)
     ->middleware(['auth:sanctum'])
     ->name('search_user');
 
+Route::get('order-pdf', [PDFController::class, 'OrderPdf'])
+    ->middleware(['auth:sanctum'])
+    ->name('order-pdf');
+
 Route::post('/preserve_order', PreserveOrderController::class)
     ->middleware(['auth:sanctum'])
     ->name('preserve_order');
@@ -84,6 +91,9 @@ Route::group([
 
     Route::get('/search_order', SearchOrderController::class)
         ->name('search_order');
+
+    Route::post('/edit_set_price', EditSetPriceController::class)
+        ->name('edit_set_price');
 
     Route::get('/meow', fn() => Inertia::render('Test', ['name' => 'Test meow']))
         ->name('meow'); // routes name as 'admin.meow'
@@ -131,7 +141,3 @@ Route::middleware(['auth:sanctum'])->get('/meow', function () {
 })->name('meow'); // new dashboard
 
 Route::middleware(['auth:sanctum'])->get('index', RedirectAfterLoginController::class);
-
-
-// test
-Route::get('order-pdf', [PDFController::class, 'OrderPdf'])->name('order-pdf');;
