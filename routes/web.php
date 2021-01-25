@@ -1,9 +1,7 @@
 <?php
 
 
-use App\Http\Controllers\PDFController;
-
-//test
+use App\Http\Controllers\PDFController; //test
 
 use App\Http\Controllers\AdminStampChangeController;
 use App\Http\Controllers\ItemController;
@@ -136,4 +134,4 @@ Route::middleware(['auth:sanctum'])->get('index', RedirectAfterLoginController::
 
 
 // test
-Route::get('generate-pdf', [PDFController::class, 'meow']);
+Route::get('order-pdf', [PDFController::class, 'OrderPdf']);
