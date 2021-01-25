@@ -60,9 +60,14 @@ class AppServiceProvider extends ServiceProvider
             'inventory' => function () {
                 return Item::all();
             },
-            // 'orders' => function () {
-            //     return OrderController::showOrders();
-            // },
+            'orders' => function () {
+                if (Auth::check()) {
+                    if (Auth::user()->role === User::STUDENT) {
+                        return OrderController::showOrders();
+                    }
+                }
+                return null;
+            },
             'flash' => fn() => [
                 'success' => Session::get('success'),
             ],
