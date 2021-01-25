@@ -92,6 +92,7 @@
                                     <v-col
                                         cols="12"
                                         class="d-flex justify-end"
+                                        v-if="order.status_code != 5"
                                     >
                                         <v-btn
                                             outlined
