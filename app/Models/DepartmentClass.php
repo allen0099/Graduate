@@ -16,6 +16,16 @@ class DepartmentClass extends Model
      */
     protected $table = 'department_classes';
 
+    /**
+     * The attributes that should be hidden for arrays.
+     *
+     * @var array
+     */
+    protected $hidden = [
+        'id',
+        'department_id',
+    ];
+
     public function students()
     {
         return $this->hasMany('App\Models\User', 'class_id');
