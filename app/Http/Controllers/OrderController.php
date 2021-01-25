@@ -341,6 +341,13 @@ class OrderController extends Controller
             ]);
         }
 
+        if ($request->status_code === Order::code_canceled) {
+            $order->status_code = $request->status_code;
+            $order->save();
+            $order->sets()->delete();
+            return redirect()->back()->with('success', $order->fresh());
+        }
+
         $order->document_id = $request->document_id;
         $order->owner_id = User::where('username', $request->owner_username)->first()->id;
         $order->status_code = $request->status_code;
