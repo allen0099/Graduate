@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdminShowOrderController;
 use App\Http\Controllers\AdminStampChangeController;
 use App\Http\Controllers\EditSetPriceController;
+use App\Http\Controllers\getPDFController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\LocationUpdateController;
 use App\Http\Controllers\Order\OrderController;
@@ -63,6 +64,9 @@ Route::get('/search_user', SearchUserController::class)
 Route::get('order-pdf', [PDFController::class, 'OrderPdf'])
     ->middleware(['auth:sanctum'])
     ->name('order-pdf');
+
+Route::get('get_pdf', getPDFController::class)
+    ->name('get_pdf');
 
 Route::post('/preserve_order', PreserveDate::class)
     ->middleware(['auth:sanctum'])

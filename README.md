@@ -43,13 +43,21 @@ docker-compose up --force-recreate -d xxx
 ```
 
 - migrate database with init data
+
 ```shell script
 php artisan migrate:fresh --seed
 ```
 
+- public storage link
+
+```shell
+php artisan storage:link
+```
+
 ## Security Vulnerabilities
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell
+via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
 
 ## License
 
