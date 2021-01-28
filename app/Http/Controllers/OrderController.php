@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreOrder;
+use App\Http\Requests\UpdateOrder;
 use App\Models\Config;
 use App\Models\Item;
 use App\Models\Order;
@@ -30,89 +32,9 @@ class OrderController extends Controller
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreOrder $request)
     {
-        $request->validate([
-            'username' => [
-                'required',
-                'exists:users,username',
-                function ($attribute, $value, $fail) use ($request) {
-                    $user = $request->user();
-                    if ($user->role !== User::ADMIN && $user->username !== $value) {
-                        $fail($attribute . ' not match.');
-                    }
-                },
-            ],
-            'sets' => 'required',
-            'sets.*.set_owner' => [
-                'required',
-                'distinct',
-                'exists:users,username',
-                function ($attribute, $value, $fail) use ($request) {
-                    $user = User::where('username', $value)->first();
-                    $stu_ids = Set::getHaveSetIds();
-
-                    if (in_array($user->id, $stu_ids)) {
-                        $fail(__('validation.student_had_set'));
-                    }
-                },
-            ],
-            'sets.*.accessory' => [
-                'exists:items,id',
-                function ($attribute, $value, $fail) use ($request) {
-                    $index = explode('.', $attribute)[1];
-
-                    $username = $request->sets[$index]['set_owner'];
-
-                    $user = User::where('username', $username)->first();
-                    $department = $user->school_class->department;
-
-                    $accessory = Item::find($value)->first();
-
-                    if (!is_null($department->default_color) && $accessory->spec !== $department->default_color) {
-                        $fail(__('validation.color_not_match'));
-                    }
-
-                    if (!in_array($value, Item::accessoryIds())) {
-                        $fail(__('validation.item_set_wrong'));
-                    }
-                },
-                function ($attribute, $value, $fail) use ($request) {
-                    $sets = $request->sets;
-                    $return = array();
-                    array_walk($sets, function ($a) use (&$return) {
-                        $return[] = $a['accessory'];
-                        $return[] = $a['cloth'];
-                    });
-                    foreach (array_count_values($return) as $key => $value) {
-                        $item = Item::find($key);
-                        if ($item->remainQuantity - $value < 0)
-                            $fail(__('validation.item_not_enough'));
-                    }
-                },
-            ],
-            'sets.*.cloth' => [
-                'exists:items,id',
-                function ($attribute, $value, $fail) use ($request) {
-                    if (!in_array($value, Item::clothIds())) {
-                        $fail(__('validation.item_set_wrong'));
-                    }
-                },
-                function ($attribute, $value, $fail) use ($request) {
-                    $sets = $request->sets;
-                    $return = array();
-                    array_walk($sets, function ($a) use (&$return) {
-                        $return[] = $a['accessory'];
-                        $return[] = $a['cloth'];
-                    });
-                    foreach (array_count_values($return) as $key => $value) {
-                        $item = Item::find($key);
-                        if ($item->remainQuantity - $value < 0)
-                            $fail(__('validation.item_not_enough'));
-                    }
-                },
-            ],
-        ]);
+        $request->validated();
 
         $order = new Order();
 
@@ -150,7 +72,7 @@ class OrderController extends Controller
      * @param int $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdateOrder $request, $id)
     {
         $order = Order::find($id);
         $user = Auth::user();
@@ -158,189 +80,7 @@ class OrderController extends Controller
         if (is_null($order))
             abort(404);
 
-        if ($user->role === User::STUDENT) {
-            // role student, only cancel
-            $this->checkBelongToStudent($order);
-
-            $request->validate([
-                'document_id' => [
-                    'required',
-                    Rule::unique('orders', 'document_id')
-                        ->ignore($order->document_id, 'document_id'),
-                    'exists:orders,document_id', // student update check
-                ],
-                'owner_username' => [
-                    'required',
-                    'exists:users,username',
-                    Rule::unique('users', 'username')
-                        ->ignore($user->id, 'id'), // student update check
-                ],
-                'status_code' => [
-                    'required',
-                    Rule::in([
-                        Order::code_canceled,
-                    ]),
-                    function ($attribute, $value, $fail) use ($request) {
-                        // todo: change fail, or not changed code
-                        $order = Order::where('document_id', $request->document_id)->first();
-                        if (!is_null($order) && $order->status_code === Order::code_canceled)
-                            $fail(__('validation.order_canceled'));
-                    },
-                ],
-                'sets.*.set_owner' => [
-                    'distinct',
-                    'exists:users,username',
-                    function ($attribute, $value, $fail) use ($request) {
-                        $user = User::where('username', $value)->first();
-                        $stu_ids = Set::getHaveSetIds();
-
-                        $order = Order::where('document_id', $request->document_id)->first();
-                        if (!is_null($order)) {
-                            $sets = $order->sets;
-                            $set_ids = $sets->map->only('student_id')->flatten()->all();
-
-                            $other_ids = array_diff($stu_ids, $set_ids);
-
-                            if (in_array($user->id, $other_ids)) {
-                                $fail(__('validation.student_had_set'));
-                            }
-                        }
-                    },
-                ],
-                'sets.*.accessory' => [
-                    'exists:items,id',
-                    function ($attribute, $value, $fail) use ($request) {
-                        $index = explode('.', $attribute)[1];
-
-                        $username = $request->sets[$index]['set_owner'];
-
-                        $user = User::where('username', $username)->first();
-                        $department = $user->school_class->department;
-
-                        $accessory = Item::find($value)->first();
-
-                        if (!is_null($department->default_color) && $accessory->spec !== $department->default_color) {
-                            $fail(__('validation.color_not_match'));
-                        }
-
-                        if (!in_array($value, Item::accessoryIds())) {
-                            $fail(__('validation.item_set_wrong'));
-                        }
-                    },
-                    function ($attribute, $value, $fail) use ($request) {
-                        $sets = $request->sets;
-                        $return = array();
-                        array_walk($sets, function ($a) use (&$return) {
-                            $return[] = $a['accessory'];
-                            $return[] = $a['cloth'];
-                        });
-                        foreach (array_count_values($return) as $key => $value) {
-                            $item = Item::find($key);
-                            if ($item->remainQuantity - $value < 0)
-                                $fail(__('validation.item_not_enough'));
-                        }
-                    },
-                ],
-                'sets.*.cloth' => [
-                    'exists:items,id',
-                    function ($attribute, $value, $fail) use ($request) {
-                        if (!in_array($value, Item::clothIds())) {
-                            $fail(__('validation.item_set_wrong'));
-                        }
-                    },
-                    function ($attribute, $value, $fail) use ($request) {
-                        $sets = $request->sets;
-                        $return = array();
-                        array_walk($sets, function ($a) use (&$return) {
-                            $return[] = $a['accessory'];
-                            $return[] = $a['cloth'];
-                        });
-                        foreach (array_count_values($return) as $key => $value) {
-                            $item = Item::find($key);
-                            if ($item->remainQuantity - $value < 0)
-                                $fail(__('validation.item_not_enough'));
-                        }
-                    },
-                ],
-            ]);
-        }
-        if ($user->role === User::ADMIN) {
-            // role admin, edit order
-            $request->validate([
-                'document_id' => [
-                    'required',
-                    Rule::unique('orders', 'document_id')
-                        ->ignore($order->document_id, 'document_id'),
-                ],
-                'payment_id' => Rule::unique('orders', 'payment_id')
-                    ->ignore($order->payment_id, 'payment_id'),
-                'owner_username' => [
-                    'required',
-                    'exists:users,username',
-                ],
-                'status_code' => [
-                    'required',
-                    Rule::in([
-                        Order::code_created,
-                        Order::code_paid,
-                        Order::code_received,
-                        Order::code_returned,
-                        Order::code_canceled,
-                        Order::code_refunding,
-                        Order::code_refunded,
-                    ]),
-                ],
-                'sets.*.set_owner' => [
-                    'distinct',
-                    'exists:users,username',
-                    function ($attribute, $value, $fail) use ($request) {
-                        $user = User::where('username', $value)->first();
-                        $stu_ids = Set::getHaveSetIds();
-
-                        $order = Order::where('document_id', $request->document_id)->first();
-                        if (!is_null($order)) {
-                            $sets = $order->sets;
-                            $set_ids = $sets->map->only('student_id')->flatten()->all();
-
-                            $other_ids = array_diff($stu_ids, $set_ids);
-
-                            if (in_array($user->id, $other_ids)) {
-                                $fail(__('validation.student_had_set'));
-                            }
-                        }
-                    },
-                ],
-                'sets.*.accessory' => [
-                    'exists:items,id',
-                    function ($attribute, $value, $fail) use ($request) {
-                        $index = explode('.', $attribute)[1];
-
-                        $username = $request->sets[$index]['set_owner'];
-
-                        $user = User::where('username', $username)->first();
-                        $department = $user->school_class->department;
-
-                        $accessory = Item::find($value)->first();
-
-                        if (!is_null($department->default_color) && $accessory->spec !== $department->default_color) {
-                            $fail(__('validation.color_not_match'));
-                        }
-
-                        if (!in_array($value, Item::accessoryIds())) {
-                            $fail(__('validation.item_set_wrong'));
-                        }
-                    },
-                ],
-                'sets.*.cloth' => [
-                    'exists:items,id',
-                    function ($attribute, $value, $fail) use ($request) {
-                        if (!in_array($value, Item::clothIds())) {
-                            $fail(__('validation.item_set_wrong'));
-                        }
-                    },
-                ],
-            ]);
-        }
+        $request->validated();
 
         if ($request->status_code === Order::code_canceled) {
             $order->status_code = $request->status_code;
@@ -409,12 +149,6 @@ class OrderController extends Controller
             $ordered_set->size_item = $set['cloth'];
             $ordered_set->save();
         }
-    }
-
-    private function checkBelongToStudent($order)
-    {
-        if ($order->owner->id !== Auth::id())
-            abort(403);
     }
 
     private function calculateTotalPrice($sets)

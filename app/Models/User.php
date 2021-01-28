@@ -72,6 +72,15 @@ class User extends Authenticatable
         'profile_photo_url',
     ];
 
+    public function isRole(string $role)
+    {
+        if (in_array($role, [User::ADMIN, User::STUDENT]))
+            if ($this->role === $role) {
+                return true;
+            }
+        return false;
+    }
+
     public function isBachelor()
     {
         return str_starts_with($this->username, '2') || str_starts_with($this->username, '4') ?
