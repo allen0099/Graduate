@@ -2,10 +2,9 @@
 
 namespace App\Providers;
 
-use App\Http\Controllers\OrderController;
+use App\Http\Controllers\Order\OrderController;
 use App\Models\Config;
 use App\Models\Item;
-use App\Models\Order;
 use App\Models\TimeRange;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;

@@ -1,18 +1,16 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Order;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreOrder;
 use App\Http\Requests\UpdateOrder;
 use App\Models\Config;
-use App\Models\Item;
 use App\Models\Order;
 use App\Models\Set;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\Rule;
-
 
 class OrderController extends Controller
 {

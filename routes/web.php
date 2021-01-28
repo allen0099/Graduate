@@ -1,24 +1,18 @@
 <?php
 
-
-use App\Http\Controllers\EditSetPriceController;
-use App\Http\Controllers\PDFController;
-
-//test
-
+use App\Http\Controllers\AdminShowOrderController;
 use App\Http\Controllers\AdminStampChangeController;
+use App\Http\Controllers\EditSetPriceController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\LocationUpdateController;
-use App\Http\Controllers\OrderController;
-use App\Http\Controllers\PreserveOrderController;
+use App\Http\Controllers\Order\OrderController;
+use App\Http\Controllers\Order\PreserveDate;
+use App\Http\Controllers\Order\ReturnOrder;
+use App\Http\Controllers\Order\SearchOrder;
+use App\Http\Controllers\PDFController;
 use App\Http\Controllers\RedirectAfterLoginController;
-use App\Http\Controllers\ReturnOrderController;
-use App\Http\Controllers\AdminShowOrderController;
-use App\Http\Controllers\SearchOrderController;
 use App\Http\Controllers\SearchUserController;
 use App\Http\Controllers\TimeRangeController;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -70,7 +64,7 @@ Route::get('order-pdf', [PDFController::class, 'OrderPdf'])
     ->middleware(['auth:sanctum'])
     ->name('order-pdf');
 
-Route::post('/preserve_order', PreserveOrderController::class)
+Route::post('/preserve_order', PreserveDate::class)
     ->middleware(['auth:sanctum'])
     ->name('preserve_order');
 
@@ -86,10 +80,10 @@ Route::group([
     'middleware' => ['auth:sanctum', 'can:admin'],
     'as' => 'admin.'
 ], function () {
-    Route::get('/return_order', ReturnOrderController::class)
+    Route::get('/return_order', ReturnOrder::class)
         ->name('return_order');
 
-    Route::get('/search_order', SearchOrderController::class)
+    Route::get('/search_order', SearchOrder::class)
         ->name('search_order');
 
     Route::post('/edit_set_price', EditSetPriceController::class)

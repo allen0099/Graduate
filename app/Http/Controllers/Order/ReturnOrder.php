@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Order;
 
-use App\Models\Order;
+use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 
-class ReturnOrderController extends Controller
+class ReturnOrder extends Controller
 {
     /**
      * Handle the incoming request.

@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Order;
 
+use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\TimeRange;
 use App\Models\User;
-use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class PreserveOrderController extends Controller
+class PreserveDate extends Controller
 {
     /**
      * Handle the incoming request.
