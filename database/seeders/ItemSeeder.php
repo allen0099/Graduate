@@ -17,13 +17,13 @@ class ItemSeeder extends Seeder
         DB::table('items')->insert([
             'spec' => '白',
             'quantity' => 1050,
-            'name' => '領巾',
+            'name' => '領巾、帽子',
             'type' => '學士',
         ]);
         DB::table('items')->insert([
             'spec' => '藍',
             'quantity' => 480,
-            'name' => '領巾',
+            'name' => '領巾、帽子',
             'type' => '學士',
         ]);
         DB::table('items')->insert([
