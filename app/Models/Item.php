@@ -36,12 +36,14 @@ class Item extends Model
 
     public function getRemainQuantityAttribute()
     {
-        $color_out = Set::all()
+        // todo: improve loading time
+        $set_all = Set::all();
+        $color_out = $set_all
             ->where('color_item', $this->id)
             ->where('returned', false)
             ->count();
 
-        $size_out = Set::all()
+        $size_out = $set_all
             ->where('size_item', $this->id)
             ->where('returned', false)
             ->count();
