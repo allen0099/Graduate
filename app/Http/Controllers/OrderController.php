@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Controllers\Order;
+namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreOrder;
 use App\Http\Requests\UpdateOrder;
 use App\Models\Config;
 use App\Models\Order;
 use App\Models\Set;
+use App\Models\TimeRange;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -119,6 +119,111 @@ class OrderController extends Controller
         $order->delete();
 
         return response()->noContent();
+    }
+
+    public function searchOrder(Request $request)
+    {
+        $search = $request->search;
+
+        if (!is_null($search)) {
+            $find_owner = User::where('username', $search);
+            $find_document = Order::where('document_id', $search);
+            $find_payment_id = Order::where('payment_id', $search);
+
+            if ($find_owner->count() === 0 && $find_document->count() === 0 && $find_payment_id->count() === 0)
+                $result = [];
+
+            if ($find_owner->count() > 0) {
+                $result = $find_owner->first()->orders()->get();
+
+                if ($result->count() === 0) {
+                    $set = $find_owner->first()->set()->first();
+                    if (!is_null($set))
+                        $result = $set->order()->get();
+                }
+            }
+
+            if ($find_document->count() > 0) {
+                $result = $find_document->get();
+            }
+
+            if ($find_payment_id->count() > 0) {
+                $result = $find_payment_id->get();
+            }
+
+            return $result;
+        }
+
+        abort(404);
+    }
+
+    public function returnOrder(Request $request)
+    {
+        $stu_id = $request->stu_id;
+
+        if ($stu_id !== null) {
+            $stu = User::where('username', $stu_id)->firstOr(fn() => abort(404));
+
+            $set = $stu->set()->get()->first();
+
+            if ($set->returned) {
+                return response()
+                    ->json([
+                        'error' => 'duplicate',
+                        'message' => __('validation.student_returned')
+                    ], 400);
+            }
+
+            $set->returned = true;
+            $set->save();
+
+            $order = $set->order()->get();
+
+            return $order;
+        }
+        return abort(404);
+    }
+
+    public function preserveDate(Request $request)
+    {
+        $user = Auth::user();
+
+        $request->validate([
+            'order_id' => [
+                'required',
+                'exists:orders,document_id'
+            ]
+        ]);
+
+        $order = Order::where('document_id', $request->order_id)->first();
+
+        $request->validate([
+            'preserve_date' => [
+                'required',
+                'after_or_equal:' . now()->addDays(2)->startOfDay(),
+                'before_or_equal:' . ($order->owner->isBachelor() ?
+                    TimeRange::getBachelorReturnEndTime() :
+                    TimeRange::getMasterReturnEndTime()),
+            ],
+        ]);
+
+        if ($user->role === User::STUDENT && $order->owner->id !== $user->id)
+            return abort(403);
+
+        $order->preserve = $request->preserve_date;
+        $order->save();
+
+        return $order->fresh();
+    }
+
+    public function paidOrder(Request $request)
+    {
+        //
+    }
+
+    public function cancelOrder(Request $request)
+    {
+        //
     }
 
     public static function showOrders()

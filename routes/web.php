@@ -6,10 +6,7 @@ use App\Http\Controllers\EditSetPriceController;
 use App\Http\Controllers\FindPdfController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\LocationUpdateController;
-use App\Http\Controllers\Order\OrderController;
-use App\Http\Controllers\Order\PreserveDate;
-use App\Http\Controllers\Order\ReturnOrder;
-use App\Http\Controllers\Order\SearchOrder;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PDFController;
 use App\Http\Controllers\RedirectAfterLoginController;
 use App\Http\Controllers\SearchUserController;
@@ -68,7 +65,7 @@ Route::get('order-pdf', [PDFController::class, 'OrderPdf'])
 Route::get('find_pdf', FindPdfController::class)
     ->name('find_pdf');
 
-Route::post('/preserve_order', PreserveDate::class)
+Route::post('/preserve_order', [OrderController::class, 'preserveDate'])
     ->middleware(['auth:sanctum'])
     ->name('preserve_order');
 
@@ -84,10 +81,10 @@ Route::group([
     'middleware' => ['auth:sanctum', 'can:admin'],
     'as' => 'admin.'
 ], function () {
-    Route::get('/return_order', ReturnOrder::class)
+    Route::get('/return_order', [OrderController::class, 'returnOrder'])
         ->name('return_order');
 
-    Route::get('/search_order', SearchOrder::class)
+    Route::get('/search_order', [OrderController::class, 'searchOrder'])
         ->name('search_order');
 
     Route::post('/edit_set_price', EditSetPriceController::class)
