@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
-class getPDFController extends Controller
+class FindPdfController extends Controller
 {
     /**
      * Handle the incoming request.
@@ -15,7 +15,11 @@ class getPDFController extends Controller
      */
     public function __invoke(Request $request)
     {
-        // todo: implement pdf select
-        return response()->redirectTo(Storage::disk('pdf')->url('Announcement.pdf'));
+        $file_name = $request->name . '.pdf';
+        $disk = Storage::disk('pdf');
+
+        return $disk->exists($file_name)
+            ? response()->redirectTo($disk->url($file_name))
+            : abort(404);
     }
 }
