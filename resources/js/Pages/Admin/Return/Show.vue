@@ -40,6 +40,7 @@
                             <v-btn
                                 color="primary"
                                 @click="return_submit"
+                                :loading="search_loading"
                             >歸還</v-btn>
                         </v-col>
                     </v-row>
@@ -118,7 +119,7 @@
                         text
                         @click="save"
                     >
-                        領取
+                        歸還
                     </v-btn>
                 </v-card-actions>
             </v-card>
@@ -164,6 +165,7 @@
             error: false,
             dialog: false,
             pageLoading: false,
+            search_loading: false,
             student: null,
             choose_file: null,
             file_list: [{
@@ -193,6 +195,7 @@
                     this.error = true
                     this.show_msg = true
                 } else {
+                    this.search_loading = true
                     await apiSearchStudent(this.stuid).then((res) => {
                         if (res.status == 200) {
                             this.dialog = true
@@ -217,12 +220,14 @@
                             this.error = true
                             this.show_msg = true
                         }
+                        this.search_loading = false
                     }).catch((err) => {
                         console.log(err)
                         this.stuid = ''
                         this.msg = '查無此學號'
                         this.error = true
                         this.show_msg = true
+                        this.search_loading = false
                     })
                 }
                 setTimeout(() => {

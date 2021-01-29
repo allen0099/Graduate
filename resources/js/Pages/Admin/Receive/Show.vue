@@ -40,6 +40,7 @@
                             <v-btn
                                 color="primary"
                                 @click="receive_submit"
+                                :loading="search_loading"
                             >查詢</v-btn>
                         </v-col>
                     </v-row>
@@ -218,7 +219,10 @@
                         <v-col
                             cols="12"
                             md="4"
-                        >訂單當前狀態：{{ statusMsg[order.status_code] }}</v-col>
+                        ><span>訂單當前狀態：</span>
+                            <span :class="order.status_code === 4 ? 'green--text text--accent--3' :
+                                            'red--text'">{{ statusMsg[order.status_code] }}</span>
+                        </v-col>
                         <v-col cols="12">訂單內容：</v-col>
                         <v-col cols="12">
                             <v-data-table
@@ -294,6 +298,7 @@
             dialog: false,
             error: false,
             pageLoading: false,
+            search_loading: false,
             choose_file: null,
             statusMsg: ["已結單", "未付款", "已付款，未領取衣服", "未歸還衣服", "已歸還衣服", "已取消訂單", "退款中", "已退款"],
             headers: [{
@@ -390,6 +395,7 @@
                 this.master_cloths = this.$page.inventory.slice(12, 15)
             },
             async receive_submit() {
+                this.search_loading = true
                 await apiSearchOrder(this.order_id).then((res) => {
                     if (res.status === 200 && res.data.length > 0) {
                         this.order = res.data[0]
@@ -401,12 +407,14 @@
                         this.error = true
                         this.show_msg = true
                     }
+                    this.search_loading = false
                 }).catch((err) => {
                     console.log(err)
                     this.order_id = ''
                     this.msg = '查無此訂單編號'
                     this.error = true
                     this.show_msg = true
+                    this.search_loading = false
                 })
 
                 setTimeout(() => {
