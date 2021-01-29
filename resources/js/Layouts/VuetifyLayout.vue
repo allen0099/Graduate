@@ -34,7 +34,7 @@
                     color="gray"
                     text
                     rounded
-                    class="ml-3 bottom hidden-sm-and-down text-decoration-none"
+                    class="ml-2 bottom hidden-sm-and-down text-decoration-none"
                     :href="route(link.url)"
                     :class="{'v-btn--active': route().current(link.url)}"
                     v-if="link.role.indexOf($page.user.role) >= 0"
@@ -53,7 +53,7 @@
                     color="gray"
                     text
                     rounded
-                    class="ml-3 hidden-sm-and-down text-decoration-none"
+                    class="ml-2 hidden-sm-and-down text-decoration-none"
                     :href="route(link.url)"
                     :class="{'v-btn--active': route().current(link.url)}"
                     v-if="link.role.indexOf($page.user.role) >= 0"
@@ -72,7 +72,7 @@
                             v-on="on"
                             color="gray"
                             text
-                            class="ml-3 hidden-sm-and-down text-decoration-none"
+                            class="ml-2 hidden-sm-and-down text-decoration-none"
                         >
                             {{$page.user.name}}<v-icon right>{{ 'mdi-menu-down' }}</v-icon>
                         </v-btn>
@@ -335,6 +335,12 @@
                         label: '訂單管理',
                         url: 'admin.order',
                         icon: 'mdi-format-list-bulleted-type',
+                        role: ['admin'],
+                    },
+                    {
+                        label: '付款',
+                        url: 'admin.paying',
+                        icon: 'mdi-alpha-p-box-outline ',
                         role: ['admin'],
                     },
                     {
