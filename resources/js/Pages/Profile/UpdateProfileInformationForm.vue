@@ -12,11 +12,11 @@
         <!-- form grid-cols-6 -->
         <template #form>
             <!-- Profile Photo -->
-            <div
+            <!-- <div
                 class="col-span-6 sm:col-span-4"
                 v-if="$page.jetstream.managesProfilePhotos"
             >
-                <!-- Profile Photo File Input -->
+
                 <input
                     type="file"
                     class="hidden"
@@ -29,7 +29,7 @@
                     value="Photo"
                 />
 
-                <!-- Current Profile Photo -->
+
                 <div
                     class="mt-2"
                     v-show="! photoPreview"
@@ -41,7 +41,7 @@
                     >
                 </div>
 
-                <!-- New Profile Photo Preview -->
+
                 <div
                     class="mt-2"
                     v-show="photoPreview"
@@ -74,7 +74,7 @@
                     :message="form.error('photo')"
                     class="mt-2"
                 />
-            </div>
+            </div> -->
 
             <!-- Name -->
             <div class="col-span-6 sm:col-span-4">
@@ -89,10 +89,6 @@
                     v-model="form.name"
                     disabled
                 />
-                <!-- <jet-input-error
-                    :message="form.error('name')"
-                    class="mt-2"
-                /> -->
             </div>
 
             <!-- Student ID -->
@@ -136,6 +132,47 @@
                     class="mt-1 block w-full"
                     v-model="form.email"
                 />
+                <jet-input-error
+                    :message="form.error('email')"
+                    class="mt-2"
+                />
+            </div>
+
+            <!-- License Confirm -->
+            <div
+                class="col-span-6 sm:col-span-4"
+                v-if="user.role === 'student'"
+            >
+                <jet-label
+                    for="license"
+                    value="出納付款查詢平台資料填寫確認"
+                />
+                <v-checkbox
+                    v-model="form.filled_pay_form"
+                    persistent-hint
+                    hint="(請登入「出納付款查詢平台」，至「您的資料」進行填寫。)"
+                    :readonly="form.filled_pay_form"
+                >
+                    <template v-slot:label>
+                        <div>
+                            本人已填寫
+                            <v-tooltip bottom>
+                                <template v-slot:activator="{ on }">
+                                    <a
+                                        target="_blank"
+                                        href="https://finfo.ais.tku.edu.tw/pmt/"
+                                        @click.stop
+                                        v-on="on"
+                                    >
+                                        出納付款查詢平台
+                                    </a>
+                                </template>
+                                請登入後，至「您的資料」進行填寫。
+                            </v-tooltip>
+                            之基本資料與金融帳戶。
+                        </div>
+                    </template>
+                </v-checkbox>
                 <jet-input-error
                     :message="form.error('email')"
                     class="mt-2"
@@ -185,11 +222,13 @@
 
         data() {
             return {
+                dialog: false,
                 form: this.$inertia.form({
                     '_method': 'PUT',
                     name: this.user.name,
                     email: this.user.email,
                     username: this.user.username,
+                    filled_pay_form: this.user.filled_pay_form,
                     photo: null,
                 }, {
                     bag: 'updateProfileInformation',
