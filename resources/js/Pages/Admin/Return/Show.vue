@@ -46,31 +46,6 @@
                     </v-row>
                 </v-toolbar>
             </v-card-title>
-            <v-spacer></v-spacer>
-            <!-- <v-alert
-                color="green"
-                text
-                :type="error ? 'error' : 'success'"
-                v-if="student"
-            >{{ student.username }} {{ student.school_class.class_name }} {{ student.name }}</v-alert> -->
-            <v-divider class="mx-5 v-divider-bold" />
-            <v-card-title>清單下載列印</v-card-title>
-            <v-card flat>
-                <v-card-title class="mx-3">
-                    <v-select
-                        class="mr-2"
-                        v-model="choose_file"
-                        :items="file_list"
-                        item-text="filename"
-                        label="檔案"
-                        return-object
-                    ></v-select>
-                    <v-btn
-                        class="ml-3"
-                        @click="download"
-                    >下載</v-btn>
-                </v-card-title>
-            </v-card>
         </v-card>
         <v-dialog
             v-model="dialog"
@@ -168,24 +143,6 @@
             search_loading: false,
             student: null,
             choose_file: null,
-            file_list: [{
-                    filename: '預約歸還簽到表',
-                    path: '123'
-                },
-                {
-                    filename: '空白簽到表',
-                    path: '123'
-                }, {
-                    filename: '未歸還清單',
-                    path: '123'
-                }, {
-                    filename: '已歸還清單',
-                    path: '123'
-                }, {
-                    filename: '當日歸還清單',
-                    path: '123'
-                }
-            ],
         }),
         methods: {
             async return_submit() {
@@ -233,10 +190,6 @@
                 setTimeout(() => {
                     this.show_msg = false
                 }, 2000)
-            },
-            download() {
-                alert(this.choose_file.filename)
-                this.choose_file = null
             },
             async save() {
                 this.pageLoading = true
