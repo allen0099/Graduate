@@ -13,7 +13,7 @@ class Item extends Model
     const MASTER = '碩士';
     const DOCTOR = '博士';
 
-    const COLOR_ITEMS = ['領巾', '披肩、帽穗'];
+    const COLOR_ITEMS = ['領巾、帽子', '披肩、帽穗'];
     const SIZE_ITEMS = ['學士服', '碩士服', '博士服'];
 
     /**
@@ -36,12 +36,14 @@ class Item extends Model
 
     public function getRemainQuantityAttribute()
     {
-        $color_out = Set::all()
+        // todo: improve loading time
+        $set_all = Set::all();
+        $color_out = $set_all
             ->where('color_item', $this->id)
             ->where('returned', false)
             ->count();
 
-        $size_out = Set::all()
+        $size_out = $set_all
             ->where('size_item', $this->id)
             ->where('returned', false)
             ->count();
