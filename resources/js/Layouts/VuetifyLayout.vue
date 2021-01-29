@@ -315,6 +315,32 @@
                 </v-container>
             </v-footer>
         </v-main>
+        <v-dialog
+            v-model="license_check"
+            persistent
+            max-width="500"
+        >
+            <v-card>
+                <v-card-title>
+                    <v-icon
+                        color="red"
+                        large
+                    >mdi-alert-octagon-outline</v-icon>系統通知
+                </v-card-title>
+                <v-card-text>
+                    系統發現您尚未確認已填寫「出納付款查詢平台」之基本資料與金融帳戶，請填寫完畢並且在「使用者設定 > 使用者資訊」勾選確認。
+                </v-card-text>
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn
+                        color="primary"
+                        :href="route('profile.show')"
+                    >
+                        前往設定
+                    </v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
     </v-app>
 </template>
 
@@ -322,6 +348,7 @@
     export default {
         data() {
             return {
+                license_check: false,
                 sidebar: false,
                 helloworld: 'helloworld',
                 showingNavigationDropdown: false,
@@ -429,7 +456,20 @@
                     window.location = '/';
                 })
             },
-        }
+            cancel() {
+                this.license_check = false
+            },
+            check() {
+                if (this.$page.user.role === 'student') {
+                    if (this.$inertia.page.url !== '/user/profile') {
+                        this.license_check = !this.$page.user.filled_pay_form
+                    }
+                }
+            },
+        },
+        mounted() {
+            this.check()
+        },
     }
 
 </script>
