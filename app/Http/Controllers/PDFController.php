@@ -7,22 +7,21 @@ use App\Models\User;
 use Barryvdh\DomPDF\Facade as PDF;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class PDFController extends Controller
 {
-    public function generatePDF()
+    public function findPdf(Request $request)
     {
-        $data = [
-            'title' => 'Welcome to ItSolutionStuff.com',
-            'date' => date('m/d/Y')
-        ];
+        $file_name = $request->name . '.pdf';
+        $disk = Storage::disk('pdf');
 
-        $pdf = PDF::loadView('pdf/pdf', $data);
-
-        return $pdf->download('itsolutionstuff.pdf');
+        return $disk->exists($file_name)
+            ? response()->redirectTo($disk->url($file_name))
+            : abort(404);
     }
 
-    public function OrderPdf(Request $request)
+    public function orderPdf(Request $request)
     {
         $document_id = $request->document_id;
 
