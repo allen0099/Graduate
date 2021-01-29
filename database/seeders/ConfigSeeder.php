@@ -26,5 +26,9 @@ class ConfigSeeder extends Seeder
             'key' => 'master_set_price',
             'value' => '1300',
         ]);
+        DB::table('configs')->insert([
+            'key' => 'margin_price',
+            'value' => '200',
+        ]);
     }
 }

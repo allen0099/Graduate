@@ -25,6 +25,8 @@ class CreateUsersTable extends Migration
             $table->foreignId('class_id')->nullable()
                 ->constrained('department_classes'); // student
 
+            $table->boolean('filled_pay_form')->default(false);
+
             $table->text('stamp')->nullable(); // admin
 
             $table->text('two_factor_secret')->nullable();
