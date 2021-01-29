@@ -105,6 +105,9 @@ Route::group([
     Route::get('/admin/paying', fn() => Inertia::render('Admin/Paying/Show'))
         ->name('paying');
 
+    Route::get('/admin/refund', fn() => Inertia::render('Admin/Refund/Show'))
+        ->name('refund');
+
     Route::get('/admin/return', fn() => Inertia::render('Admin/Return/Show'))
         ->name('return');
 

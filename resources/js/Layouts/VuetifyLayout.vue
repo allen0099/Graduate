@@ -340,19 +340,25 @@
                     {
                         label: '付款',
                         url: 'admin.paying',
-                        icon: 'mdi-alpha-p-box-outline ',
+                        icon: '',
                         role: ['admin'],
                     },
                     {
                         label: '領取',
                         url: 'admin.receive',
-                        icon: 'mdi-alpha-r-box-outline ',
+                        icon: '',
                         role: ['admin'],
                     },
                     {
                         label: '歸還',
                         url: 'admin.return',
-                        icon: 'mdi-alpha-r-box-outline ',
+                        icon: '',
+                        role: ['admin'],
+                    },
+                    {
+                        label: '退款',
+                        url: 'admin.refund',
+                        icon: '',
                         role: ['admin'],
                     },
                     {
