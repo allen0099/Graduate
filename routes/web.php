@@ -102,6 +102,9 @@ Route::group([
     Route::get('/admin/order', AdminShowOrderController::class)
         ->name('order'); // routes name as 'admin.setting'
 
+    Route::get('/admin/paying', fn() => Inertia::render('Admin/Paying/Show'))
+        ->name('paying');
+
     Route::get('/admin/return', fn() => Inertia::render('Admin/Return/Show'))
         ->name('return');
 
