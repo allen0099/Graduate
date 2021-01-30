@@ -104,29 +104,5 @@ class ItemSeeder extends Seeder
             'spec' => 'XL',
             'quantity' => 160,
         ]);
-        DB::table('items')->insert([
-            'type' => '博士',
-            'name' => '博士服',
-            'spec' => 'S',
-            'quantity' => 0,
-        ]);
-        DB::table('items')->insert([
-            'type' => '博士',
-            'name' => '博士服',
-            'spec' => 'M',
-            'quantity' => 129,
-        ]);
-        DB::table('items')->insert([
-            'type' => '博士',
-            'name' => '博士服',
-            'spec' => 'L',
-            'quantity' => 36,
-        ]);
-        DB::table('items')->insert([
-            'type' => '博士',
-            'name' => '博士服',
-            'spec' => 'XL',
-            'quantity' => 0,
-        ]);
     }
 }

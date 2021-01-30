@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\PreserveDate;
 use App\Http\Requests\StoreOrder;
 use App\Http\Requests\UpdateOrder;
 use App\Models\Config;
@@ -184,34 +185,15 @@ class OrderController extends Controller
         return abort(404);
     }
 
-    public function preserveDate(Request $request)
+    public function preserveDate(PreserveDate $request)
     {
-        $user = Auth::user();
-
-        $request->validate([
-            'order_id' => [
-                'required',
-                'exists:orders,document_id'
-            ]
-        ]);
+        $request->validated();
 
         $order = Order::where('document_id', $request->order_id)->first();
 
-        $request->validate([
-            'preserve_date' => [
-                'required',
-                'after_or_equal:' . now()->addDays(2)->startOfDay(),
-                'before_or_equal:' . ($order->owner->isBachelor() ?
-                    TimeRange::getBachelorReturnEndTime() :
-                    TimeRange::getMasterReturnEndTime()),
-            ],
-        ]);
-
-        if ($user->role === User::STUDENT && $order->owner->id !== $user->id)
-            return abort(403);
-
-        $order->preserve = $request->preserve_date;
-        $order->save();
+        $order->forceFill([
+            'preserve' => $request['preserve_date'],
+        ])->save();
 
         return $order->fresh();
     }

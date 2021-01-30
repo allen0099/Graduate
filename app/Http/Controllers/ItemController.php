@@ -94,7 +94,6 @@ class ItemController extends Controller
                 Rule::in([
                     Item::BACHELOR,
                     Item::MASTER,
-                    Item::DOCTOR
                 ])
             ],
             'name' => 'required',
