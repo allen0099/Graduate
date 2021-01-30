@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class SearchUserController extends Controller
 {
@@ -19,7 +20,7 @@ class SearchUserController extends Controller
 
         if (!is_null($search)) {
             $find_user = User::where('username', $search)
-                ->with(['set', 'orders']);
+                ->with(['set']);
 
             if ($find_user->count() === 0) {
                 return abort(404);
@@ -27,7 +28,13 @@ class SearchUserController extends Controller
 
             $user = $find_user->first();
 
-            return $user;
+            if (Auth::user()->role === User::ADMIN) {
+                return $user;
+            } else {
+                $attributes = array_keys($user->toArray());
+                unset($user->set->student);
+                return $user->makeHidden($attributes)->makeVisible(['name', 'username', 'school_class', 'set']);
+            }
         }
 
         return abort(404);
