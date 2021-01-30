@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use App\Http\Controllers\Order\OrderController;
+use App\Http\Controllers\OrderController;
 use App\Models\Config;
 use App\Models\Item;
 use App\Models\TimeRange;
