@@ -29,7 +29,8 @@ class CreateSetsTable extends Migration
             $table->foreignId('size_item')
                 ->constrained('items');
 
-            $table->boolean('returned')->default(false);
+            $table->date('returned')->nullable();
+            $table->boolean('refund')->default(false);
         });
     }
 

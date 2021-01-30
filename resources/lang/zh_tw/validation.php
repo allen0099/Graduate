@@ -163,7 +163,11 @@ return [
     'item_set_wrong' => 'Item :attribute is not a valid type.',
     'item_not_enough' => 'Item not enough.',
     'student_returned' => 'This set had returned.',
+    'student_not_returned' => 'This set did not returned.',
+    'student_refunded' => 'This student had refunded.',
+    'student_not_borrow' => 'This student did not borrow set.',
     'order_canceled' => 'This order is canceled.',
     'order_not_found' => 'This order id not found.',
+    'order_status_error' => 'This order state is not correct.',
 
 ];

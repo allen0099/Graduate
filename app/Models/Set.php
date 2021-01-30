@@ -33,7 +33,8 @@ class Set extends Model
      * @var array
      */
     protected $casts = [
-        'returned' => 'boolean',
+        'returned' => 'date',
+        'refund' => 'boolean',
     ];
 
     /**
@@ -47,6 +48,11 @@ class Set extends Model
         'color_item',
         'size_item',
     ];
+
+    public function isRefund()
+    {
+        return $this->refund;
+    }
 
     public static function getHaveSetIds()
     {

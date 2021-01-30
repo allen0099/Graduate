@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CheckOrder;
 use App\Http\Requests\PreserveDate;
 use App\Http\Requests\StoreOrder;
 use App\Http\Requests\UpdateOrder;
@@ -158,33 +159,6 @@ class OrderController extends Controller
         abort(404);
     }
 
-    public function returnOrder(Request $request)
-    {
-        $stu_id = $request->stu_id;
-
-        if ($stu_id !== null) {
-            $stu = User::where('username', $stu_id)->firstOr(fn() => abort(404));
-
-            $set = $stu->set()->get()->first();
-
-            if ($set->returned) {
-                return response()
-                    ->json([
-                        'error' => 'duplicate',
-                        'message' => __('validation.student_returned')
-                    ], 400);
-            }
-
-            $set->returned = true;
-            $set->save();
-
-            $order = $set->order()->get();
-
-            return $order;
-        }
-        return abort(404);
-    }
-
     public function preserveDate(PreserveDate $request)
     {
         $request->validated();
@@ -198,14 +172,134 @@ class OrderController extends Controller
         return $order->fresh();
     }
 
-    public function paidOrder(Request $request)
+    public function paidOrder(CheckOrder $request)
     {
-        //
+        $request->validated();
+
+        $order = Order::where('document_id', $request->order_id);
+
+        if ($order->status_code !== Order::code_created) {
+            return response()->json([
+                'error' => 'error',
+                'message' => __('validation.order_status_error')
+            ], 400);
+        }
+
+        $order->forceFill([
+            'status_code' => Order::code_paid,
+        ])->save();
+
+        return $order->fresh();
     }
 
-    public function cancelOrder(Request $request)
+    public function receiveCloth(CheckOrder $request)
     {
-        //
+        $request->validated();
+
+        $order = Order::where('document_id', $request->order_id)->first();
+
+        if ($order->status_code !== Order::code_paid) {
+            return response()->json([
+                'error' => 'error',
+                'message' => __('validation.order_status_error')
+            ], 400);
+        }
+
+        $order->forceFill([
+            'status_code' => Order::code_received,
+        ])->save();
+
+        return $order->fresh();
+    }
+
+    public function returnCloth(Request $request)
+    {
+        $request->validate([
+            'stu_username' => ['required', 'exists:users,username'],
+        ]);
+
+        $student = User::where('username', $request->stu_username)->first();
+        $set = $student->set()->get()->first();
+
+        $order = $set->order()->get()->first();
+
+        if ($order->status_code !== Order::code_received) {
+            return response()->json([
+                'error' => 'error',
+                'message' => __('validation.order_status_error')
+            ], 400);
+        }
+
+        $this->setExistCheck($set);
+
+        if (!is_null($set->returned)) {
+            return response()
+                ->json([
+                    'error' => 'duplicate',
+                    'message' => __('validation.student_returned')
+                ], 400);
+        }
+
+        $set->forceFill([
+            'returned' => today(),
+        ])->save();
+
+        $order_sets = $order->sets()->get();
+
+        foreach ($order_sets as $set) {
+            if (is_null($set->returned))
+                return $order;
+        }
+
+        $order->forceFill([
+            'status_code' => Order::code_returned,
+        ])->save();
+
+        return $order->fresh();
+    }
+
+    public function refundOrder(Request $request)
+    {
+        $request->validate([
+            'stu_username' => ['required', 'exists:users,username'],
+        ]);
+
+        $student = User::where('username', $request->stu_username)->first();
+        $set = $student->set()->get()->first();
+
+        $this->setExistCheck($set);
+
+        if (is_null($set->returned)) {
+            return response()
+                ->json([
+                    'error' => 'duplicate',
+                    'message' => __('validation.student_not_returned')
+                ], 400);
+        }
+
+        if ($set->refund) {
+            return response()
+                ->json([
+                    'error' => 'duplicate',
+                    'message' => __('validation.student_refunded')
+                ], 400);
+        }
+
+        $set->forceFill([
+            'refund' => true,
+        ])->save();
+
+        return $student->fresh();
+    }
+
+    public function cancelOrder(CheckOrder $request)
+    {
+        $request->validated();
+
+        $order = Order::where('document_id', $request->order_id)->first();
+        $order->delete();
+
+        return response()->noContent();
     }
 
     public static function showOrders()
@@ -220,6 +314,17 @@ class OrderController extends Controller
             ];
         }
         return [];
+    }
+
+    private function setExistCheck($set)
+    {
+        if (is_null($set)) {
+            return response()
+                ->json([
+                    'error' => 'duplicate',
+                    'message' => __('validation.student_not_borrow')
+                ], 400);
+        }
     }
 
     private function saveSets($order, $sets)

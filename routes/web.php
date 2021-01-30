@@ -40,8 +40,28 @@ Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
 Route::get('/test', fn() => Inertia::render('HelloWorld', ['name' => 'bro, this is not cool']))
     ->name('test');
 
+Route::get('find_pdf', [PDFController::class, 'findPdf'])
+    ->name('find_pdf');
+
 // HTTP status, ... , name
 // check routes `php artisan route:list --columns=method,uri,name --path=user`
+// login required
+Route::group([
+    'middleware' => ['auth:sanctum'],
+], function () {
+    Route::get('/search_user', SearchUserController::class)
+        ->name('search_user');
+
+    Route::get('order-pdf', [PDFController::class, 'orderPdf'])
+        ->name('order-pdf');
+
+    Route::post('/preserve_order', [OrderController::class, 'preserveDate'])
+        ->name('preserve_order');
+
+    Route::apiResource('order', OrderController::class, ['only' => ['index', 'store', 'update']]);
+    Route::apiResource('item', ItemController::class, ['only' => ['index']]);
+});
+
 Route::group([
     'middleware' => ['auth:sanctum'],
     'prefix' => 'user', // route prefix, all routes in this group is prefix by 'user'
@@ -53,38 +73,29 @@ Route::group([
         ->middleware('can:admin');
 });
 
-Route::get('/search_user', SearchUserController::class)
-    ->middleware(['auth:sanctum'])
-    ->name('search_user');
-
-Route::get('order-pdf', [PDFController::class, 'orderPdf'])
-    ->middleware(['auth:sanctum'])
-    ->name('order-pdf');
-
-Route::get('find_pdf', [PDFController::class, 'findPdf'])
-    ->name('find_pdf');
-
-Route::post('/preserve_order', [OrderController::class, 'preserveDate'])
-    ->middleware(['auth:sanctum'])
-    ->name('preserve_order');
-
-Route::apiResource('order', OrderController::class, ['only' => ['index', 'store', 'update']])
-    ->middleware(['auth:sanctum']);
-
-Route::apiResource('item', ItemController::class, ['only' => ['index']])
-    ->middleware(['auth:sanctum']);
-
 // Admin routes group
 Route::group([
 //    'prefix' => 'admin', // if enable, will prefix route with it
     'middleware' => ['auth:sanctum', 'can:admin'],
     'as' => 'admin.'
 ], function () {
-    Route::get('/return_order', [OrderController::class, 'returnOrder'])
-        ->name('return_order');
-
     Route::get('/search_order', [OrderController::class, 'searchOrder'])
         ->name('search_order');
+
+    Route::post('/paid_order', [OrderController::class, 'paidOrder'])
+        ->name('paid_order');
+
+    Route::post('/receive_order', [OrderController::class, 'receiveCloth'])
+        ->name('receive_order');
+
+    Route::post('/return_order', [OrderController::class, 'returnCloth'])
+        ->name('return_order');
+
+    Route::post('/refund_order', [OrderController::class, 'refundOrder'])
+        ->name('refund_order');
+
+    Route::post('/cancel_order', [OrderController::class, 'cancelOrder'])
+        ->name('cancel_order');
 
     Route::post('/edit_set_price', EditSetPriceController::class)
         ->name('edit_set_price');
