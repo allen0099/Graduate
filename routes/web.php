@@ -9,6 +9,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PDFController;
 use App\Http\Controllers\RedirectAfterLoginController;
 use App\Http\Controllers\SearchUserController;
+use App\Http\Controllers\SearchOwnerController;
 use App\Http\Controllers\TimeRangeController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -145,6 +146,8 @@ Route::group([
         ->name('order');
     Route::get('/student/myorder', fn() => Inertia::render('Student/MyOrder/Show'))
         ->name('myorder');
+    Route::get('/order_owner', SearchOwnerController::class)
+        ->name('order_owner');
 });
 
 Route::middleware(['auth:sanctum'])->get('/meow', function () {

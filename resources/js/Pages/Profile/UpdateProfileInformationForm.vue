@@ -143,10 +143,24 @@
                 class="col-span-6 sm:col-span-4"
                 v-if="user.role === 'student'"
             >
-                <jet-label
-                    for="license"
-                    value="出納付款查詢平台資料填寫確認"
-                />
+                <jet-label for="license">出納付款查詢平台資料填寫確認
+                    <v-tooltip bottom>
+                        <template v-slot:activator="{ on, attrs }">
+                            <v-btn
+                                icon
+                                x-small
+                                elevation="1"
+                                class="mb-1"
+                                v-bind="attrs"
+                                v-on="on"
+                                @click="help = true"
+                            >
+                                <v-icon>mdi-help-circle-outline</v-icon>
+                            </v-btn>
+                        </template>
+                        <span>點擊顯示幫助。</span>
+                    </v-tooltip>
+                </jet-label>
                 <v-checkbox
                     v-model="form.filled_pay_form"
                     persistent-hint
@@ -178,6 +192,28 @@
                     class="mt-2"
                 />
             </div>
+            <v-dialog
+                v-model="help"
+                max-width="850"
+            >
+                <v-card>
+                    <v-card-title>
+                        <v-icon large>mdi-help-circle-outline</v-icon><span class="ml-3">幫助</span>
+                    </v-card-title>
+                    <v-card-text>
+                        文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字
+                    </v-card-text>
+                    <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn
+                            color="primary"
+                            @click="help = false"
+                        >
+                            關閉
+                        </v-btn>
+                    </v-card-actions>
+                </v-card>
+            </v-dialog>
         </template>
 
         <template #actions>
@@ -222,7 +258,7 @@
 
         data() {
             return {
-                dialog: false,
+                help: false,
                 form: this.$inertia.form({
                     '_method': 'PUT',
                     name: this.user.name,
@@ -272,6 +308,9 @@
                     this.photoPreview = null
                 });
             },
+            help_cancel() {
+                this.help = false
+            }
         },
     }
 

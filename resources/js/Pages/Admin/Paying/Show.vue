@@ -300,25 +300,15 @@
                 }, 2000)
             },
             async save() {
-                // this.form.document_id = this.order.document_id
-                // this.form.owner_username = this.order.owner.username
-                // this.form.status_code = 3
-
-                // await this.form.patch('/order/' + this.order.id).then(() => {
-                //     this.cancel()
-                //     this.msg = '已領取'
-                //     this.error = false
-                //     this.show_msg = true
-                // });
                 this.pageLoading = true
                 await this.$inertia.patch(`/order/${this.order.id}`, {
                     document_id: this.order.document_id,
                     owner_username: this.order.owner.username,
-                    status_code: 3
+                    status_code: 2
                 }, {
                     onSuccess: (page) => {
                         console.log(page)
-                        this.msg = '已領取'
+                        this.msg = '已儲存'
                         this.error = false
                         this.show_msg = true
                     },

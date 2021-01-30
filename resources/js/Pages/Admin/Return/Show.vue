@@ -155,9 +155,9 @@
                     this.search_loading = true
                     await apiSearchStudent(this.stuid).then((res) => {
                         if (res.status == 200) {
-                            this.dialog = true
                             if (res.data.set) {
                                 if (!res.data.set.returned) {
+                                    this.dialog = true
                                     this.student = res.data
                                 } else {
                                     this.stuid = ''
