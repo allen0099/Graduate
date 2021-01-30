@@ -28,7 +28,18 @@
                     >
                         <v-card outlined>
                             <v-card-title>
-                                購買品項：{{ choose.name }}
+                                <span>購買品項：{{ choose.name }}</span>
+                                <v-spacer></v-spacer>
+                                <span class="subtitle-2">
+                                    <v-btn
+                                        small
+                                        color="blue-grey"
+                                        class="ma-2 white--text"
+                                    >
+                                        <v-icon small>mdi-information-variant</v-icon>
+                                        <span class="ml-2">查看樣式</span>
+                                    </v-btn>
+                                </span>
                             </v-card-title>
                             <v-card-text class="text--primary">
                                 <v-row>
@@ -165,6 +176,7 @@
                                     <v-icon
                                         small
                                         @click="delete_item(item)"
+                                        v-if="item.stu_id != $page.user.username"
                                     >
                                         mdi-delete
                                     </v-icon>
@@ -210,6 +222,7 @@
                         flat
                         class="mb-5"
                     >
+                        <v-card-title>{{ choose.name }}訂購</v-card-title>
 
                         <v-row
                             class="body-1 pa-sm-5 pa-2"
@@ -236,7 +249,7 @@
                             <v-col
                                 cols="12"
                                 class="d-flex justify-end"
-                            ><span>共{{ order.length }}套，總金額： {{ order.length * price }} NT$</span></v-col>
+                            ><span>共 {{ order.length }} 套，總金額： {{ order.length * price }} NT$</span></v-col>
                             <v-col
                                 cols="12"
                                 class="d-flex justify-end"
@@ -310,11 +323,70 @@
                                 <v-col cols="12">
                                     總金額：{{ result.total_price }}</v-col>
                             </v-row>
+                            <v-row
+                                dense
+                                class="mt-5"
+                            >
+                                <v-col cols="12">
+                                    備註
+                                </v-col>
+                            </v-row>
+                            <ol
+                                class="mt-2"
+                                style="list-style: decimal;"
+                            >
+                                <li>5a6s4d6a4sd564as65d4a6s54d65as4d56as564d56as4d56a4s564d56a45a4sd54as56d46as54d56a4s5d6
+                                </li>
+                                <li>5a6s4d6a4sd564as65d4a6s54d65as4d56as564d56as4d56a4s564d56a45a4sd54as56d46as54d56a4s5d6
+                                </li>
+                                <li>5a6s4d6a4sd564as65d4a6s54d65as4d56as564d56as4d56a4s564d56a45a4sd54as56d46as54d56a4s5d6
+                                </li>
+                                <li>5a6s4d6a4sd564as65d4a6s54d65as4d56as564d56as4d56a4s564d56a45a4sd54as56d46as54d56a4s5d6
+                                </li>
+                                <li>5a6s4d6a4sd564as65d4a6s54d65as4d56as564d56as4d56a4s564d56a45a4sd54as56d46as54d56a4s5d6
+                                </li>
+                                <li>5a6s4d6a4sd564as65d4a6s54d65as4d56as564d56as4d56a4s564d56a45a4sd54as56d46as54d56a4s5d6
+                                </li>
+                            </ol>
                         </v-card-text>
                         <v-card-text
                             class="font-weight-bold body-1"
                             v-else
-                        >{{ error_msg }}
+                        >
+                            <v-row
+                                dense
+                                class="mb-3"
+                            >
+                                <v-col cols="12">{{ error_msg }}
+                                </v-col>
+                            </v-row>
+                            <v-row
+                                dense
+                                v-if="owner"
+                            >
+                                <v-col cols="12">訂購人：{{ owner.name }}
+                                </v-col>
+                                <v-col cols="12">系級：{{ owner.school_class.class_name }}
+                                </v-col>
+                                <v-col cols="12">
+                                    學號：{{ owner.username }}
+                                </v-col>
+                                <v-col cols="12">
+                                    信箱：<a :href="`mailto:${owner.email}`">{{ owner.email }}</a>
+                                </v-col>
+                                <v-col
+                                    cols="12"
+                                    class="mt-3"
+                                >
+                                    您的{{ $page.orders.set.cloth.name }}規格
+                                </v-col>
+                                <v-col cols="12">
+                                    {{ $page.orders.set.cloth.name }}尺寸：{{ $page.orders.set.cloth.spec }}
+                                </v-col>
+                                <v-col cols="12">
+                                    {{ $page.orders.set.accessory.name }}顏色：{{ $page.orders.set.accessory.spec }}
+                                </v-col>
+                            </v-row>
                         </v-card-text>
                     </v-card>
 
@@ -398,7 +470,8 @@
     import * as easings from 'vuetify/es5/services/goto/easing-patterns'
     import {
         apiSearchStudent,
-        apiCreateOrder
+        apiCreateOrder,
+        apiSearchOwner
     } from '@/api/api'
 
     export default {
@@ -429,15 +502,16 @@
                 snackbar_true: false,
                 order_check: false,
                 msg: '',
+                owner: null,
                 choose: {
                     type: 1,
                     name: '學士服',
-                    accessory: '領巾'
+                    accessory: '領巾、帽子'
                 },
                 choose_items: [{
                         type: 1,
                         name: '學士服',
-                        accessory: '領巾'
+                        accessory: '領巾、帽子'
                     },
                     {
                         type: 2,
@@ -471,14 +545,12 @@
                     {
                         text: '配件顏色',
                         value: 'color',
-                        align: 'center',
                         width: 20,
                         sortable: false
                     },
                     {
                         text: '尺寸',
                         value: 'size',
-                        align: 'center',
                         width: 20,
                         sortable: false
                     },
@@ -510,7 +582,7 @@
         },
 
         methods: {
-            init_obj() {
+            async init_obj() {
                 if (this.$page.user.username[0] < "5") {
                     this.choose = this.choose_items[0]
                     this.cloths = this.$page.inventory.slice(8, 12)
@@ -531,7 +603,7 @@
 
                 let open_time = this.$page.configs.time_range.find(x => x.id == 1)
                 let start_time = new Date(open_time.start_time + " 00:00:00")
-                let end_time = new Date(open_time.end_time + " 00:00:00")
+                let end_time = new Date(open_time.end_time + " 23:59:59")
                 let a = new Date()
                 if (!(a >= start_time && a <= end_time)) {
                     this.step = 4
@@ -544,6 +616,11 @@
                     this.step = 4
                     this.order_check = false
                     this.error_msg = '您已有訂購紀錄，不可重複訂購，請確認是否自己或是有它人幫您訂購。'
+                    await apiSearchOwner().then(res => {
+                        if (res.status === 200) {
+                            this.owner = res.data
+                        }
+                    })
                     return
                 }
             },
@@ -581,16 +658,23 @@
                             this.snackbar_true = false
                             this.snackbar = true
                         } else {
-                            order_item.stu_id = res.data.username
-                            order_item.name = res.data.name
-                            order_item.department = res.data.school_class.class_name
-                            order_item.color =
-                                res.data.school_class.department.default_color
-                            this.order.push(order_item)
-                            this.student_id = ''
-                            this.msg = '新增成功'
-                            this.snackbar_true = true
-                            this.snackbar = true
+                            if (res.data.filled_pay_form === false) {
+                                this.student_id = ''
+                                this.msg = '此生尚未填寫「出納付款查詢平台」之基本資料與金融帳戶。'
+                                this.snackbar_true = false
+                                this.snackbar = true
+                            } else {
+                                order_item.stu_id = res.data.username
+                                order_item.name = res.data.name
+                                order_item.department = res.data.school_class.class_name
+                                order_item.color =
+                                    res.data.school_class.department.default_color
+                                this.order.push(order_item)
+                                this.student_id = ''
+                                this.msg = '新增成功'
+                                this.snackbar_true = true
+                                this.snackbar = true
+                            }
                         }
                     } else {
                         this.student_id = ''
