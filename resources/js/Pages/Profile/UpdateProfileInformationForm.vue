@@ -87,7 +87,7 @@
                     type="text"
                     class="mt-1 block w-full shadow-none"
                     v-model="form.name"
-                    disabled
+                    :disabled="user.role !== 'admin'"
                 />
             </div>
 
@@ -106,7 +106,10 @@
                 />
             </div>
 
-            <div class="col-span-6 sm:col-span-4">
+            <div
+                class="col-span-6 sm:col-span-4"
+                v-if="user.role !== 'admin'"
+            >
                 <jet-label
                     for="sud_id"
                     value="系級"
@@ -115,7 +118,7 @@
                     id="sud_id"
                     type="text"
                     class="mt-1 block w-full shadow-none"
-                    value="資訊工程學系(日) 四年級 B 班"
+                    :value="user.school_class.class_name"
                     disabled
                 />
             </div>
@@ -187,10 +190,6 @@
                         </div>
                     </template>
                 </v-checkbox>
-                <jet-input-error
-                    :message="form.error('email')"
-                    class="mt-2"
-                />
             </div>
             <v-dialog
                 v-model="help"
@@ -283,7 +282,6 @@
 
                 this.form.post(route('user-profile-information.update'), {
                     preserveScroll: true,
-                    meow: "123",
                 });
             },
 

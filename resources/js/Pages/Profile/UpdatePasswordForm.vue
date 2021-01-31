@@ -5,7 +5,7 @@
         </template>
 
         <template #description>
-            密碼至少 8 個字元 (後端需要去設定)
+            密碼至少 8 個字元
         </template>
 
         <template #form>
