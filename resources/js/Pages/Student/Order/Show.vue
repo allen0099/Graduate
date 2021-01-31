@@ -615,7 +615,7 @@
                 if (this.$page.orders.set) {
                     this.step = 4
                     this.order_check = false
-                    this.error_msg = '您已有訂購紀錄，不可重複訂購，請確認是否自己或是有它人幫您訂購。'
+                    this.error_msg = '您已有訂購紀錄，不可重複訂購，請確認是否自己或是它人已幫您訂購。'
                     await apiSearchOwner().then(res => {
                         if (res.status === 200) {
                             this.owner = res.data

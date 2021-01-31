@@ -304,6 +304,7 @@
                 await this.$inertia.patch(`/order/${this.order.id}`, {
                     document_id: this.order.document_id,
                     owner_username: this.order.owner.username,
+                    payment_id: this.order.payment_id,
                     status_code: 2
                 }, {
                     onSuccess: (page) => {
