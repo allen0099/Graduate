@@ -18,15 +18,20 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
      */
     public function update($user, array $input)
     {
+
         Validator::make($input, [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
             'photo' => ['nullable', 'image', 'max:1024'],
             'filled_pay_form' => ['boolean'],
         ])->validateWithBag('updateProfileInformation');
-
-        if (isset($input['photo'])) {
+        
+        if (isset($input['photo']) && $user->role === 'admin') {
             $user->updateProfilePhoto($input['photo']);
+        }
+
+        if ($user->role !== 'admin'){
+            $input['name'] = $user->name;
         }
 
         if ($input['email'] !== $user->email &&
