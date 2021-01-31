@@ -24,7 +24,6 @@ export const apiOrderUpdate = (order_id, order) =>
 export const apiCancelOrder = order_id =>
     Request.post("/cancel_order", { order_id });
 
-// export const apiPaidOrder = order_id => Request.post("/paid_order", order_id);
 export const apiReceiveCloth = order_id =>
     Request.post("/receive_order", { order_id });
 export const apiReturnCloth = stu_username =>
@@ -37,3 +36,7 @@ export const apiSearchOwner = () => Request.get(`/order_owner`);
 export const apiSearchStudent = stu_id =>
     Request.get(`/search_user?search=${stu_id}`);
 export const apiCreateOrder = order => Request.post("/order", order);
+
+// Student myorder
+export const apiPreserveDate = (order_id, preserve_date) =>
+    Request.post("/preserve_order", { order_id, preserve_date });
