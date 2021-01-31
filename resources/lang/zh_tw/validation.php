@@ -169,5 +169,6 @@ return [
     'order_canceled' => 'This order is canceled.',
     'order_not_found' => 'This order id not found.',
     'order_status_error' => 'This order state is not correct.',
+    'order_had_preserve' => 'This order had reserved.',
 
 ];

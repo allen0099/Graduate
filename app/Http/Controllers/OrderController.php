@@ -165,6 +165,13 @@ class OrderController extends Controller
 
         $order = Order::where('document_id', $request->order_id)->first();
 
+        if (is_null($order->preserve)) {
+            return response()->json([
+                'error' => 'error',
+                'message' => __('validation.order_had_preserve')
+            ], 400);
+        }
+
         $order->forceFill([
             'preserve' => $request['preserve_date'],
         ])->save();
