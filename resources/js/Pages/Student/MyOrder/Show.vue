@@ -62,7 +62,7 @@
                                     <v-col
                                         cols="12"
                                         class="d-flex justify-end"
-                                        v-if="order.status_code === 1"
+                                        v-if="order.status_code === Status.created"
                                     >
                                         <v-btn
                                             outlined
@@ -74,7 +74,7 @@
                                         >
                                             下載訂單
                                             <v-icon right>
-                                                mdi-delete
+                                                mdi-download
                                             </v-icon>
                                         </v-btn>
                                         <v-btn
@@ -86,6 +86,37 @@
                                             取消訂單
                                             <v-icon right>
                                                 mdi-delete
+                                            </v-icon>
+                                        </v-btn>
+                                    </v-col>
+                                    <v-col
+                                        cols="12"
+                                        class="d-flex justify-end"
+                                        v-if="order.status_code === Status.paid"
+                                    >
+                                        <v-btn
+                                            outlined
+                                            color="indigo"
+                                            class="mr-3"
+                                            dense
+                                            :href="`${route('order-pdf')}?document_id=${order.document_id}`"
+                                            download
+                                        >
+                                            下載領據
+                                            <v-icon right>
+                                                mdi-download
+                                            </v-icon>
+                                        </v-btn>
+                                        <v-btn
+                                            outlined
+                                            color="teal darken-2"
+                                            dense
+                                            @click="reservation(order)"
+                                            :disabled="order.preserve"
+                                        >
+                                            預約領衣
+                                            <v-icon right>
+                                                mdi-hand-right
                                             </v-icon>
                                         </v-btn>
                                     </v-col>
@@ -116,17 +147,33 @@
                                     <v-col
                                         v-if="order.payment_id"
                                         cols="12"
+                                    >付款編號：{{ order.payment_id }}
+                                    </v-col>
+                                    <!-- <v-col
+                                        v-if="order.payment_id"
+                                        cols="12"
                                     >付款單據編號：{{ windowSize.x >= 430 ? order.payment_id :'' }}
                                     </v-col>
                                     <v-col
                                         v-if="order.payment_id && windowSize.x < 430"
                                         cols="12"
-                                    >{{order.payment_id }}</v-col>
-                                    <!-- <v-col cols="12">{{ '訂單狀態：' }}</v-col> -->
-                                    <v-col cols="12">
+                                    >{{order.payment_id }}</v-col> -->
+                                    <v-col
+                                        cols="12"
+                                        md="4"
+                                    >
                                         <span>{{ '訂單狀態：' }}</span>
-                                        <span :class="order.status_code === 4 ? 'green--text text--accent--3' :
+                                        <span :class="order.status_code === Status.returned || order.status_code === Status.refunded ? 'green--text text--accent--3' :
                                             'red--text'">{{ statusMsg[order.status_code] }}</span>
+                                    </v-col>
+                                    <v-col
+                                        v-if="order.status_code === Status.paid"
+                                        cols="12"
+                                        md="4"
+                                    >
+                                        <span>{{ '預約領衣日期：' }}</span>
+                                        <span :class=" order.preserve ? 'green--text text--accent--3' :
+                                            'red--text'">{{ order.preserve ? order.preserve : '未預約' }}</span>
                                     </v-col>
                                 </v-row>
                             </v-card-text>
@@ -134,7 +181,7 @@
                     </v-col>
                 </v-row>
 
-                <v-card-actions v-show="order.status_code != 5">
+                <v-card-actions>
                     <v-btn
                         :color="colorList[order.status_code].detail"
                         text
@@ -153,7 +200,7 @@
                         </v-icon>
                     </v-btn>
                 </v-card-actions>
-                <v-expand-transition v-show="order.status_code != 5">
+                <v-expand-transition>
                     <div v-show="order.show">
                         <v-divider></v-divider>
 
@@ -196,7 +243,7 @@
             </v-card>
         </v-container>
         <v-dialog
-            v-model="dialog"
+            v-model="cancelDialog"
             max-width="400px"
             persistent
         >
@@ -205,7 +252,13 @@
                     警告
                 </v-card-title>
                 <v-card-text>
-                    取消訂單後將無法復原，確定要取消訂單?
+                    <ol class="mt-1">
+                        <li>
+                            訂單尚未付款時可以取消訂單
+                        </li>
+                        <li class="mt-1">取消訂單後將無法復原，確定要取消訂單?
+                        </li>
+                    </ol>
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>
@@ -245,6 +298,105 @@
                 </v-card>
             </v-dialog>
         </v-dialog>
+        <v-dialog
+            v-model="reservationDialog"
+            max-width="650px"
+        >
+            <v-card>
+                <v-card-title>
+                    選擇領取衣服日期
+                </v-card-title>
+                <v-card-text>
+                    <v-select
+                        v-model="select_date"
+                        :items="timeList"
+                        label="預約日期"
+                    ></v-select>
+                    <ol
+                        class="mt-2"
+                        style="list-style: decimal;"
+                    >
+                        <li>開放領取{{ $page.user.username[0] < "5" ? '學士服' : '碩士服' }}時段：
+                            <span style="color: #d48344;">{{ time_range.start_time }} ~
+                                {{ time_range.end_time }}
+                            </span>。
+                        </li>
+                        <li>最晚預約時間為欲預約之日期前 2 天，如欲預約 03/10 請在 03/08 23:59:59 前預約完畢。
+                        </li>
+                        <li>
+                            <span>請注意，</span>
+                            <span class="red--text">請注意，預約後即不允許修改。
+                            </span>
+                            <span>。</span>
+                        </li>
+                        <li>領取當天請攜帶領據，並且確認領據上的每一位同學都有簽名。
+                        </li>
+                    </ol>
+                </v-card-text>
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn
+                        color="error"
+                        text
+                        @click="reservation_cancel"
+                    >
+                        取消
+                    </v-btn>
+                    <v-btn
+                        color="primary"
+                        text
+                        @click="pageLoading = true"
+                    >
+                        確定
+                    </v-btn>
+                </v-card-actions>
+            </v-card>
+            <v-dialog
+                v-model="pageLoading"
+                persistent
+                width="300"
+            >
+                <v-card
+                    color="primary"
+                    dark
+                    v-if="reservationCheck"
+                >
+                    <v-card-text>
+                        Loading...
+                        <v-progress-linear
+                            indeterminate
+                            color="white"
+                            class="mb-0"
+                        ></v-progress-linear>
+                    </v-card-text>
+                </v-card>
+                <v-card v-else>
+                    <v-card-title>
+                        再次確認
+                    </v-card-title>
+                    <v-card-text>
+                        確定預約 {{ select_date }} ?
+                    </v-card-text>
+                    <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn
+                            color="error"
+                            text
+                            @click="pageLoading = false"
+                        >
+                            返回
+                        </v-btn>
+                        <v-btn
+                            color="primary"
+                            text
+                            @click="reservation_save"
+                        >
+                            確定
+                        </v-btn>
+                    </v-card-actions>
+                </v-card>
+            </v-dialog>
+        </v-dialog>
         <v-snackbar
             v-model="snackbar"
             :timeout="2000"
@@ -273,6 +425,16 @@
 
 <script>
     import VuetifyLayout from '@/Layouts/VuetifyLayout'
+    import {
+        Status,
+        StatusMsg,
+        colorList
+    } from '@/api/config'
+
+    import {
+        apiPreserveDate,
+        apiCancelOrder
+    } from '@/api/api'
 
     export default {
         components: {
@@ -280,47 +442,24 @@
         },
         name: "StudentMyorder",
         data: () => ({
-            dialog: false,
+            cancelDialog: false,
+            reservationDialog: false,
             pageLoading: false,
+            reservationCheck: false,
             snackbar: false,
             statusFilterSelected: -1,
             order: null,
             msg: '',
             orderList: [],
-            colorList: [{
-                    bg: '#fef9ef',
-                    detail: '#d48344',
-                }, {
-                    bg: '#fef9ef',
-                    detail: '#d48344',
-                },
-                {
-                    bg: '#fef9ef',
-                    detail: '#d48344',
-                },
-                {
-                    bg: '#fef9ef',
-                    detail: '#d48344',
-                },
-                {
-                    bg: 'green lighten-5',
-                    detail: 'green darken-2',
-                },
-                {
-                    bg: 'red lighten-5',
-                    detail: 'red accent-2',
-                },
-                {
-                    bg: '#fef9ef',
-                    detail: '#d48344',
-                },
-                {
-                    bg: '#fef9ef',
-                    detail: '#d48344',
-                },
-            ],
-            statusMsg: ["已結單", "未付款", "已付款，未領取衣服", "未歸還衣服", "已歸還衣服", "已取消訂單", "退款中", "已退款"],
-            // statusMsg2: ["未付款", "已付款", "已領取衣服", "已歸還衣服", "已申請訂單取消", "已取消訂單"]
+            Status: Status,
+            colorList: colorList,
+            statusMsg: StatusMsg,
+            time_range: {
+                end_time: '2021-01-01',
+                start_time: '2021-01-01'
+            },
+            timeList: [],
+            select_date: null,
             windowSize: {
                 x: 0,
                 y: 0,
@@ -345,50 +484,107 @@
                 }
                 return true
             },
-            init_show() {
-                // this.orderList = JSON.parse(JSON.stringify())
-                // this.orderList = this.orderList.map(x => Object.assign({}, x).show = false)
+            init() {
                 this.orderList = this.$page.orders.own.map(x => Object.assign({
                     show: false
                 }, x))
+                this.time_range = this.$page.configs.time_range[this.$page.user.username[0] < "5" ? 2 : 3]
 
-                // this.orderList = this.$page.orders
-                // console.log(this.orderList)
-                // this.show = [...Array(this.$page.orders.length).keys()].map(() => false)
-                // console.log(this.show)
+                Date.prototype.Format = function (fmt) {
+                    var o = {
+                        "M+": this.getMonth() + 1, //月份
+                        "d+": this.getDate(), //日
+                        "H+": this.getHours(), //小時
+                        "m+": this.getMinutes(), //分
+                        "s+": this.getSeconds(), //秒
+                        "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+                        "S": this.getMilliseconds() //毫秒
+                    };
+                    if (/(y+)/.test(fmt)) {
+                        fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+                    }
+                    for (var k in o) {
+                        if (new RegExp("(" + k + ")").test(fmt)) {
+                            fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr((
+                                "" +
+                                o[k]).length)));
+                        }
+                    }
+                    return fmt;
+                }
 
+
+                let today = new Date(new Date().Format("yyyy-MM-dd") + " 00:00:00")
+
+                let start_time = new Date(this.time_range.start_time + " 00:00:00")
+                let end_time = new Date(this.time_range.end_time + " 00:00:00")
+
+                let x = new Date(today.getTime() + 2 * 24 * 60 * 60 * 1000)
+
+                this.timeList = []
+
+                for (let i = start_time; i <= end_time; i = new Date(i.getTime() + 24 * 60 * 60 * 1000)) {
+                    if (x <= i) {
+                        this.timeList.push(i.Format("yyyy-MM-dd"))
+                    }
+                }
             },
             cancel_check(order) {
-                this.dialog = true
+                this.cancelDialog = true
                 this.order = order
             },
             check_cancel() {
-                this.dialog = false
-                this.order = null
+                this.cancelDialog = false
+                // this.order = null
             },
             async check_save() {
                 this.pageLoading = true
-
-                await this.$inertia.patch(`/order/${this.order.id}`, {
-                    document_id: this.order.document_id,
-                    owner_username: this.order.owner.username,
-                    status_code: 5
-                }, {
-                    onSuccess: (page) => {
-                        this.msg = '已取消'
-                        this.order.status_code = 5
-                        this.order.sets = []
-                    },
-                    onError: (errors) => {
+                await apiCancelOrder(this.order.document_id).then(res => {
+                    if (res.status == 204) {
+                        this.msg = '已取消訂單'
+                        this.orderList.splice(this.orderList.findIndex(x => x.document_id == this.order
+                            .document_id), 1)
+                    } else {
                         this.msg = '發生錯誤'
-                    },
-                    onFinish: () => {
-                        this.pageLoading = false
-                        this.check_cancel()
-                        this.snackbar = true
-                    },
+                    }
+                    this.pageLoading = false
+                    this.check_cancel()
+                    this.snackbar = true
+                }).catch((err) => {
+                    this.msg = '發生錯誤'
+                    this.pageLoading = false
+                    this.check_cancel()
+                    this.snackbar = true
                 })
             },
+            reservation(order) {
+                this.order = order
+                this.select_date = null
+                this.reservationDialog = true
+                this.reservationCheck = false
+            },
+            reservation_cancel() {
+                this.order = null
+                this.reservationDialog = false
+            },
+            async reservation_save() {
+                this.reservationCheck = true
+                await apiPreserveDate(this.order.document_id, this.select_date).then(res => {
+                    if (res.status == 200) {
+                        this.msg = '已預約'
+                        this.order.preserve = this.select_date
+                    } else {
+                        this.msg = '發生錯誤'
+                    }
+                    this.snackbar = true
+                    this.pageLoading = false
+                }).catch((err) => {
+                    this.msg = '發生錯誤'
+                    this.snackbar = true
+                    this.pageLoading = false
+                })
+                await this.reservation_cancel()
+            }
         },
         computed: {
             statusMsgObj() {
@@ -407,7 +603,7 @@
         },
         async mounted() {
             await this.onResize()
-            await this.init_show()
+            await this.init()
         },
     }
 

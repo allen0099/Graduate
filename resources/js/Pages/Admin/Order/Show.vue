@@ -92,7 +92,6 @@
                                     <v-col
                                         cols="12"
                                         class="d-flex justify-end"
-                                        v-if="order.status_code != 5"
                                     >
                                         <v-btn
                                             outlined
@@ -140,7 +139,7 @@
                                     <!-- <v-col cols="12">{{ '訂單狀態：' }} {{ order.status_code }}</v-col> -->
                                     <v-col cols="12">
                                         <span>{{ '訂單狀態：' }}</span>
-                                        <span :class="order.status_code === 4 ? 'green--text text--accent--3' :
+                                        <span :class="order.status_code === Status.returned || order.status_code === Status.refunded ? 'green--text text--accent--3' :
                                             'red--text'">{{ statusMsg[order.status_code] }}</span>
                                     </v-col>
                                 </v-row>
@@ -178,7 +177,7 @@
                     </v-col>
                 </v-row>
 
-                <v-card-actions v-show="order.status_code != 5">
+                <v-card-actions>
                     <v-btn
                         :color="colorList[order.status_code].detail"
                         text
@@ -197,7 +196,7 @@
                         </v-icon>
                     </v-btn>
                 </v-card-actions>
-                <v-expand-transition v-show="order.status_code != 5">
+                <v-expand-transition>
                     <div v-show="order.show">
                         <v-divider></v-divider>
 
@@ -336,7 +335,7 @@
                 max-width="400px"
             >
                 <v-card>
-                    <v-card-title class="headline grey lighten-2">
+                    <v-card-title>
                         警告
                     </v-card-title>
                     <v-card-text>
@@ -408,7 +407,15 @@
 
 <script>
     import VuetifyLayout from '@/Layouts/VuetifyLayout'
-    import apiRoomAirQualityValue from '@/api/api'
+    import {
+        apiCancelOrder
+    } from '@/api/api'
+
+    import {
+        Status,
+        StatusMsg,
+        colorList
+    } from '@/api/config'
 
     export default {
         components: {
@@ -452,40 +459,9 @@
                     }
                 },
                 orderList: [],
-                colorList: [{
-                        bg: '#fef9ef',
-                        detail: '#d48344',
-                    }, {
-                        bg: '#fef9ef',
-                        detail: '#d48344',
-                    },
-                    {
-                        bg: '#fef9ef',
-                        detail: '#d48344',
-                    },
-                    {
-                        bg: '#fef9ef',
-                        detail: '#d48344',
-                    },
-                    {
-                        bg: 'green lighten-5',
-                        detail: 'green darken-2',
-                    },
-                    {
-                        bg: 'red lighten-5',
-                        detail: 'red accent-2',
-                    },
-                    {
-                        bg: '#fef9ef',
-                        detail: '#d48344',
-                    },
-                    {
-                        bg: '#fef9ef',
-                        detail: '#d48344',
-                    },
-                ],
-                statusMsg: ["已結單", "未付款", "已付款，未領取衣服", "未歸還衣服", "已歸還衣服", "已取消訂單", "退款中", "已退款"],
-                // statusMsg2: ["未付款", "已付款", "已領取衣服", "已歸還衣服", "已申請訂單取消", "已取消訂單"]
+                Status: Status,
+                colorList: colorList,
+                statusMsg: StatusMsg,
                 windowSize: {
                     x: 0,
                     y: 0,
@@ -529,7 +505,7 @@
                 this.order = Object.assign({}, this.baseorder);
             },
             edit_save() {
-                if (this.order.status_code === 5) {
+                if (this.order.status_code === this.Status.canceled) {
                     this.checkCancel = true
                 } else {
                     this.pageLoading = true
@@ -547,24 +523,33 @@
                 }
             },
             check_cancel() {
-                // this.edit_cancel()
                 this.checkCancel = false
+                this.pageLoading = false
+                this.edit_cancel()
             },
-            check_save() {
-                if (this.order.status_code === 5) {
+            async check_save() {
+                if (this.order.status_code === this.Status.canceled) {
                     this.pageLoading = true
-                    this.form.status_code = this.order.status_code
-                    this.form.document_id = this.order.document_id
-                    this.form.payment_id = this.order.payment_id
-                    this.form.owner_username = this.order.owner.username
-                    console.log(this.order.status_code)
-                    this.form.patch('/order/' + this.order.id).then(() => {
+
+                    await apiCancelOrder(this.order.document_id).then(res => {
+                        if (res.status == 204) {
+                            this.msg = '已取消訂單'
+                            this.orderList.splice(this.orderList.findIndex(x => x.document_id == this.order
+                                .document_id), 1)
+                        } else {
+                            this.msg = '發生錯誤'
+                        }
+                        this.pageLoading = false
                         this.check_cancel()
-                        this.msg = this.$page.errorBags.length > 0 ? '發生錯誤' : ''
-                        this.snackbar = this.$page.errorBags.length > 0
-                    });
+                        this.snackbar = true
+                    }).catch((err) => {
+                        this.msg = '發生錯誤'
+                        this.pageLoading = false
+                        this.check_cancel()
+                        this.snackbar = true
+                    })
                 }
-                this.search_submit()
+                // await this.search_submit()
             },
             search_submit() {
                 this.pageLoading = true
@@ -609,7 +594,7 @@
                 }])
             },
             statusMsgObj2() {
-                return this.statusMsg.slice(1).reduce((res, item, index) => {
+                let x = this.statusMsg.slice(1).reduce((res, item, index) => {
                     var obj = {
                         'text': item,
                         'value': index + 1
@@ -617,6 +602,13 @@
                     res.push(obj)
                     return res
                 }, [])
+
+                x.push({
+                    'text': '取消訂單',
+                    'value': this.Status.canceled
+                })
+
+                return x
             }
         },
         async mounted() {

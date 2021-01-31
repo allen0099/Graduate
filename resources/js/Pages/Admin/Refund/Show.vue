@@ -80,7 +80,7 @@
                             md="4"
                         >總金額：{{ order.total_price }}</v-col>
                         <v-col cols="12"><span>訂單當前狀態：</span>
-                            <span :class="order.status_code === 4 ? 'green--text text--accent--3' :
+                            <span :class="order.status_code === Status.returned || order.status_code ? 'green--text text--accent--3' :
                                             'red--text'">{{ statusMsg[order.status_code] }}</span>
                         </v-col>
                         <v-col clos="12">
@@ -156,6 +156,11 @@
         apiOrderUpdate
     } from '@/api/api'
 
+    import {
+        Status,
+        StatusMsg,
+    } from '@/api/config'
+
     export default {
         components: {
             VuetifyLayout,
@@ -171,7 +176,8 @@
             pageLoading: false,
             search_loading: false,
             choose_file: null,
-            statusMsg: ["已結單", "未付款", "已付款，未領取衣服", "未歸還衣服", "已歸還衣服", "已取消訂單", "退款中", "已退款"],
+            Status: Status,
+            statusMsg: StatusMsg,
             headers: [{
                     text: '學號',
                     align: 'start',
@@ -300,21 +306,11 @@
                 }, 2000)
             },
             async save() {
-                // this.form.document_id = this.order.document_id
-                // this.form.owner_username = this.order.owner.username
-                // this.form.status_code = 3
-
-                // await this.form.patch('/order/' + this.order.id).then(() => {
-                //     this.cancel()
-                //     this.msg = '已領取'
-                //     this.error = false
-                //     this.show_msg = true
-                // });
                 this.pageLoading = true
                 await this.$inertia.patch(`/order/${this.order.id}`, {
                     document_id: this.order.document_id,
                     owner_username: this.order.owner.username,
-                    status_code: 3
+                    status_code: Status.refunding
                 }, {
                     onSuccess: (page) => {
                         console.log(page)
