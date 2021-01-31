@@ -59,6 +59,9 @@ Route::group([
     Route::post('/preserve_order', [OrderController::class, 'preserveDate'])
         ->name('preserve_order');
 
+    Route::post('/cancel_order', [OrderController::class, 'cancelOrder'])
+        ->name('cancel_order');
+
     Route::apiResource('order', OrderController::class, ['only' => ['index', 'store', 'update']]);
     Route::apiResource('item', ItemController::class, ['only' => ['index']]);
 });
@@ -94,9 +97,6 @@ Route::group([
 
     Route::post('/refund_order', [OrderController::class, 'refundOrder'])
         ->name('refund_order');
-
-    Route::post('/cancel_order', [OrderController::class, 'cancelOrder'])
-        ->name('cancel_order');
 
     Route::post('/edit_set_price', EditSetPriceController::class)
         ->name('edit_set_price');

@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Order;
+use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
@@ -14,9 +16,18 @@ class CheckOrder extends FormRequest
      */
     public function authorize()
     {
-        return Auth::check()
-            ? true
-            : false;
+        $order = Order::where('document_id', $this->order_id);
+
+        if (is_null($order))
+            return false;
+        if (Auth::user()->isRole(User::ADMIN))
+            return true;
+        if (Auth::user()->isRole(User::STUDENT)) {
+            return (Auth::id() !== $order->first()->owner->id)
+                ? false
+                : true;
+        }
+        return false;
     }
 
     /**

@@ -20,17 +20,14 @@ class PreserveDate extends FormRequest
     {
         $order = Order::where('document_id', $this->order_id);
 
-        if (Auth::check()) {
-            if (is_null($order))
-                return false;
-            if (Auth::user()->isRole(User::ADMIN))
-                return true;
-            if (Auth::user()->isRole(User::STUDENT)) {
-                return (Auth::id() !== $order->first()->owner->id)
-                    ? false
-                    : true;
-            }
+        if (is_null($order))
             return false;
+        if (Auth::user()->isRole(User::ADMIN))
+            return true;
+        if (Auth::user()->isRole(User::STUDENT)) {
+            return (Auth::id() !== $order->first()->owner->id)
+                ? false
+                : true;
         }
         return false;
     }
