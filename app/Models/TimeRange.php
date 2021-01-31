@@ -9,8 +9,11 @@ class TimeRange extends Model
 {
     use HasFactory;
 
-    const B = 5;
-    const M = 6;
+    const BORROW_TIME = 1;
+    const PAID_TIME = 2;
+    const B = 3;
+    const M = 4;
+    const RET = 5;
 
     /**
      * Indicates if the model should be timestamped.

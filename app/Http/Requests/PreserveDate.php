@@ -43,6 +43,7 @@ class PreserveDate extends FormRequest
     public function rules()
     {
         $order = Order::where('document_id', $this->order_id)->first();
+        $bt = TimeRange::find(TimeRange::BORROW_TIME);
         return [
             'order_id' => [
                 'required',
@@ -50,10 +51,12 @@ class PreserveDate extends FormRequest
             ],
             'preserve_date' => [
                 'required',
-                'after_or_equal:' . today()->addDays(2),
-                'before_or_equal:' . ($order->owner->isBachelor() ?
-                    TimeRange::getBachelorReturnEndTime() :
-                    TimeRange::getMasterReturnEndTime()),
+                'after_or_equal:' . today()->addDays(2) > $bt->start_time
+                    ? today()->addDays(2)
+                    : $bt->start_time,
+                'before_or_equal:' . ($order->owner->isBachelor()
+                    ? TimeRange::getBachelorReturnEndTime()
+                    : TimeRange::getMasterReturnEndTime()),
             ],
         ];
     }
