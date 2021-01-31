@@ -15,6 +15,8 @@ class Item extends Model
     const COLOR_ITEMS = ['領巾、帽子', '披肩、帽穗'];
     const SIZE_ITEMS = ['學士服', '碩士服'];
 
+    const COLOR_LIST = ['白', '藍', '黃', '橘', '灰', '紫'];
+
     /**
      * The attributes that should be hidden for serialization.
      *

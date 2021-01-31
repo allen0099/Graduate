@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminShowOrderController;
 use App\Http\Controllers\AdminStampChangeController;
+use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\EditSetPriceController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\LocationUpdateController;
@@ -128,6 +129,8 @@ Route::group([
     Route::apiResource('order', OrderController::class, ['except' => ['index', 'store', 'update']]);
 
     Route::apiResource('item', ItemController::class, ['except' => ['index']]);
+
+    Route::apiResource('department', DepartmentController::class, ['except' => ['store', 'destroy']]);
 
     Route::apiResource('time', TimeRangeController::class,
         ['except' => ['index', 'show', 'destroy', 'store']]);
