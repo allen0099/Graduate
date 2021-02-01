@@ -14,6 +14,8 @@ export const apiInventoryUpdate = (id, res) =>
 export const apiPriceUpdate = (cloth, price) =>
     Request.post(`/edit_set_price`, { cloth, price });
 
+export const apiDepartment = () => Request.get("/department");
+
 // Admin Order Actions
 export const apiSearchOrder = search =>
     Request.get(`/search_order?search=${search}`);

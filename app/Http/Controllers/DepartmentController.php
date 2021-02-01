@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Department;
+use App\Models\DepartmentClass;
 use App\Models\Item;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -16,7 +17,7 @@ class DepartmentController extends Controller
      */
     public function index()
     {
-        return Department::all();
+        return DepartmentClass::all();
     }
 
     /**

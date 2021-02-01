@@ -11,18 +11,18 @@
                 show-arrows
             >
                 <v-tab>
-                    <v-icon left>mdi-account</v-icon>
                     資料上傳
                 </v-tab>
                 <v-divider vertical></v-divider>
                 <v-tab>
-                    <v-icon left>mdi-lock</v-icon>
                     時間與地點
                 </v-tab>
                 <v-divider vertical></v-divider>
                 <v-tab>
-                    <v-icon left>mdi-access-point</v-icon>
                     衣服相關設定
+                </v-tab>
+                <v-tab>
+                    系級顏色設定
                 </v-tab>
                 <!-- tab 1 -->
                 <v-tab-item>
@@ -279,6 +279,11 @@
                         </v-card>
                     </v-card>
                 </v-tab-item>
+
+                <!-- tab 4 -->
+                <v-tab-item>
+                    <DepartmentColorSettimg></DepartmentColorSettimg>
+                </v-tab-item>
             </v-tabs>
         </div>
 
@@ -317,6 +322,7 @@
     import UploadStampImg from '@/Pages/Admin/Setting/UploadStampImg'
     import TimeSetting from '@/Pages/Admin/Setting/TimeSetting'
     import LocationSetting from '@/Pages/Admin/Setting/LocationSetting'
+    import DepartmentColorSettimg from '@/Pages/Admin/Setting/DepartmentColorSettimg'
     import {
         apiInventoryUpdate,
         apiPriceUpdate
@@ -329,14 +335,15 @@
             UploadStudentData,
             UploadStampImg,
             TimeSetting,
-            LocationSetting
+            LocationSetting,
+            DepartmentColorSettimg
         },
         name: "AdminSetting",
         data: () => ({
             snackbar: false,
             snackbar_true: false,
             msg: '',
-            tab: 0,
+            tab: 3,
             toggle_btn: 0,
             bachelor_price: 900,
             master_price: 1300,

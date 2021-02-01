@@ -20,8 +20,7 @@ class SearchOwnerController extends Controller
     {
 
         if(Auth::user()->role === User::STUDENT){
-            // $find_set = Set::where('student_id', Auth::user()->id);
-            $find_set = Set::where('student_id', '25');
+            $find_set = Set::where('student_id', Auth::user()->id);
             if ($find_set->count() === 0) {
                 return abort(404);
             }

@@ -22,6 +22,7 @@ class CreateDepartmentClassesTable extends Migration
 
             $table->string('class_id')->unique();
             $table->string('class_name')->unique();
+            $table->string('default_color')->nullable();
 
             $table->unique(['department_id', 'class_id']);
         });
