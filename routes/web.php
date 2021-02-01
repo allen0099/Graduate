@@ -158,3 +158,7 @@ Route::middleware(['auth:sanctum'])->get('/meow', function () {
 })->name('meow'); // new dashboard
 
 Route::middleware(['auth:sanctum'])->get('index', RedirectAfterLoginController::class);
+
+
+Route::get('test-pdf', [PDFController::class, 'test'])
+    ->name('test-pdf');
