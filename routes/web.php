@@ -133,7 +133,7 @@ Route::group([
 
     Route::apiResource('department', DepartmentController::class, ['except' => ['store', 'destroy']]);
 
-    Route::apiResource('department_class', DepartmentClassController::class, ['except' => ['store', 'destroy']]);
+    Route::apiResource('department_class', DepartmentClassController::class, ['except' => ['update', 'destroy']]);
 
     Route::apiResource('time', TimeRangeController::class,
         ['except' => ['index', 'show', 'destroy', 'store']]);

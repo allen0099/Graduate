@@ -20,14 +20,27 @@ class DepartmentClassController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Update list objects.
      *
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
-        // won't implement
+        $request->validate([
+            'class_id.*' => ['required', 'exists:department_classes,class_id'],
+            'color' => ['nullable', Rule::in(array_merge(Item::COLOR_LIST, [null]))],
+        ]);
+
+        foreach ($request->class_id as $item) {
+            $dc = DepartmentClass::where('class_id', $item)->first();
+
+            $dc->forceFill([
+                'default_color' => $request->color,
+            ])->save();
+        }
+
+        return response()->noContent();
     }
 
     /**
@@ -50,18 +63,7 @@ class DepartmentClassController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $request->validate([
-            'class_id' => ['required', 'exists:department_classes,class_id'],
-            'color' => ['required', Rule::in(Item::COLOR_LIST)],
-        ]);
-
-        $dc = DepartmentClass::where('class_id', $request->class_id)->first();
-
-        $dc->forceFill([
-            'default_color' => $request->color,
-        ])->save();
-
-        return $dc->fresh();
+        // won't implement
     }
 
     /**
