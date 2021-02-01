@@ -48,9 +48,9 @@ class PreserveDate extends FormRequest
             ],
             'preserve_date' => [
                 'required',
-                'after_or_equal:' . today()->addDays(2) > $bt->start_time
+                'after_or_equal:' . (today()->addDays(2) > $bt->start_time
                     ? today()->addDays(2)
-                    : $bt->start_time,
+                    : $bt->start_time),
                 'before_or_equal:' . ($order->owner->isBachelor()
                     ? TimeRange::getBachelorReturnEndTime()
                     : TimeRange::getMasterReturnEndTime()),
