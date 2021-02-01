@@ -162,6 +162,26 @@
 
                         <v-divider></v-divider>
 
+                        <v-list-item
+                            v-for="link in rightLinks"
+                            :key="`${link.label}-drawer-right-link`"
+                            :href="route(link.url)"
+                            class="text-decoration-none"
+                            color="primary"
+                            :class="{'v-btn--active': route().current(link.url)}"
+                            v-if="link.role.indexOf($page.user.role) >= 0"
+                        >
+                            <v-list-item-icon>
+                                <v-icon v-text="link.icon" />
+                            </v-list-item-icon>
+
+                            <v-list-item-content>
+                                <v-list-item-title v-text="link.label" />
+                            </v-list-item-content>
+                        </v-list-item>
+
+                        <v-divider></v-divider>
+
                         <v-list-group
                             prepend-icon="mdi-account-circle"
                             no-action

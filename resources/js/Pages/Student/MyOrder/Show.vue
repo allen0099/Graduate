@@ -251,7 +251,7 @@
                 <v-card-title>
                     警告
                 </v-card-title>
-                <v-card-text>
+                <v-card-text class="font-weight-bold">
                     <ol class="mt-1">
                         <li>
                             訂單尚未付款時可以取消訂單
@@ -310,7 +310,7 @@
                     <v-select
                         v-model="select_date"
                         :items="timeList"
-                        label="預約日期"
+                        :label="timeList.length == 0 ? '已過期' : '預約日期'"
                     ></v-select>
                     <ol
                         class="mt-2"
@@ -325,9 +325,8 @@
                         </li>
                         <li>
                             <span>請注意，</span>
-                            <span class="red--text">請注意，預約後即不允許修改。
+                            <span class="red--text">預約後即不允許修改。
                             </span>
-                            <span>。</span>
                         </li>
                         <li>領取當天請攜帶領據，並且確認領據上的每一位同學都有簽名。
                         </li>
@@ -346,6 +345,7 @@
                         color="primary"
                         text
                         @click="pageLoading = true"
+                        :disabled="!select_date"
                     >
                         確定
                     </v-btn>
@@ -374,7 +374,7 @@
                     <v-card-title>
                         再次確認
                     </v-card-title>
-                    <v-card-text>
+                    <v-card-text class="font-weight-bold">
                         確定預約 {{ select_date }} ?
                     </v-card-text>
                     <v-card-actions>
@@ -401,13 +401,21 @@
             v-model="snackbar"
             :timeout="2000"
         >
+            <v-icon
+                dark
+                right
+                class="mr-2"
+                :color="snackbar_true ? 'success' : 'error'"
+            >
+                {{ snackbar_true ? 'mdi-checkbox-marked-circle' : 'mdi-alert ' }}
+            </v-icon>
             {{ msg }}
             <template v-slot:action="{ attrs }">
                 <v-btn
                     text
                     v-bind="attrs"
                     @click="snackbar = false"
-                    color="red"
+                    :color="snackbar_true ? 'success' : 'error'"
                 >
                     關閉
                 </v-btn>
@@ -447,6 +455,7 @@
             pageLoading: false,
             reservationCheck: false,
             snackbar: false,
+            snackbar_true: false,
             statusFilterSelected: -1,
             order: null,
             msg: '',
@@ -544,8 +553,10 @@
                         this.msg = '已取消訂單'
                         this.orderList.splice(this.orderList.findIndex(x => x.document_id == this.order
                             .document_id), 1)
+                        this.snackbar_true = true
                     } else {
                         this.msg = '發生錯誤'
+                        this.snackbar_true = false
                     }
                     this.pageLoading = false
                     this.check_cancel()
@@ -554,6 +565,7 @@
                     this.msg = '發生錯誤'
                     this.pageLoading = false
                     this.check_cancel()
+                    this.snackbar_true = false
                     this.snackbar = true
                 })
             },
@@ -573,13 +585,16 @@
                     if (res.status == 200) {
                         this.msg = '已預約'
                         this.order.preserve = this.select_date
+                        this.snackbar_true = true
                     } else {
                         this.msg = '發生錯誤'
+                        this.snackbar_true = false
                     }
                     this.snackbar = true
                     this.pageLoading = false
                 }).catch((err) => {
                     this.msg = '發生錯誤'
+                    this.snackbar_true = false
                     this.snackbar = true
                     this.pageLoading = false
                 })

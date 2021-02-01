@@ -338,7 +338,7 @@
                     <v-card-title>
                         警告
                     </v-card-title>
-                    <v-card-text>
+                    <v-card-text class="font-weight-bold">
                         取消訂單後將無法復原，確定要取消訂單?
                     </v-card-text>
                     <v-card-actions>
