@@ -17,7 +17,6 @@ class CreateDepartmentsTable extends Migration
             $table->id();
             $table->string('department_id')->unique();
             $table->string('name');
-            $table->string('default_color')->nullable();
         });
     }
 

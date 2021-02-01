@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Department;
+use App\Models\DepartmentClass;
 use App\Models\Item;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
-class DepartmentController extends Controller
+class DepartmentClassController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -16,18 +16,31 @@ class DepartmentController extends Controller
      */
     public function index()
     {
-        return Department::all();
+        return DepartmentClass::all();
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Update list objects.
      *
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
-        // won't implement
+        $request->validate([
+            'class_id.*' => ['required', 'exists:department_classes,class_id'],
+            'color' => ['nullable', Rule::in(array_merge(Item::COLOR_LIST, [null]))],
+        ]);
+
+        foreach ($request->class_id as $item) {
+            $dc = DepartmentClass::where('class_id', $item)->first();
+
+            $dc->forceFill([
+                'default_color' => $request->color,
+            ])->save();
+        }
+
+        return response()->noContent();
     }
 
     /**
@@ -38,7 +51,7 @@ class DepartmentController extends Controller
      */
     public function show($id)
     {
-        return Department::find($id);
+        return DepartmentClass::find($id);
     }
 
     /**
@@ -50,7 +63,7 @@ class DepartmentController extends Controller
      */
     public function update(Request $request, $id)
     {
-        // todo: update department obj
+        // won't implement
     }
 
     /**
