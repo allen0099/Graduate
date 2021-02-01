@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Models\User;
+use App\Models\TimeRange;
+use Carbon\Carbon;
 use Barryvdh\DomPDF\Facade as PDF;
 use Milon\Barcode\Facades\DNS1DFacade as DNS1D;
 use Illuminate\Http\Request;
@@ -76,10 +78,36 @@ class PDFController extends Controller
         return '資料錯誤';
     }
 
-    public function test(){
-        $barcode_username = DNS1D::getBarcodeHTML('4445645656', 'C39+');
-        error_log($barcode_username);
-        // return '<img src="data:image/png; base64, '.$barcode_username.'" />';
-        return $barcode_username;
+    public function preservePdf(){
+        // $Bachelor_start = Carbon::createFromFormat('Y-m-d', TimeRange::getBachelorReturnStartTime());
+        // $Bachelor_end = Carbon::createFromFormat('Y-m-d', TimeRange::getBachelorReturnEndTime());
+
+        $Bachelor_start = Carbon::createFromFormat('Y-m-d', TimeRange::getBachelorReturnStartTime());
+        $Bachelor_end = Carbon::createFromFormat('Y-m-d', TimeRange::getBachelorReturnEndTime());
+        $today = now();
+        $start = null;
+        $end = null;
+
+        $Bachelor = [];
+
+        if(today()->addDays(1) < $Bachelor_start){
+            $Bachelor = ['fail'];
+        } else {
+            // $start = today()->addDays(1) > $Bachelor_start ? $Bachelor_start : today()->addDays(1);
+            // $end = today()->addDays(1) > $Bachelor_end ? $Bachelor_end : today()->addDays(1);
+            // while($start <= $end){
+            //     array_push($Bachelor, $start->format('Y-m-d'));
+            //     $start->addDays(1);
+            // }
+        }
+
+        $start = today()->addDays(1) > $Bachelor_start ? $Bachelor_start : today()->addDays(1);
+        $end = today()->addDays(1) > $Bachelor_end ? $Bachelor_end : today()->addDays(1);
+
+        // today()->addDays(2)->format('Y-m-d');
+        // TimeRange::getMasterReturnStartTime();
+        return [now(), $start, $end, $Bachelor];
     }
+
+
 }
