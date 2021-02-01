@@ -79,42 +79,7 @@
                     </v-card-text>
                 </v-card>
             </v-card-text>
-            <!-- <v-card-text>
-            <v-container fluid>
-                <p>{{ selected }}</p>
-                <v-row dense>
-                    <v-col
-                        cols="6"
-                        sm="4"
-                        lg="2"
-                        md="3"
-                        v-for="(item, index) in departments"
-                        :key="`departments-${index}`"
-                    >
-                        <v-checkbox
-                            v-model="selected"
-                            :label="item.class_name"
-                            :value="item.class_id"
-                        ></v-checkbox>
-                    </v-col>
-                </v-row>
-            </v-container>
-        </v-card-text> -->
-            <!-- <v-snackbar v-model="snackbar">
-            {{ msg }}
 
-            <template v-slot:action="{ attrs }">
-                <v-btn
-                    color="primary"
-                    text
-                    v-bind="attrs"
-                    @click="snackbar = false"
-                    class="font-weight-bold"
-                >
-                    關閉
-                </v-btn>
-            </template>
-        </v-snackbar> -->
         </v-card>
         <v-dialog
             v-model="dialog"
@@ -171,6 +136,7 @@
                         color="primary"
                         text
                         @click="save"
+                        :disabled="!color_choose"
                     >
                         設定
                     </v-btn>
@@ -196,12 +162,38 @@
                 </v-card>
             </v-dialog>
         </v-dialog>
+        <v-snackbar
+            v-model="snackbar"
+            :timeout="2000"
+        >
+            <v-icon
+                dark
+                right
+                class="mr-2"
+                :color="snackbar_true ? 'success' : 'error'"
+            >
+                {{ snackbar_true ? 'mdi-checkbox-marked-circle' : 'mdi-alert ' }}
+            </v-icon>
+            {{ msg }}
+
+            <template v-slot:action="{ attrs }">
+                <v-btn
+                    :color="snackbar_true ? 'success' : 'error'"
+                    text
+                    v-bind="attrs"
+                    @click="snackbar = false"
+                >
+                    關閉
+                </v-btn>
+            </template>
+        </v-snackbar>
     </div>
 </template>
 
 <script>
     import {
-        apiDepartment
+        apiDepartment,
+        apiClassSetColor
     } from '@/api/api'
 
     export default {
@@ -212,7 +204,10 @@
                 search: '',
                 dialog: false,
                 pageLoading: false,
+                snackbar: false,
+                snackbar_true: false,
                 color_choose: null,
+                msg: '',
                 departments: [],
                 departments_B: [],
                 departments_M: [],
@@ -272,15 +267,31 @@
                 this.selected = []
                 this.search = ''
                 this.color_choose = null
+                this.pageLoading = false
             },
-            save() {
+            async save() {
+                this.pageLoading = true
                 if (this.color_choose == '不設定') {
                     this.color_choose = null
                 }
-                for (let i of this.selected) {
-                    this.departments.find(x => x.class_id == i).default_color = this.color_choose
-                }
-                this.cancel()
+                await apiClassSetColor(this.selected, this.color_choose).then(res => {
+                    if (res.status == 204) {
+                        for (let i of this.selected) {
+                            this.departments.find(x => x.class_id == i).default_color = this.color_choose
+                        }
+                        this.msg = '設定完成'
+                        this.snackbar_true = true
+                    } else {
+                        this.msg = '設定失敗'
+                        this.snackbar_true = false
+                    }
+                    this.snackbar = true
+                }).catch((err) => {
+                    this.msg = '設定失敗'
+                    this.search_loading = false
+                })
+
+                await this.cancel()
             },
         },
 
