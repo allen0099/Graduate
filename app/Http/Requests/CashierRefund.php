@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use App\Models\TimeRange;
 use Illuminate\Foundation\Http\FormRequest;
 
-class CashierListDate extends FormRequest
+class CashierRefund extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,8 +25,7 @@ class CashierListDate extends FormRequest
     public function rules()
     {
         return [
-            'start_date' => ['date'],
-            'end_date' => ['date', 'after:start_date'],
+            'id' => ['required', 'exists:lists,id'],
         ];
     }
 }

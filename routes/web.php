@@ -6,6 +6,7 @@ use App\Http\Controllers\DepartmentClassController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\EditSetPriceController;
 use App\Http\Controllers\ItemController;
+use App\Http\Controllers\ListController;
 use App\Http\Controllers\LocationUpdateController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PDFController;
@@ -87,6 +88,12 @@ Route::group([
 ], function () {
     Route::get('/search_order', [OrderController::class, 'searchOrder'])
         ->name('search_order');
+
+    Route::get('/new_cashier_list', [ListController::class, 'createNewList'])
+        ->name('new_cashier_list');
+
+    Route::post('/cashier_refund', [ListController::class, 'refunded'])
+        ->name('cashier_refund');
 
     Route::post('/paid_order', [OrderController::class, 'paidOrder'])
         ->name('paid_order');

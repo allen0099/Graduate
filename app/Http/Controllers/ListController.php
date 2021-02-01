@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\CashierListDate;
+use App\Http\Requests\CashierRefund;
+use App\Models\CashierList;
 use App\Models\Set;
 use App\Models\TimeRange;
 use Illuminate\Http\Request;
 
 class ListController extends Controller
 {
-    public function createNewList(CashierListDate $request)
+    public function createNewList(CashierRefund $request)
     {
         $request->validated();
 
@@ -22,9 +23,31 @@ class ListController extends Controller
             $end_date = $request->end_date;
         }
 
-        $sets = Set::all()->whereBetween('returned', [$start_date, $end_date]);
+        $sets = Set::all()
+            ->whereNull('list_id')
+            ->whereBetween('returned', [$start_date, $end_date]);
 
-        // todo: filter 出還沒送出納組的人
-        //  new set()
+        $list = new CashierList();
+        $list->save();
+
+        foreach ($sets as $set) {
+            $set->forceFill([
+                'list_id' => $list->id,
+            ])->save();
+        }
+
+        return $list->fresh();
+    }
+
+    public function refunded(CashierRefund $request)
+    {
+        $request->validated();
+
+        $list = CashierList::find($request->id);
+        $list->forceFill([
+            'refund' => true,
+        ])->save();
+
+        return $list->fresh();
     }
 }
