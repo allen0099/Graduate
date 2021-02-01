@@ -126,7 +126,7 @@
                     <tr>
                         <th></th>
                         <th>
-                            <p>領巾數量</p>
+                            <p>領巾、帽子數量</p>
                         </th>
                         @foreach ($colorList as $key => $value)
                             @if ($value == 0)

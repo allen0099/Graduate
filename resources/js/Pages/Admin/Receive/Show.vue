@@ -105,7 +105,7 @@
                     class="mt-3"
                     flat
                 >
-                    <v-card-title>學士服領巾數量</v-card-title>
+                    <v-card-title>學士服領巾、帽子數量</v-card-title>
                     <v-row dense>
                         <v-col
                             v-for="(ba_item, index) in bachelor_accessories"

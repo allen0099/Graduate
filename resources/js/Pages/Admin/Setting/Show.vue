@@ -21,6 +21,7 @@
                 <v-tab>
                     衣服相關設定
                 </v-tab>
+                <v-divider vertical></v-divider>
                 <v-tab>
                     系級顏色設定
                 </v-tab>
@@ -140,7 +141,7 @@
                                     <v-btn @click="save_inventory(item)">儲存</v-btn>
                                 </v-col>
                             </v-row>
-                            <v-card-title>領巾數量設定</v-card-title>
+                            <v-card-title>領巾、帽子數量設定</v-card-title>
                             <v-row
                                 v-for="(item, index) in bachelor_accessories"
                                 :key="`bachelor_accessories-${index}`"
@@ -343,7 +344,7 @@
             snackbar: false,
             snackbar_true: false,
             msg: '',
-            tab: 3,
+            tab: 0,
             toggle_btn: 0,
             bachelor_price: 900,
             master_price: 1300,
@@ -356,25 +357,6 @@
                 v => /^[0-9]*$/.test(v) || '只能輸入數字'
             ]
         }),
-        watch: {
-            tab: (val) => {
-                location.hash = (val + 1).toString()
-            }
-        },
-        computed: {
-            hash() {
-                let hash = location.hash
-                if (hash === '#2') {
-                    this.tab = 1
-                } else if (hash === '#3') {
-                    this.tab = 2
-                } else {
-                    this.tab = 0
-                    location.hash = '#1'
-                }
-                return location.hash
-            }
-        },
         methods: {
             init_obj() {
                 this.bachelor_accessories = this.$page.inventory.slice(0, 2)
