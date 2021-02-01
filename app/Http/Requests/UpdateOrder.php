@@ -95,11 +95,11 @@ class UpdateOrder extends FormRequest
                         $username = $request->sets[$index]['set_owner'];
 
                         $user = User::where('username', $username)->first();
-                        $department = $user->school_class->department;
+                        $school_class = $user->school_class;
 
                         $accessory = Item::find($value)->first();
 
-                        if (!is_null($department->default_color) && $accessory->spec !== $department->default_color) {
+                        if (!is_null($school_class->default_color) && $accessory->spec !== $school_class->default_color) {
                             $fail(__('validation.color_not_match'));
                         }
 
@@ -197,11 +197,11 @@ class UpdateOrder extends FormRequest
                         $username = $request->sets[$index]['set_owner'];
 
                         $user = User::where('username', $username)->first();
-                        $department = $user->school_class->department;
+                        $school_class = $user->school_class;
 
                         $accessory = Item::find($value)->first();
 
-                        if (!is_null($department->default_color) && $accessory->spec !== $department->default_color) {
+                        if (!is_null($school_class->default_color) && $accessory->spec !== $school_class->default_color) {
                             $fail(__('validation.color_not_match'));
                         }
 
