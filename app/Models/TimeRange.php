@@ -42,4 +42,14 @@ class TimeRange extends Model
     {
         return TimeRange::find(TimeRange::M)->end_time;
     }
+
+    public static function getBachelorReturnStartTime()
+    {
+        return TimeRange::find(TimeRange::B)->start_time;
+    }
+
+    public static function getMasterReturnStartTime()
+    {
+        return TimeRange::find(TimeRange::M)->start_time;
+    }
 }
