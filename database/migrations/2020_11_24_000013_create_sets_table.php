@@ -35,7 +35,6 @@ class CreateSetsTable extends Migration
 
             $table->date('returned')->nullable();
             $table->boolean('refund')->default(false);
-            $table->boolean('processing')->default(false);
         });
     }
 

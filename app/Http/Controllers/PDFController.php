@@ -7,10 +7,10 @@ use App\Models\User;
 use App\Models\TimeRange;
 use Carbon\Carbon;
 use Barryvdh\DomPDF\Facade as PDF;
-use Milon\Barcode\Facades\DNS1DFacade as DNS1D;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Milon\Barcode\DNS1D;
 
 class PDFController extends Controller
 {
@@ -49,8 +49,8 @@ class PDFController extends Controller
                 //     $totle += 1;
                 // }
 
-                $barcode_username = DNS1D::getBarcodePNG((string) $result->owner->username, 'C39');
-                $barcode_id = DNS1D::getBarcodePNG((string) $result->document_id, 'C39');
+                $barcode_username = (new DNS1D)->getBarcodePNG((string)$result->owner->username, 'C39');
+                $barcode_id = (new DNS1D)->getBarcodePNG((string)$result->document_id, 'C39');
 
                 $data = [
                     'order' => $result,
@@ -69,7 +69,7 @@ class PDFController extends Controller
                 // );
 
                 $pdf->setPaper('a4', 'potrait');
-                
+
                 return $pdf->stream('訂單-'.$result->owner->username.'.pdf');
                 // return view('pdf/order', $data);
                 // return '<img src="data:image/png; base64, '.$barcode_username.'" />';
@@ -107,6 +107,12 @@ class PDFController extends Controller
         // today()->addDays(2)->format('Y-m-d');
         // TimeRange::getMasterReturnStartTime();
         return [now(), $start, $end, $Bachelor];
+    }
+    public function test(){
+        $barcode_username = (new DNS1D)->getBarcodeHTML('4445645656', 'C39+');
+        error_log($barcode_username);
+        // return '<img src="data:image/png; base64, '.$barcode_username.'" />';
+        return $barcode_username;
     }
 
 
