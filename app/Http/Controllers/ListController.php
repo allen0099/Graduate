@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CashierListDate;
 use App\Http\Requests\CashierRefund;
 use App\Models\CashierList;
 use App\Models\Set;
@@ -10,7 +11,7 @@ use Illuminate\Http\Request;
 
 class ListController extends Controller
 {
-    public function createNewList(CashierRefund $request)
+    public function createNewList(CashierListDate $request)
     {
         $request->validated();
 

@@ -23,6 +23,16 @@ class TimeRange extends Model
     public $timestamps = false;
 
     /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'start_time' => 'datetime',
+        'end_time' => 'datetime',
+    ];
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var string[]
