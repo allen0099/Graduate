@@ -63,12 +63,10 @@ class PDFController extends Controller
                     'barcode_id' => $barcode_id
                 ];
 
-                $pdf = PDF::loadView('pdf/order', $data);
+                $pdf = PDF::loadView('pdf/order', $data)->setPaper('a4', 'potrait');
                 // $pdf = PDF::setOptions(
                 //     ['isHtml5ParserEnabled'=>true,'isRemoteEnabled'=>true])->loadView('pdf/order', $data
                 // );
-
-                $pdf->setPaper('a4', 'potrait');
 
                 return $pdf->stream('訂單-'.$result->owner->username.'.pdf');
                 // return view('pdf/order', $data);
@@ -81,33 +79,87 @@ class PDFController extends Controller
     public function preservePdf(){
         // $Bachelor_start = Carbon::createFromFormat('Y-m-d', TimeRange::getBachelorReturnStartTime());
         // $Bachelor_end = Carbon::createFromFormat('Y-m-d', TimeRange::getBachelorReturnEndTime());
+        
+        $disk = Storage::disk('pdf');
 
-        $Bachelor_start = Carbon::createFromFormat('Y-m-d', TimeRange::getBachelorReturnStartTime());
-        $Bachelor_end = Carbon::createFromFormat('Y-m-d', TimeRange::getBachelorReturnEndTime());
-        $today = now();
+        $Bachelor_start = TimeRange::getBachelorReturnStartTime();
+        $Bachelor_end = TimeRange::getBachelorReturnEndTime();
         $start = null;
         $end = null;
 
-        $Bachelor = [];
+        $res = [];
 
-        if(today()->addDays(1) < $Bachelor_start){
-            $Bachelor = ['fail'];
-        } else {
-            // $start = today()->addDays(1) > $Bachelor_start ? $Bachelor_start : today()->addDays(1);
-            // $end = today()->addDays(1) > $Bachelor_end ? $Bachelor_end : today()->addDays(1);
-            // while($start <= $end){
-            //     array_push($Bachelor, $start->format('Y-m-d'));
-            //     $start->addDays(1);
-            // }
+        if(today()->addDays(1) >= $Bachelor_start){
+            $start = today()->addDays(1) > $Bachelor_start ? $Bachelor_start : today()->addDays(1);
+            $end = today()->addDays(1) > $Bachelor_end ? $Bachelor_end : today()->addDays(1);
+            while($start <= $end){
+                if($disk->exists('preseve/學士服預約清單'.$start->format('Y-m-d').'.pdf')){
+                    array_push($res, [
+                        'filepath'=>$disk->url('preseve/學士服預約清單'.$start->format('Y-m-d').'.pdf'),
+                        'filename' => '學士服預約清單'.$start->format('Y-m-d').'.pdf'
+                        ]
+                    );
+                    $start->addDays(1);
+                    continue;
+                }
+
+                $order = Order::whereDate('preserve', '=', $start)->get();
+                $order = $order->filter(function ($value, $key) {
+                    return $value->owner->username[0] < "5";
+                });
+                $data = ['date' => $start->format('Y-m-d')];
+                $pdf = PDF::loadView('pdf/preserve', $data)->setPaper('a4', 'potrait');
+                $content = $pdf->download()->getOriginalContent();
+                Storage::put('pdf/preseve/學士服預約清單'.$start->format('Y-m-d').'.pdf', $content);
+                
+                array_push($res, [
+                    'filepath'=>$disk->url('preseve/學士服預約清單'.$start->format('Y-m-d').'.pdf'),
+                    'filename' => '學士服預約清單'.$start->format('Y-m-d').'.pdf'
+                    ]
+                );
+                $start->addDays(1);
+            }
         }
 
-        $start = today()->addDays(1) > $Bachelor_start ? $Bachelor_start : today()->addDays(1);
-        $end = today()->addDays(1) > $Bachelor_end ? $Bachelor_end : today()->addDays(1);
+        $Master_start = TimeRange::getMasterReturnStartTime();
+        $Master_end = TimeRange::getMasterReturnEndTime();
+        $start = null;
+        $end = null;
 
-        // today()->addDays(2)->format('Y-m-d');
-        // TimeRange::getMasterReturnStartTime();
-        return [now(), $start, $end, $Bachelor];
+        if(today()->addDays(1) >= $Master_start){
+            $start = today()->addDays(1) > $Master_start ? $Master_start : today()->addDays(1);
+            $end = today()->addDays(1) > $Master_end ? $Master_end : today()->addDays(1);
+            while($start <= $end){
+                if($disk->exists('preseve/碩士服預約清單'.$start->format('Y-m-d').'.pdf')){
+                    array_push($res, [
+                        'filepath'=>$disk->url('preseve/碩士服預約清單'.$start->format('Y-m-d').'.pdf'),
+                        'filename' => '碩士服預約清單'.$start->format('Y-m-d').'.pdf'
+                        ]
+                    );
+                    $start->addDays(1);
+                    continue;
+                }
+                $order = Order::whereDate('preserve', '=', $start)->get();
+                $order = $order->filter(function ($value, $key) {
+                    return $value->owner->username[0] > "5";
+                });
+                $data = ['date' => $start->format('Y-m-d')];
+                $pdf = PDF::loadView('pdf/preserve', $data)->setPaper('a4', 'potrait');
+                $content = $pdf->download()->getOriginalContent();
+                Storage::put('pdf/preseve/碩士服預約清單'.$start->format('Y-m-d').'.pdf', $content);
+                
+                array_push($res, [
+                    'filepath'=>$disk->url('preseve/碩士服預約清單'.$start->format('Y-m-d').'.pdf'),
+                    'filename' => '碩士服預約清單'.$start->format('Y-m-d').'.pdf'
+                    ]
+                );
+                $start->addDays(1);
+            }
+        }
+
+        return $res;
     }
+
     public function test(){
         $barcode_username = (new DNS1D)->getBarcodeHTML('4445645656', 'C39+');
         error_log($barcode_username);
