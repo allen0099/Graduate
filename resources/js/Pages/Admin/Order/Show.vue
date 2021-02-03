@@ -241,7 +241,7 @@
                                                 class="text-left"
                                                 v-if="order.status_code === Status.returned"
                                             >
-                                                退款
+                                                還款
                                             </th>
                                         </tr>
                                     </thead>

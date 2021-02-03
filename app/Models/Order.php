@@ -13,8 +13,8 @@ class Order extends Model
     const code_paid = 2; // 完成繳費 尚未領取衣服
     const code_received = 3; // 完成領取衣服 尚未歸還衣服
     const code_returned = 4; // 完成歸還衣服 完成歸還保證金
-    const code_refunding = 5; // 退款中
-    const code_refunded = 6; // 已退款
+    const code_refunding = 5; // 還款中
+    const code_refunded = 6; // 已還款
     const code_canceled = 7; // 已取消訂單
 
     /**

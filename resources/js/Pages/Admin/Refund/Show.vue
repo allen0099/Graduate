@@ -1,16 +1,16 @@
 <template>
     <VuetifyLayout>
         <template #header>
-            退款處理
+            還款處理
         </template>
         <v-card
             class="mt-3"
             flat
         >
             <v-card-title>
-                退款
+                還款
                 <v-spacer></v-spacer>
-                <v-btn @click="dialog_refund = true">生成退款名單</v-btn>
+                <v-btn @click="dialog_refund = true">生成還款名單</v-btn>
             </v-card-title>
             <v-card-text class="font-weight-bold">
                 <v-row
@@ -28,7 +28,7 @@
                     >
                         日期：{{ new Date(item.date).Format("yyyy-MM-dd") }}
                     </v-col>
-                    <v-col> 尚未處理退款數量：{{ item.count }}</v-col>
+                    <v-col> 尚未處理還款數量：{{ item.count }}</v-col>
                 </v-row>
             </v-card-text>
         </v-card>
@@ -38,7 +38,7 @@
             flat
         >
             <v-card-title>
-                退款中
+                還款中
             </v-card-title>
         </v-card>
         <v-divider class="mx-5 v-divider-bold" />
@@ -47,7 +47,7 @@
             flat
         >
             <v-card-title>
-                已退款
+                已還款
             </v-card-title>
         </v-card>
 
@@ -77,10 +77,10 @@
             max-width="600px"
         >
             <v-card>
-                <v-card-title>生成退款名單</v-card-title>
+                <v-card-title>生成還款名單</v-card-title>
                 <v-card-text class="font-weight-bold">
                     <v-row dense>
-                        <v-col cols="12">將該時間範圍的所有尚未處理退款的學生集合生成退款名單</v-col>
+                        <v-col cols="12">將該時間範圍的所有尚未處理還款的學生集合生成還款名單</v-col>
                         <v-col>
                             <v-select
                                 v-model="start_date"

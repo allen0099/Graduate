@@ -403,7 +403,7 @@
                         role: ['admin'],
                     },
                     {
-                        label: '退款',
+                        label: '還款',
                         url: 'admin.refund',
                         icon: '',
                         role: ['admin'],
