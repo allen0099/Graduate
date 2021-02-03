@@ -318,6 +318,7 @@ class OrderController extends Controller
             return [
                 'own' => User::find(Auth::id())->orders,
                 'set' => User::find(Auth::id())->set,
+                'shared' => User::find(Auth::id())->set->order,
             ];
         }
         return [];

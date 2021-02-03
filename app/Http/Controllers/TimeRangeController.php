@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\TimeRange;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 
@@ -13,9 +14,11 @@ class TimeRangeController extends Controller
         $this->validateTime($request);
 
         $timeRange = TimeRange::find($id);
-        $timeRange->start_time = $request->start_time;
-        $timeRange->end_time = $request->end_time;
-        $timeRange->save();
+
+        $timeRange->forceFill([
+            'start_time' => $request->start_time,
+            'end_time' => Carbon::createFromFormat('Y-m-d', $request->end_time)->endOfDay(),
+        ])->save();
 
         return $this->redirectAfterDone('success', '資料變更成功！');
     }
@@ -25,10 +28,11 @@ class TimeRangeController extends Controller
         $this->validateTime($request);
 
         $time = new TimeRange();
-        $time->content = $request->input('content');
-        $time->start_time = $request->input('start_time');
-        $time->end_time = $request->input('end_time');
-        $time->save();
+        $time->forceFill([
+            'content' => $request->input('content'),
+            'start_time' => $request->input('start_time'),
+            'end_time' => $request->input('end_time')
+        ])->save();
 
         return $this->redirectAfterDone('success', '新增資料成功！');
     }
