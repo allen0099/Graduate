@@ -6,10 +6,33 @@ use App\Http\Requests\CashierRefund;
 use App\Models\CashierList;
 use App\Models\Set;
 use App\Models\TimeRange;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class ListController extends Controller
 {
+    public function notReturnedTotal()
+    {
+
+        $start_date = Carbon::createFromFormat('Y-m-d H:i:s', TimeRange::find(TimeRange::RET)->start_time . ' 00:00:00', 'Asia/Taipei');
+        $end_date = Carbon::createFromFormat('Y-m-d H:i:s', TimeRange::find(TimeRange::RET)->end_time . ' 23:59:59', 'Asia/Taipei');
+
+        $list = [];
+        for (; $start_date <= $end_date;) {
+            $temp = $start_date->copy();
+            $set = Set::all()
+                ->whereNull('list_id')
+                ->whereBetween('returned', [$temp, $start_date->addDays(1)]);
+            array_push($list, ["date" => $temp, "count" => count($set), $set]);
+        }
+
+        // $set = Set::all()
+        //     ->whereNull('list_id')
+        //     ->whereBetween('returned', [TimeRange::find(TimeRange::RET)->start_time, $end_date])->get();
+
+        return $list;
+    }
+
     public function createNewList(CashierRefund $request)
     {
         $request->validated();
