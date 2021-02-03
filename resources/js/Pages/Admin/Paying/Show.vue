@@ -74,7 +74,7 @@
                         <v-col
                             cols="12"
                             md="4"
-                        >訂單日期：{{ order.created_at.slice(0, 16) }}</v-col>
+                        >訂單日期：{{ new Date(order.created_at).Format("yyyy-MM-dd HH:mm") }}</v-col>
                         <v-col
                             cols="12"
                             md="4"
@@ -122,7 +122,7 @@
                         @click="save"
                         :disabled="order.status_code != Status.created || !order.payment_id"
                     >
-                        領取
+                        確認
                     </v-btn>
                 </v-card-actions>
             </v-card>
@@ -193,7 +193,7 @@
                 },
                 {
                     text: '班級',
-                    value: 'student.class_id',
+                    value: 'student.school_class.class_name',
                     sortable: false,
                     width: 100,
                 },
@@ -266,6 +266,29 @@
         }),
         methods: {
             init_obj() {
+                Date.prototype.Format = function (fmt) {
+                    var o = {
+                        "M+": this.getMonth() + 1, //月份
+                        "d+": this.getDate(), //日
+                        "H+": this.getHours(), //小時
+                        "m+": this.getMinutes(), //分
+                        "s+": this.getSeconds(), //秒
+                        "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+                        "S": this.getMilliseconds() //毫秒
+                    };
+                    if (/(y+)/.test(fmt)) {
+                        fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+                    }
+                    for (var k in o) {
+                        if (new RegExp("(" + k + ")").test(fmt)) {
+                            fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr((
+                                "" +
+                                o[k]).length)));
+                        }
+                    }
+                    return fmt;
+                }
+
                 this.bachelor_accessories = this.$page.inventory.slice(0, 2)
                 this.master_accessories = this.$page.inventory.slice(2, 8)
                 this.bachelor_cloths = this.$page.inventory.slice(8, 12)

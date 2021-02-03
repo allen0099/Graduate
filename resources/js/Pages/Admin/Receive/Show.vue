@@ -210,12 +210,15 @@
                         <v-col
                             cols="12"
                             md="4"
-                        >訂單日期：{{ order.created_at.slice(0, 16) }}</v-col>
+                        >訂單日期：{{ new Date(order.created_at).Format("yyyy-MM-dd HH:mm") }}</v-col>
                         <v-col
                             cols="12"
                             md="4"
                         >總金額：{{ order.total_price }}</v-col>
-                        <v-col cols="12">付款單據編號：{{ order.payment_id }}</v-col>
+                        <v-col
+                            cols="12"
+                            v-if="order.payment_id"
+                        >付款單據編號：{{ order.payment_id }}</v-col>
                         <v-col
                             cols="12"
                             md="4"
@@ -333,7 +336,7 @@
                 },
                 {
                     text: '班級',
-                    value: 'student.class_id',
+                    value: 'student.school_class.class_name',
                     sortable: false,
                     width: 100,
                 },

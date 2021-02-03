@@ -87,23 +87,22 @@
                             tile
                             :color="colorList[order.status_code].bg"
                         >
+                            <v-card-title class="font-weight-bold">
+                                {{ order.owner.username[0] > "5" ? "碩士服" : "學士服" }}
+                                <v-spacer></v-spacer>
+                                <v-btn
+                                    outlined
+                                    color="indigo"
+                                    @click="edit_order(order)"
+                                >
+                                    編輯
+                                    <v-icon right>
+                                        mdi-pencil
+                                    </v-icon>
+                                </v-btn>
+                            </v-card-title>
                             <v-card-text class="font-weight-bold">
                                 <v-row dense>
-                                    <v-col
-                                        cols="12"
-                                        class="d-flex justify-end"
-                                    >
-                                        <v-btn
-                                            outlined
-                                            color="indigo"
-                                            @click="edit_order(order)"
-                                        >
-                                            編輯
-                                            <v-icon right>
-                                                mdi-pencil
-                                            </v-icon>
-                                        </v-btn>
-                                    </v-col>
                                     <v-col
                                         cols="12"
                                         md="4"
@@ -123,7 +122,7 @@
                                     <v-col
                                         cols="12"
                                         md="4"
-                                    >訂單日期：{{ order.created_at.slice(0, 16) }}</v-col>
+                                    >訂單日期：{{ new Date(order.created_at).Format("yyyy-MM-dd HH:mm") }}</v-col>
                                     <v-col
                                         cols="12"
                                         md="4"
@@ -221,10 +220,28 @@
                                                 學號
                                             </th>
                                             <th class="text-left">
+                                                姓名
+                                            </th>
+                                            <th class="text-left">
+                                                系級
+                                            </th>
+                                            <th class="text-left">
                                                 尺寸
                                             </th>
                                             <th class="text-left">
                                                 顏色
+                                            </th>
+                                            <th
+                                                class="text-left"
+                                                v-if="order.status_code === Status.received"
+                                            >
+                                                歸還
+                                            </th>
+                                            <th
+                                                class="text-left"
+                                                v-if="order.status_code === Status.returned"
+                                            >
+                                                退款
                                             </th>
                                         </tr>
                                     </thead>
@@ -234,8 +251,16 @@
                                             :key="`${order.document_id}-detial-${index}`"
                                         >
                                             <td>{{ item.student.username }}</td>
+                                            <td>{{ item.student.name }}</td>
+                                            <td>{{ item.student.school_class.class_name }}</td>
                                             <td>{{ item.cloth.spec }}</td>
                                             <td>{{ item.accessory.spec }}</td>
+                                            <td v-if="order.status_code === Status.received">
+                                                {{ item.returned ? '已歸還' : '未歸還' }}
+                                            </td>
+                                            <td v-if="order.status_code === Status.returned">
+                                                {{ item.refund ? '已還款' : '未還款' }}
+                                            </td>
                                         </tr>
                                     </tbody>
                                 </template>
@@ -279,7 +304,7 @@
                             <v-col
                                 cols="12"
                                 md="4"
-                            >訂單日期：{{ order.created_at.slice(0, 16) }}</v-col>
+                            >訂單日期：{{ new Date(order.created_at).Format("yyyy-MM-dd HH:mm") }}</v-col>
                             <v-col
                                 cols="12"
                                 md="4"
@@ -478,6 +503,31 @@
             }
         },
         methods: {
+            init() {
+                Date.prototype.Format = function (fmt) {
+                    var o = {
+                        "M+": this.getMonth() + 1, //月份
+                        "d+": this.getDate(), //日
+                        "H+": this.getHours(), //小時
+                        "m+": this.getMinutes(), //分
+                        "s+": this.getSeconds(), //秒
+                        "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+                        "S": this.getMilliseconds() //毫秒
+                    };
+                    if (/(y+)/.test(fmt)) {
+                        fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+                    }
+                    for (var k in o) {
+                        if (new RegExp("(" + k + ")").test(fmt)) {
+                            fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k])
+                                .substr((
+                                    "" +
+                                    o[k]).length)));
+                        }
+                    }
+                    return fmt;
+                }
+            },
             onResize() {
                 this.windowSize = {
                     x: window.innerWidth,
@@ -615,6 +665,9 @@
             await this.onResize()
             await this.init_show()
         },
+        created() {
+            this.init()
+        }
     }
 
 </script>
