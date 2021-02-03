@@ -36,6 +36,11 @@ export const apiReturnCloth = stu_username =>
 export const apiRefundCloth = stu_username =>
     Request.post("/refund_order", { stu_username });
 
+export const apiNotReturnedTotal = () => Request.get("/not_returned_total");
+
+// Admin pdf
+export const apiPreservePdf = () => Request.get("/preserve_pdf");
+
 // Student order
 export const apiSearchOwner = () => Request.get(`/order_owner`);
 export const apiSearchStudent = stu_id =>

@@ -47,12 +47,6 @@
                 </v-toolbar>
             </v-card-title>
             <v-spacer></v-spacer>
-            <!-- <v-alert
-                :color="green"
-                text
-                :type="error ? 'error' : 'success'"
-                v-show="student.stuid"
-            >{{ student.stuid }} {{ student.department }} {{ student.name }}</v-alert> -->
             <v-divider class="mx-5 v-divider-bold" />
             <v-card-title>清單下載列印</v-card-title>
             <v-card flat>
@@ -67,17 +61,18 @@
                     ></v-select>
                     <v-btn
                         class="ml-3"
-                        @click="download"
+                        :href="choose_file.filepath"
+                        download
                     >下載</v-btn>
                 </v-card-title>
             </v-card>
-            <v-divider class="mx-5 v-divider-bold" />
+            <!-- <v-divider class="mx-5 v-divider-bold" />
             <v-card-title>今日預約數量</v-card-title>
             <v-card
                 flat
                 class="mx-5"
             >
-                <!-- 學士服 -->
+
                 <v-card
                     class="mt-3"
                     flat
@@ -100,7 +95,7 @@
                         </v-col>
                     </v-row>
                 </v-card>
-                <!-- 學士服配件 -->
+
                 <v-card
                     class="mt-3"
                     flat
@@ -127,7 +122,7 @@
                     </v-row>
                 </v-card>
                 <v-divider class="mt-6 mb-3"></v-divider>
-                <!-- 碩士服 -->
+
                 <v-card
                     class="mt-3"
                     flat
@@ -151,7 +146,7 @@
                         </v-col>
                     </v-row>
                 </v-card>
-                <!-- 碩士服配件 -->
+
                 <v-card
                     class="mt-3"
                     flat
@@ -177,7 +172,7 @@
                         </v-col>
                     </v-row>
                 </v-card>
-            </v-card>
+            </v-card> -->
         </v-card>
 
         <v-dialog
@@ -295,7 +290,8 @@
     import VuetifyLayout from '@/Layouts/VuetifyLayout'
     import {
         apiSearchOrder,
-        apiOrderUpdate
+        apiOrderUpdate,
+        apiPreservePdf
     } from '@/api/api'
 
     import {
@@ -318,7 +314,10 @@
             error: false,
             pageLoading: false,
             search_loading: false,
-            choose_file: null,
+            choose_file: {
+                filepath: '',
+                filename: ''
+            },
             Status: Status,
             statusMsg: StatusMsg,
             headers: [{
@@ -353,22 +352,8 @@
                     width: 20,
                 }
             ],
-            file_list: [{
-                    filename: '今日預約領取簽到表-學士',
-                    path: '123'
-                },
-                {
-                    filename: '今日預約領取簽到表-碩士',
-                    path: '123'
-                },
-                {
-                    filename: '空白簽到表-學士',
-                    path: '123'
-                },
-                {
-                    filename: '空白簽到表-碩士',
-                    path: '123'
-                },
+            file_list: [
+
             ],
             bachelor_cloths: [],
             bachelor_accessories: [],
@@ -409,7 +394,7 @@
             },
         }),
         methods: {
-            init_obj() {
+            async init_obj() {
                 this.bachelor_accessories = this.$page.inventory.slice(0, 2)
                 this.master_accessories = this.$page.inventory.slice(2, 8)
                 this.bachelor_cloths = this.$page.inventory.slice(8, 12)
@@ -431,9 +416,10 @@
                     }
                     for (var k in o) {
                         if (new RegExp("(" + k + ")").test(fmt)) {
-                            fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr((
-                                "" +
-                                o[k]).length)));
+                            fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k])
+                                .substr((
+                                    "" +
+                                    o[k]).length)));
                         }
                     }
                     return fmt;
@@ -441,6 +427,13 @@
 
 
                 this.today = new Date().Format("yyyy-MM-dd")
+
+                await apiPreservePdf().then(res => {
+                    if (res.status == 200) {
+                        this.file_list = res.data
+                    }
+                })
+
             },
             async receive_submit() {
                 this.search_loading = true
@@ -499,10 +492,6 @@
                 this.order = null
                 this.dialog = false
             },
-            download() {
-                alert(this.choose_file.filename)
-                this.choose_file = null
-            }
         },
         created() {
             this.init_obj()
