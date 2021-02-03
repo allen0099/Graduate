@@ -318,7 +318,7 @@
                                 <v-col cols="12">
                                     訂單編號：{{ result.document_id }}</v-col>
                                 <v-col cols="12">
-                                    訂單日期：{{ result.created_at.slice(0, 16) }}
+                                    訂單日期：{{ new Date(result.created_at).Format("yyyy-MM-dd HH:mm") }}
                                 </v-col>
                                 <v-col cols="12">
                                     總金額：{{ result.total_price }}</v-col>
@@ -583,6 +583,31 @@
 
         methods: {
             async init_obj() {
+
+                Date.prototype.Format = function (fmt) {
+                    var o = {
+                        "M+": this.getMonth() + 1, //月份
+                        "d+": this.getDate(), //日
+                        "H+": this.getHours(), //小時
+                        "m+": this.getMinutes(), //分
+                        "s+": this.getSeconds(), //秒
+                        "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+                        "S": this.getMilliseconds() //毫秒
+                    };
+                    if (/(y+)/.test(fmt)) {
+                        fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+                    }
+                    for (var k in o) {
+                        if (new RegExp("(" + k + ")").test(fmt)) {
+                            fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k])
+                                .substr((
+                                    "" +
+                                    o[k]).length)));
+                        }
+                    }
+                    return fmt;
+                }
+
                 if (this.$page.user.username[0] < "5") {
                     this.choose = this.choose_items[0]
                     this.cloths = this.$page.inventory.slice(8, 12)
@@ -598,7 +623,7 @@
                 order_item.stu_id = this.$page.user.username
                 order_item.name = this.$page.user.name
                 order_item.department = this.$page.user.school_class.class_name
-                order_item.color = this.$page.user.school_class.department.default_color
+                order_item.color = this.$page.user.school_class.default_color
                 this.order.push(order_item)
 
                 let open_time = this.$page.configs.time_range.find(x => x.id == 1)
@@ -668,7 +693,7 @@
                                 order_item.name = res.data.name
                                 order_item.department = res.data.school_class.class_name
                                 order_item.color =
-                                    res.data.school_class.department.default_color
+                                    res.data.school_class.default_color
                                 this.order.push(order_item)
                                 this.student_id = ''
                                 this.msg = '新增成功'

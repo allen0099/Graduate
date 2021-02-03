@@ -6,7 +6,6 @@
     >
         <template #title>
             {{ time.content + '設定' }}
-            {{ $page.errors.length }}
         </template>
 
         <!-- form grid-cols-6 -->
@@ -118,15 +117,45 @@
                 this.form.patch('/time/' + this.time.id);
             },
             initTime() {
-                this.dates = [this.time.start_time, this.time.end_time]
+                let start_time = new Date(this.time.start_time).Format("yyyy-MM-dd")
+                let end_time = new Date(this.time.end_time).Format("yyyy-MM-dd")
+                this.dates = [start_time, end_time]
                 this.content = this.time.content
                 this.form.start_time = this.dates[0]
                 this.form.end_time = this.dates[1]
+            },
+            init() {
+                Date.prototype.Format = function (fmt) {
+                    var o = {
+                        "M+": this.getMonth() + 1, //月份
+                        "d+": this.getDate(), //日
+                        "H+": this.getHours(), //小時
+                        "m+": this.getMinutes(), //分
+                        "s+": this.getSeconds(), //秒
+                        "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+                        "S": this.getMilliseconds() //毫秒
+                    };
+                    if (/(y+)/.test(fmt)) {
+                        fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+                    }
+                    for (var k in o) {
+                        if (new RegExp("(" + k + ")").test(fmt)) {
+                            fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k])
+                                .substr((
+                                    "" +
+                                    o[k]).length)));
+                        }
+                    }
+                    return fmt;
+                }
             }
         },
         mounted() {
             this.initTime()
         },
+        created() {
+            this.init()
+        }
     }
 
 </script>

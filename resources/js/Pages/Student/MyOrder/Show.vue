@@ -139,7 +139,7 @@
                                     <v-col
                                         cols="12"
                                         md="4"
-                                    >訂單日期：{{ order.created_at.slice(0, 16) }}</v-col>
+                                    >訂單日期：{{ new Date(order.created_at).Format("yyyy-MM-dd HH:mm") }}</v-col>
                                     <v-col
                                         cols="12"
                                         md="4"
