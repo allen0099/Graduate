@@ -16,8 +16,8 @@ class CreateTimeRangesTable extends Migration
         Schema::create('time_ranges', function (Blueprint $table) {
             $table->id();
             $table->string('content')->unique();
-            $table->date('start_time');
-            $table->date('end_time');
+            $table->dateTime('start_time');
+            $table->dateTime('end_time');
         });
     }
 
