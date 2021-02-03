@@ -14,10 +14,9 @@ class CreateSetsTable extends Migration
     public function up()
     {
         Schema::create('sets', function (Blueprint $table) {
-            // each students only have one set, include a cloth and an accessory
             $table->id();
 
-            $table->foreignId('student_id')->unique()
+            $table->foreignId('student_id')
                 ->constrained('users');
 
             $table->foreignId('order_id')
@@ -35,6 +34,8 @@ class CreateSetsTable extends Migration
 
             $table->date('returned')->nullable();
             $table->boolean('refund')->default(false);
+
+            $table->softDeletes();
         });
     }
 

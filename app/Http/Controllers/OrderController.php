@@ -304,6 +304,7 @@ class OrderController extends Controller
         $request->validated();
 
         $order = Order::where('document_id', $request->order_id)->first();
+        $order->sets()->delete();
         $order->delete();
 
         return response()->noContent();

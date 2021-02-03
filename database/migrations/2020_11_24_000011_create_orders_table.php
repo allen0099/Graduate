@@ -25,6 +25,8 @@ class CreateOrdersTable extends Migration
             $table->integer('total_price');
             $table->integer('status_code');
             $table->date('preserve')->nullable();
+
+            $table->softDeletes();
             $table->timestamps();
         });
     }
