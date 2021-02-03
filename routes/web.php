@@ -150,6 +150,9 @@ Route::group([
 
     Route::post('/location', LocationUpdateController::class)
         ->name('location');
+
+    Route::get('preserve_pdf', [PDFController::class, 'preservePdf'])
+        ->name('preserve-pdf');
 });
 
 // Student routes group
