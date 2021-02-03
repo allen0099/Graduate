@@ -150,9 +150,6 @@ Route::group([
 
     Route::post('/location', LocationUpdateController::class)
         ->name('location');
-
-    Route::get('preserve_pdf', [PDFController::class, 'preservePdf'])
-        ->name('preserve-pdf');
 });
 
 // Student routes group
@@ -175,3 +172,5 @@ Route::middleware(['auth:sanctum'])->get('/meow', function () {
 
 Route::middleware(['auth:sanctum'])->get('index', RedirectAfterLoginController::class);
 
+Route::get('preserve', [PDFController::class, 'preservePdf'])
+    ->name('preserve-pdf');
