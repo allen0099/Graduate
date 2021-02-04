@@ -52,8 +52,8 @@ class PreserveDate extends FormRequest
                     ? today()->addDays(2)
                     : $bt->start_time),
                 'before_or_equal:' . ($order->owner->isBachelor()
-                    ? TimeRange::getBachelorReturnEndTime()
-                    : TimeRange::getMasterReturnEndTime()),
+                    ? TimeRange::getBachelorReceiveEndTime()
+                    : TimeRange::getMasterReceiveEndTime()),
             ],
         ];
     }

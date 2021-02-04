@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Order;
 use App\Models\User;
 use App\Models\TimeRange;
+use App\Models\Config;
 use Carbon\Carbon;
 use Barryvdh\DomPDF\Facade as PDF;
 use Illuminate\Http\Request;
@@ -35,55 +36,42 @@ class PDFController extends Controller
                 return abort(403);
             }
 
-            // $sizeList = ['S' => 0, 'M' => 0, 'L' => 0, 'XL' => 0];
-            // $colorList = ['白' => 0, '黃' => 0, '橘' => 0, '灰' => 0, '藍' => 0, '紫' => 0];
-            // $totle = 0;
-
             if (!is_null($result)) {
 
                 $cloth_type = $result->owner->isMaster() ? "碩士服" : "學士服";
 
-                // foreach ($result->sets as $i => $i_value) {
-                //     $colorList[$i_value->accessory->spec] += 1;
-                //     $sizeList[$i_value->cloth->spec] += 1;
-                //     $totle += 1;
-                // }
-
                 $barcode_username = (new DNS1D)->getBarcodePNG((string)$result->owner->username, 'C39');
                 $barcode_id = (new DNS1D)->getBarcodePNG((string)$result->document_id, 'C39');
 
+                $paid_time = TimeRange::find(TimeRange::PAID_TIME);
+                $rec_time = TimeRange::find($result->owner->isMaster() ? TimeRange::M : TimeRange::B);
+                $location = Config::getReturnLocation();
+
                 $data = [
                     'order' => $result,
-                    // 'sizeList' => $sizeList,
-                    // 'colorList' => $colorList,
-                    'totle' => 10,
                     'one_set_price' => 1000,
                     'cloth_type' => $cloth_type,
-                    // 'barcode_username' => $barcode_username,
-                    'barcode_id' => $barcode_id
+                    'location' => $location->value,
+                    'paid_time' => $paid_time,
+                    'rec_time' => $rec_time
                 ];
 
                 $pdf = PDF::loadView('pdf/order', $data)->setPaper('a4', 'potrait');
-                // $pdf = PDF::setOptions(
-                //     ['isHtml5ParserEnabled'=>true,'isRemoteEnabled'=>true])->loadView('pdf/order', $data
-                // );
 
                 return $pdf->stream('訂單-'.$result->owner->username.'.pdf');
-                // return view('pdf/order', $data);
-                // return '<img src="data:image/png; base64, '.$barcode_username.'" />';
+                // return $data;
             }
         }
         return '資料錯誤';
     }
 
     public function preservePdf(){
-        // $Bachelor_start = Carbon::createFromFormat('Y-m-d', TimeRange::getBachelorReturnStartTime());
-        // $Bachelor_end = Carbon::createFromFormat('Y-m-d', TimeRange::getBachelorReturnEndTime());
+        // $Bachelor_start = Carbon::createFromFormat('Y-m-d', TimeRange::getBachelorReceiveStartTime());
+        // $Bachelor_end = Carbon::createFromFormat('Y-m-d', TimeRange::getBachelorReceiveEndTime());
         
         $disk = Storage::disk('pdf');
-
-        $Bachelor_start = TimeRange::getBachelorReturnStartTime();
-        $Bachelor_end = TimeRange::getBachelorReturnEndTime();
+        $Bachelor_start = TimeRange::getBachelorReceiveStartTime();
+        $Bachelor_end = TimeRange::getBachelorReceiveEndTime();
         $start = null;
         $end = null;
 
@@ -121,8 +109,8 @@ class PDFController extends Controller
             }
         }
 
-        $Master_start = TimeRange::getMasterReturnStartTime();
-        $Master_end = TimeRange::getMasterReturnEndTime();
+        $Master_start = TimeRange::getMasterReceiveStartTime();
+        $Master_end = TimeRange::getMasterReceiveEndTime();
         $start = null;
         $end = null;
 
