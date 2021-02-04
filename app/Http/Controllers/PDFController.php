@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Models\User;
+use App\Models\Set;
 use App\Models\TimeRange;
 use App\Models\Config;
 use Carbon\Carbon;
@@ -65,7 +66,7 @@ class PDFController extends Controller
                 // return $data;
             }
         }
-        return '資料錯誤';
+        return abort(404);
     }
 
     public function preservePdf(){
@@ -151,7 +152,44 @@ class PDFController extends Controller
         return $res;
     }
 
+    public function receiptPdf(Request $request){
+        if (Auth::user()->role !== User::ADMIN) {
+            $find_set = Set::where('student_id', Auth::user()->id);
+        } else if (Auth::user()->role === User::ADMIN){
+            $student_id = $request->student_id;
+            if(!is_null($student_id)){
+                $find_studnet = User::where('username', $student_id);
+                if($find_studnet->count() === 0){
+                    return abort(404);
+                }
+                $find_set = Set::where('student_id', $find_studnet->first()->id);
+            } else {
+                return abort(404);
+            }
+        } else {
+            return abort(403);
+        }
+
+        if($find_set->count() === 0){
+            return abort(404);
+        }
+
+        $set = $find_set->first();
+
+        $data = [
+            'student' => $set->student,
+            'accessory' => $set->accessory,
+            'cloth' => $set->cloth
+        ];
+
+        $pdf = PDF::loadView('pdf/receipt', $data)->setPaper('a4', 'potrait');
+
+        return $pdf->stream('歸還證明單-'.$set->student->username.'.pdf');
+        // return $data;
+    }
+
     public function test(){
+        
         $barcode_username = (new DNS1D)->getBarcodeHTML('4445645656', 'C39+');
         error_log($barcode_username);
         // return '<img src="data:image/png; base64, '.$barcode_username.'" />';
