@@ -101,8 +101,8 @@ Route::group([
     Route::get('/cashier_list', [ListController::class, 'getListByStatus'])
         ->name('cashier_list');
 
-    Route::post('/cashier_refund', [ListController::class, 'refunded'])
-        ->name('cashier_refund');
+    Route::post('/update_cashier_list', [ListController::class, 'updateList'])
+        ->name('update_cashier_list');
 
     Route::post('/paid_order', [OrderController::class, 'paidOrder'])
         ->name('paid_order');

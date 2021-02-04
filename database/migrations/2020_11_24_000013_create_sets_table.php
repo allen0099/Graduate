@@ -30,7 +30,8 @@ class CreateSetsTable extends Migration
 
             $table->foreignId('list_id')
                 ->nullable()
-                ->constrained('lists');
+                ->constrained('lists')
+                ->nullOnDelete();
 
             $table->date('returned')->nullable();
             $table->boolean('refund')->default(false);
