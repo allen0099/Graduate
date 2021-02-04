@@ -183,3 +183,9 @@ Route::middleware(['auth:sanctum'])->get('index', RedirectAfterLoginController::
 
 Route::get('preserve', [PDFController::class, 'preservePdf'])
     ->name('preserve-pdf');
+
+Route::get('/receipt_pdf', [PDFController::class, 'receiptPdf'])
+    ->name('receipt_pdf');
+
+    Route::get('/upload', fn() => Inertia::render('Admin/Setting/UploadFile'))
+        ->name('upload');
