@@ -7,6 +7,14 @@ const Request = axios.create({
     withCredentials: true
 });
 
+const UploadRequest = axios.create({
+    baseURL: baseURL,
+    withCredentials: true,
+    headers: {
+        "Content-Type": "multipart/form-data"
+    }
+});
+
 // Admin Setting
 export const apiInventoryUpdate = (id, res) =>
     Request.patch(`/item/${id}`, res);
@@ -38,7 +46,6 @@ export const apiRefundCloth = stu_username =>
 
 export const apiNotReturnedTotal = () => Request.get("/not_returned_total");
 
-export const apiUploadFile = file => Request.post("/test_upload", { file });
 // Admin pdf
 export const apiPreservePdf = () => Request.get("/preserve_pdf");
 
@@ -51,3 +58,6 @@ export const apiCreateOrder = order => Request.post("/order", order);
 // Student myorder
 export const apiPreserveDate = (order_id, preserve_date) =>
     Request.post("/preserve_order", { order_id, preserve_date });
+
+// Upload
+export const apiUploadFile = file => UploadRequest.post("/test_upload", file);
