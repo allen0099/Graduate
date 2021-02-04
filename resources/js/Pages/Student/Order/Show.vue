@@ -253,7 +253,7 @@
                             <v-col
                                 cols="12"
                                 class="d-flex justify-end"
-                            ><code class="caption">* 價格均含保證金({{ margin }})與清潔費({{ price }})</code></v-col>
+                            ><code class="caption">* 單套價格均含保證金({{ margin }})與清潔費({{ price }})</code></v-col>
                             <v-col
                                 cols="12"
                                 class="d-flex justify-end"
