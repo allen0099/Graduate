@@ -627,13 +627,14 @@
                 this.order.push(order_item)
 
                 let open_time = this.$page.configs.time_range.find(x => x.id == 1)
-                let start_time = new Date(open_time.start_time + " 00:00:00")
-                let end_time = new Date(open_time.end_time + " 23:59:59")
+                let start_time = new Date(open_time.start_time)
+                let end_time = new Date(open_time.end_time)
                 let a = new Date()
                 if (!(a >= start_time && a <= end_time)) {
                     this.step = 4
                     this.order_check = false
-                    this.error_msg = '非開放訂購時段，開放時間為 ' + open_time.start_time + ' ~ ' + open_time.end_time + '。'
+                    this.error_msg = '非開放訂購時段，開放時間為 ' + start_time.Format("yyyy-MM-dd HH:mm:ss") + ' ~ ' +
+                        end_time.Format("yyyy-MM-dd HH:mm:ss") + '。'
                     return
                 }
 
