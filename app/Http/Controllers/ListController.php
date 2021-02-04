@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CheckStartAndEndDate;
-use App\Http\Requests\CashierRefund;
+use App\Http\Requests\UpdateList;
 use App\Models\CashierList;
 use App\Models\Set;
 use App\Models\TimeRange;
@@ -80,13 +80,20 @@ class ListController extends Controller
         return $list->fresh();
     }
 
-    public function refunded(CashierRefund $request)
+    public function updateList(UpdateList $request)
     {
         $request->validated();
 
         $list = CashierList::find($request->id);
+
+        if ($request->status === 'delete') {
+            $list->delete();
+
+            return response()->noContent();
+        }
+
         $list->forceFill([
-            'refund' => true,
+            'status' => $request->status,
         ])->save();
 
         return $list->fresh();
