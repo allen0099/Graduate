@@ -19,8 +19,7 @@ class SearchUserController extends Controller
         $search = $request->search;
 
         if (!is_null($search)) {
-            $find_user = User::where('username', $search)
-                ->with(['set']);
+            $find_user = User::where('username', $search);
 
             if ($find_user->count() === 0) {
                 return abort(404);
@@ -28,15 +27,16 @@ class SearchUserController extends Controller
 
             $user = $find_user->first();
 
-            if (Auth::user()->role === User::ADMIN) {
-                return $user;
-            } else {
-                $attributes = array_keys($user->toArray());
-                unset($user->set->student);
-                return $user->makeHidden($attributes)->makeVisible(['name', 'username', 'school_class', 'set']);
-            }
-        }
+            if (Auth::user()->isRole(User::STUDENT)) {
+                if (!is_null($user->set)) {
+                    unset($user->set->student);
+                }
 
+                return $user->makeHidden(array_keys($user->toArray()))->makeVisible(['name', 'username', 'school_class', 'set']);
+            }
+
+            return $user;
+        }
         return abort(404);
     }
 }
