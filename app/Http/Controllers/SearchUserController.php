@@ -32,7 +32,7 @@ class SearchUserController extends Controller
                     unset($user->set->student);
                 }
 
-                return $user->makeHidden(array_keys($user->toArray()))->makeVisible(['name', 'username', 'school_class', 'set']);
+                return $user->makeHidden(array_keys($user->toArray()))->makeVisible(['name', 'username', 'school_class', 'set', 'filled_pay_form']);
             }
 
             return $user;
