@@ -38,7 +38,7 @@ export const apiRefundCloth = stu_username =>
 
 export const apiNotReturnedTotal = () => Request.get("/not_returned_total");
 
-export const apiUploadFile = file => Request.post("/test_upload", file);
+export const apiUploadFile = file => Request.post("/test_upload", { file });
 // Admin pdf
 export const apiPreservePdf = () => Request.get("/preserve_pdf");
 
