@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CheckStartAndEndDate;
 use App\Http\Requests\CashierRefund;
 use App\Models\CashierList;
 use App\Models\Set;
 use App\Models\TimeRange;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class ListController extends Controller
 {
@@ -33,12 +35,11 @@ class ListController extends Controller
         return $list;
     }
 
-    public function createNewList(CashierRefund $request)
+    public function getNotListedSets(CheckStartAndEndDate $request)
     {
         $request->validated();
 
         if (is_null($request->start_date)) {
-            // run default
             $start_date = TimeRange::find(TimeRange::RET)->start_time;
             $end_date = today();
         } else {
@@ -46,14 +47,31 @@ class ListController extends Controller
             $end_date = $request->end_date;
         }
 
-        $sets = Set::all()
+        return Set::all()
             ->whereNull('list_id')
             ->whereBetween('returned', [$start_date, $end_date]);
+    }
+
+    public function getListByStatus(Request $request)
+    {
+        $request->validate([
+            'status_code' => ['required', Rule::in(CashierList::CODE_ARRAY)],
+        ]);
+
+        return CashierList::all()->where('status', $request->status_code);
+    }
+
+    public function createNewList(Request $request)
+    {
+        $request->validate([
+            'id.*' => ['required', 'exists:sets,id'],
+        ]);
 
         $list = new CashierList();
         $list->save();
 
-        foreach ($sets as $set) {
+        foreach ($request->id as $item) {
+            $set = Set::find($item);
             $set->forceFill([
                 'list_id' => $list->id,
             ])->save();

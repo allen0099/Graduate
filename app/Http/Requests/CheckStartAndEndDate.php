@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use App\Models\TimeRange;
 use Illuminate\Foundation\Http\FormRequest;
 
-class CashierListDate extends FormRequest
+class CheckStartAndEndDate extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.

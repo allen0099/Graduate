@@ -95,6 +95,12 @@ Route::group([
     Route::get('/new_cashier_list', [ListController::class, 'createNewList'])
         ->name('new_cashier_list');
 
+    Route::get('/not_listed_sets', [ListController::class, 'getNotListedSets'])
+        ->name('not_listed_sets');
+
+    Route::get('/cashier_list', [ListController::class, 'getListByStatus'])
+        ->name('cashier_list');
+
     Route::post('/cashier_refund', [ListController::class, 'refunded'])
         ->name('cashier_refund');
 
