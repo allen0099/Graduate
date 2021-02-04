@@ -7,7 +7,7 @@
     <style>
         html {
             size: 21cm 29.6cm;
-            margin: 1cm;
+            margin: 0.3cm 0.7cm;
         }
 
         * {
@@ -17,20 +17,23 @@
         }
 
         body {
+            position: relative;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            z-index: -1;
         }
 
         .half-bar {
-            margin: 1.0cm 0px;
+            margin: 0.5cm 0px;
             border-bottom: 1px dashed #000000;
         }
 
         .title {
+            font-size: 26px;
             text-align: center;
             margin-top: 5px;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
         }
 
         .page-break {
@@ -44,29 +47,40 @@
 
         th {
             text-align: left;
-            padding: 5px 10px;
-        }
-
-        table {
-            margin-top: 5px;
-            margin-bottom: 10px;
-        }
-
-        #footer {
-            margin-top: 5px;
-            text-align: right;
-        }
-
-        .remark {
-            font-size: 14px;
-        }
-
-        .remark th {
             padding: 0px 10px;
         }
 
-        .remark-title {
-            font-size: 16px;
+        table {
+            margin-top: 3px;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        #footer {
+            text-align: right;
+            font-size: 14px;
+        }
+
+        .remark {
+            font-size: 12px;
+            width: 90%;
+        }
+
+        .remark li {
+            padding: 0px 5px;
+            word-wrap: break-word;
+        }
+
+        .barcode {
+            display: flex;
+            justify-content: flex-start;
+        }
+
+        .img {
+            position: absolute;
+            width: 120px;
+            right: 0px;
+            top: 43%;
         }
 
     </style>
@@ -83,6 +97,12 @@
                     <tr>
                         <th>
                             <p>訂單編號：{{ $order->document_id }}</p>
+                            <div class="barcode">
+                                <span>
+                                    <img
+                                        src="data:image/png;base64,{{ DNS1D::getBarcodePNG((string) $order->document_id, 'C39', 1, 30) }}" />
+                                </span>
+                            </div>
                         </th>
                         <th>
                             <p>成立時間：{{ substr($order->created_at, 0, 16) }}</p>
@@ -94,134 +114,116 @@
                 <table align="center">
                     <tr>
                         <th>
-                            <p>學號：{{ $order->owner->username }}</p>
+                            <p>訂購人：{{ $order->owner->name }}</p>
                         </th>
                         <th>
                             <p>系級：{{ $order->owner->school_class->class_name }}</p>
                         </th>
                         <th>
-                            <p>姓名：{{ $order->owner->name }}</p>
+                            <p>學號：{{ $order->owner->username }}
+                            </p>
+                            <div class="barcode">
+                                <span>
+                                    <img
+                                        src="data:image/png;base64,{{ DNS1D::getBarcodePNG((string) $order->owner->username, 'C39', 1, 30) }}" />
+                                </span>
+                            </div>
                         </th>
                     </tr>
                 </table>
-                {{-- <hr /> --}}
-                <table>
-                    <tr>
-                        <th>
-                            <p>項目：</p>
-                        </th>
-                        <th>
-                            <p>學士服數量</p>
-                        </th>
-                        @foreach ($sizeList as $key => $value)
-                            @if ($value == 0)
-                                @continue
-                            @endif
+                <hr />
+
+                <table style="padding-left: 70px;">
+                    @foreach ($order->sets as $index => $set)
+                        <tr>
                             <th>
-                                <p>{{ $key }} 號：{{ $value }}</p>
+                                @if ($index === 0)
+                                    <p>項目：</p>
+                                @endif
                             </th>
-                        @endforeach
-                    </tr>
-                    <tr>
-                        <th></th>
-                        <th>
-                            <p>領巾、帽子數量</p>
-                        </th>
-                        @foreach ($colorList as $key => $value)
-                            @if ($value == 0)
-                                @continue
-                            @endif
                             <th>
-                                <p>{{ $key }}色：{{ $value }}</p>
+                                <p>{{ $set->student->username }}</p>
                             </th>
-                        @endforeach
-                    </tr>
+                            <th>
+                                <p>{{ $set->student->school_class->class_name }}</p>
+                            </th>
+                            <th>
+                                <p>{{ $set->student->name }}</p>
+                            </th>
+                            <th>
+                                <p>尺寸：{{ $set->cloth->spec }}</p>
+                            </th>
+                            <th>
+                                <p>顏色：{{ $set->accessory->spec }}</p>
+                            </th>
+                        </tr>
+                    @endforeach
                 </table>
+
                 <table>
-                    <!--
-                <tr>
-                    <th>
-                        <p>金額：</p>
-                    </th>
-                </tr>
--->
                     <tr>
                         <th>
                             <p>金額：</p>
                         </th>
                         <th>
-                            <p>學士服 {{ $totle }} 套</p>
+                            <p>{{ $cloth_type }} {{ count($order->sets) }} 套</p>
                         </th>
                         <th>
                             <p>×</p>
                         </th>
                         <th>
-                            <p>{{ $one_set_price }} 元</p>
+                            <p>（清潔費：{{ $one_set_price }} + 保證金：{{ $one_set_price }}）</p>
                         </th>
                         <th>
-                            <p>=</p>
+                            <p>{{ '=' }}</p>
                         </th>
                         <th>
-                            <p>{{ $totle * $one_set_price }} 元（新台幣）</p>
+                            <p>{{ count($order->sets) * $one_set_price }} 元（新台幣）</p>
                         </th>
                         <th>
                             <p>經辦人蓋章：</p>
                         </th>
                     </tr>
+                    @for ($i = 0; $i < 10 - count($order->sets); $i++)
+                        <tr>
+                            <th>&nbsp;</th>
+                        </tr>
+                    @endfor
                 </table>
+
                 <div style="padding: 10px 0px;"></div>
-                <table class="remark">
-                    <tr>
-                        <th>
-                            <p class="remark-title">備註：</p>
-                        </th>
-                        <th>
-                            <p>1. 一二三四五六七八九十一二三四五六七八九十一二三四五六七八九十一二三四</p>
-                        </th>
-                    </tr>
-                    <tr>
-                        <th>
-                        </th>
-                        <th>
-                            <p>2. 一二三四五六七八九十一二三四五六七八九十一二三四五六七八九十一二三四</p>
-                        </th>
-                    </tr>
-                    <tr>
-                        <th>
-                        </th>
-                        <th>
-                            <p>3. 一二三四五六七八九十一二三四五六七八九十一二三四五六七八九十一二三四</p>
-                        </th>
-                    </tr>
-                    <tr>
-                        <th>
-                        </th>
-                        <th>
-                            <p>4. 一二三四五六七八九十一二三四五六七八九十一二三四五六七八九十一二三四</p>
-                        </th>
-                    </tr>
-                    <tr>
-                        <th>
-                        </th>
-                        <th>
-                            <p>5. 一二三四五六七八九十一二三四五六七八九十一二三四五六七八九十一二三四</p>
-                        </th>
-                    </tr>
-                    <tr>
-                        <th>
-                        </th>
-                        <th>
-                            <p>6. 一二三四五六七八九十一二三四五六七八九十一二三四五六七八九十一二三四</p>
-                        </th>
-                    </tr>
+                <table>
+                    <th>
+                    </th>
+                    <ol class="remark">
+                        <li>
+                            <p>請在繳費期限{{ $paid_time->start_time->format('Y/m/d') }}至{{ $paid_time->end_time->format('Y/m/d') }}止，至校園繳費機進行繳費，繳費完成後請持繳費單據與本單至{{ $location }}完成繳費登記。
+                            </p>
+                        </li>
+                        <li>
+                            <p>請於{{ $rec_time->start_time->format('Y/m/d') }}至{{ $rec_time->end_time->format('Y/m/d') }}下午2時至4時，持本單學生存根聯至{{ $location }}領取{{ $cloth_type }}。
+                            </p>
+                        </li>
+                        <li>
+                            <p>於領取期限前兩日至學位服租借網站可以預約領取衣服的日期，詳細請看網站說明。</p>
+                        </li>
+                        <li>
+                            <p>於領取期限前兩日至學位服租借網站可以預約領取衣服的日期，詳細請看網站說明。</p>
+                        </li>
+                    </ol>
                 </table>
             </div>
         </div>
         <div id="footer">
-            <p>{{ $part === 0 ? '（學生存根聯）' : '（事務組整備組收執聯）' }}</p>
+            <p>{{ $part === 0 ? '（學生存根聯）' : '（事務組整備組收執聯）' }}
+                @for ($i = 0; $i < ($part === 0 ? 18 : 7); $i++)
+                    &nbsp;
+                @endfor
+            </p>
         </div>
         @if ($part === 0)
             <hr class="half-bar" />
+            <img class="img" src="{{ public_path('asset/Tamkang_University_logo.svg.png') }}" />
         @endif
     @endfor
 </body>
