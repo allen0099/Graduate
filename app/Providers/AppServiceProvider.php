@@ -48,8 +48,10 @@ class AppServiceProvider extends ServiceProvider
                     return [
                         'time_range' => TimeRange::all(),
                         'location' => Config::getReturnLocationValue(),
-                        'bachelor_set_price' => Config::getBachelorSetPriceValue(),
-                        'master_set_price' => Config::getMasterSetPriceValue(),
+                        'bachelor_price' => Config::getBachelorPrice()->value,
+                        'master_price' => Config::getMasterPrice()->value,
+                        'bachelor_margin_price' => Config::getBachelorMarginPrice()->value,
+                        'master_margin_price' => Config::getMasterMarginPrice()->value,
                     ];
                 }
                 return null;

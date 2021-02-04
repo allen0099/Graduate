@@ -172,13 +172,13 @@
                             <p>×</p>
                         </th>
                         <th>
-                            <p>（清潔費：{{ $one_set_price }} + 保證金：{{ $one_set_price }}）</p>
+                            <p>（清潔費{{ $price }}元 + 保證金{{ $margin }}元）</p>
                         </th>
                         <th>
                             <p>{{ '=' }}</p>
                         </th>
                         <th>
-                            <p>{{ count($order->sets) * $one_set_price }} 元（新台幣）</p>
+                            <p>{{ count($order->sets) * ($price + $margin) }} 元（新台幣）</p>
                         </th>
                         <th>
                             <p>經辦人蓋章：</p>

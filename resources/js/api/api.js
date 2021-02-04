@@ -11,8 +11,8 @@ const Request = axios.create({
 export const apiInventoryUpdate = (id, res) =>
     Request.patch(`/item/${id}`, res);
 
-export const apiPriceUpdate = (cloth, price) =>
-    Request.post(`/edit_set_price`, { cloth, price });
+export const apiPriceUpdate = (type, price) =>
+    Request.post(`/edit_price`, { type, price });
 
 export const apiDepartment = () => Request.get("/department_class");
 

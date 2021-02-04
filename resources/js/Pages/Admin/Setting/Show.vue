@@ -85,7 +85,7 @@
                                     cols="2"
                                     class="mt-2"
                                 >
-                                    價格
+                                    清潔費
                                 </v-col>
                                 <v-col
                                     md="4"
@@ -106,6 +106,37 @@
                                     class="ml-3"
                                 >
                                     <v-btn @click="save_price(bachelor_price)">儲存</v-btn>
+                                </v-col>
+                            </v-row>
+                            <v-row
+                                class="mx-5"
+                                dense
+                            >
+                                <v-col
+                                    cols="2"
+                                    class="mt-2"
+                                >
+                                    保證金
+                                </v-col>
+                                <v-col
+                                    md="4"
+                                    cols="6"
+                                >
+                                    <v-text-field
+                                        v-model="bachelor_margin_price"
+                                        value="10.00"
+                                        prefix="$"
+                                        outlined
+                                        dense
+                                        :rules="numberRules"
+                                    ></v-text-field>
+                                </v-col>
+                                <v-col
+                                    md="3"
+                                    cols="3"
+                                    class="ml-3"
+                                >
+                                    <v-btn @click="save_margin_price(bachelor_margin_price)">儲存</v-btn>
                                 </v-col>
                             </v-row>
                             <v-divider class="mx-5 v-divider-bold" />
@@ -189,7 +220,7 @@
                                     cols="2"
                                     class="mt-2"
                                 >
-                                    價格
+                                    清潔費
                                 </v-col>
                                 <v-col
                                     md="4"
@@ -210,6 +241,37 @@
                                     class="ml-3"
                                 >
                                     <v-btn @click="save_price(master_price)">儲存</v-btn>
+                                </v-col>
+                            </v-row>
+                            <v-row
+                                class="mx-5"
+                                dense
+                            >
+                                <v-col
+                                    cols="2"
+                                    class="mt-2"
+                                >
+                                    保證金
+                                </v-col>
+                                <v-col
+                                    md="4"
+                                    cols="6"
+                                >
+                                    <v-text-field
+                                        v-model="master_margin_price"
+                                        value="10.00"
+                                        prefix="$"
+                                        outlined
+                                        dense
+                                        :rules="numberRules"
+                                    ></v-text-field>
+                                </v-col>
+                                <v-col
+                                    md="3"
+                                    cols="3"
+                                    class="ml-3"
+                                >
+                                    <v-btn @click="save_margin_price(master_margin_price)">儲存</v-btn>
                                 </v-col>
                             </v-row>
                             <v-divider class="mx-5 v-divider-bold" />
@@ -348,6 +410,8 @@
             toggle_btn: 0,
             bachelor_price: 900,
             master_price: 1300,
+            bachelor_margin_price: 900,
+            master_margin_price: 1300,
             bachelor_cloths: [],
             bachelor_accessories: [],
             master_cloths: [],
@@ -363,8 +427,10 @@
                 this.master_accessories = this.$page.inventory.slice(2, 8)
                 this.bachelor_cloths = this.$page.inventory.slice(8, 12)
                 this.master_cloths = this.$page.inventory.slice(12, 15)
-                this.bachelor_price = this.$page.configs.bachelor_set_price
-                this.master_price = this.$page.configs.master_set_price
+                this.bachelor_price = this.$page.configs.bachelor_price
+                this.bachelor_margin_price = this.$page.configs.bachelor_margin_price
+                this.master_price = this.$page.configs.master_price
+                this.master_margin_price = this.$page.configs.master_margin_price
             },
             async save_inventory(item) {
                 this.snackbar = false
@@ -392,8 +458,31 @@
             async save_price(price) {
                 this.snackbar = false
                 if (!!price && /^[0-9]*$/.test(price)) {
-                    let cloth = this.toggle_btn === 0 ? 'bachelor' : 'master'
-                    await apiPriceUpdate(cloth, price).then((res) => {
+                    let type = this.toggle_btn === 0 ? 'bachelor' : 'master'
+                    await apiPriceUpdate(type, price).then((res) => {
+                        if (res.status === 200) {
+                            this.snackbar_true = true
+                            this.msg = '修改成功'
+                        } else {
+                            this.snackbar_true = false
+                            this.msg = '修改失敗'
+                        }
+                    }).catch((err) => {
+                        console.log(err)
+                        this.snackbar_true = false
+                        this.msg = '修改失敗'
+                    })
+                } else {
+                    this.snackbar_true = false
+                    this.msg = '修改失敗'
+                }
+                this.snackbar = true
+            },
+            async save_margin_price(margin_price) {
+                this.snackbar = false
+                if (!!margin_price && /^[0-9]*$/.test(margin_price)) {
+                    let type = this.toggle_btn === 0 ? 'bachelor_margin' : 'master_margin'
+                    await apiPriceUpdate(type, margin_price).then((res) => {
                         if (res.status === 200) {
                             this.snackbar_true = true
                             this.msg = '修改成功'

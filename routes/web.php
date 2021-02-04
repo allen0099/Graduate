@@ -116,8 +116,8 @@ Route::group([
     Route::post('/refund_order', [OrderController::class, 'refundOrder'])
         ->name('refund_order');
 
-    Route::post('/edit_set_price', EditSetPriceController::class)
-        ->name('edit_set_price');
+    Route::post('/edit_price', EditSetPriceController::class)
+        ->name('edit_price');
 
     Route::get('/meow', fn() => Inertia::render('Test', ['name' => 'Test meow']))
         ->name('meow'); // routes name as 'admin.meow'

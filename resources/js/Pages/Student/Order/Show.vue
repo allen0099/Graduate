@@ -249,11 +249,11 @@
                             <v-col
                                 cols="12"
                                 class="d-flex justify-end"
-                            ><span>共 {{ order.length }} 套，總金額： {{ order.length * price }} NT$</span></v-col>
+                            ><span>共 {{ order.length }} 套，總金額： {{ order.length * (price + margin) }} NT$</span></v-col>
                             <v-col
                                 cols="12"
                                 class="d-flex justify-end"
-                            ><code class="caption">* 價格均含保證金與清潔費用</code></v-col>
+                            ><code class="caption">* 價格均含保證金({{ margin }})與清潔費({{ price }})</code></v-col>
                             <v-col
                                 cols="12"
                                 class="d-flex justify-end"
@@ -522,6 +522,7 @@
                 cloths: [],
                 accessories: [],
                 price: 0,
+                margin: 0,
                 student_id: '',
                 headers: [{
                         text: '學號',
@@ -612,12 +613,14 @@
                     this.choose = this.choose_items[0]
                     this.cloths = this.$page.inventory.slice(8, 12)
                     this.accessories = this.$page.inventory.slice(0, 2)
-                    this.price = this.$page.configs.bachelor_set_price
+                    this.price = parseInt(this.$page.configs.bachelor_price, 10)
+                    this.margin = parseInt(this.$page.configs.bachelor_margin_price, 10)
                 } else {
                     this.choose = this.choose_items[1]
                     this.cloths = this.$page.inventory.slice(12, 15)
                     this.accessories = this.$page.inventory.slice(2, 8)
-                    this.price = this.$page.configs.master_set_price
+                    this.price = parseInt(this.$page.configs.master_price, 10);
+                    this.margin = parseInt(this.$page.configs.master_margin_price, 10);
                 }
                 let order_item = Object.assign({}, this.edited_item)
                 order_item.stu_id = this.$page.user.username

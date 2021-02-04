@@ -62,11 +62,11 @@ class Config extends Model
     }
 
     public static function getBachelorMarginPrice(){
-        return Config::where('key', 'master_margin_price')->first();
+        return Config::where('key', 'bachelor_margin_price')->first();
     }
 
     public static function getMasterMarginPrice(){
-        return Config::where('key', 'bachelor_margin_price')->first();
+        return Config::where('key', 'master_margin_price')->first();
     }
 
     public static function getReturnLocation()
