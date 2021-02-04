@@ -16,10 +16,10 @@ class EditSetPriceController extends Controller
     public function __invoke(Request $request)
     {
         $request->validate([
-            'cloth' => 'required|in:bachelor,master',
+            'type' => 'required|in:bachelor,master,bachelor_margin,master_margin',
             'price' => 'required|integer',
         ]);
 
-        return Config::editSetPrice($request->cloth, $request->price);
+        return Config::editSetPrice($request->type, $request->price);
     }
 }

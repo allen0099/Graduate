@@ -16,40 +16,57 @@ class Config extends Model
      */
     public $timestamps = false;
 
-    public static function editSetPrice($cloth, int $price)
+    public static function editSetPrice($type, int $price)
     {
-        if ($cloth === 'bachelor') {
-            $c = Config::getBachelorSetPrice();
-        } else if ($cloth === 'master') {
-            $c = Config::getMasterSetPrice();
-        } else {
+        if ($type === 'bachelor') {
+            $t = Config::getBachelorPrice();
+        } else if ($type === 'master') {
+            $t = Config::getMasterPrice();
+        } else if ($type === 'bachelor_margin') {
+            $t = Config::getBachelorMarginPrice();
+        }else if ($type === 'master_margin') {
+            $t = Config::getMasterMarginPrice();
+        }else {
             return abort(404);
         }
 
-        $c->value = $price;
-        $c->save();
+        $t->value = $price;
+        $t->save();
 
-        return $c;
+        return $t;
     }
 
-    public static function getBachelorSetPrice()
-    {
-        return Config::where('key', 'bachelor_set_price')->first();
-    }
 
     public static function getBachelorSetPriceValue()
     {
-        return Config::where('key', 'bachelor_set_price')->first()->value;
-    }
+        $price = Config::where('key', 'bachelor_price')->first()->value + 
+        Config::where('key', 'bachelor_margin_price')->first()->value;
 
-    public static function getMasterSetPrice()
-    {
-        return Config::where('key', 'master_set_price')->first();
+        return $price;
     }
 
     public static function getMasterSetPriceValue()
     {
-        return Config::where('key', 'master_set_price')->first()->value;
+        $price = Config::where('key', 'master_price')->first()->value + 
+        Config::where('key', 'master_margin_price')->first()->value;
+
+        return $price;
+    }
+
+    public static function getBachelorPrice(){
+        return Config::where('key', 'bachelor_price')->first();
+    }
+
+    public static function getMasterPrice(){
+        return Config::where('key', 'master_price')->first();
+    }
+
+    public static function getBachelorMarginPrice(){
+        return Config::where('key', 'master_margin_price')->first();
+    }
+
+    public static function getMasterMarginPrice(){
+        return Config::where('key', 'bachelor_margin_price')->first();
     }
 
     public static function getReturnLocation()
