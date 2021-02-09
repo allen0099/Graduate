@@ -644,7 +644,7 @@
                 this.pageLoading = true
                 let id = this.edit_list.id
                 await apiUpdateListStatus(id, this.edit_status_code).then(res => {
-                    if (res.status === 200) {
+                    if (res.status === 200 || res.status === 204) {
                         if (this.edit_list.status === 1) {
                             this.init_list = this.init_list.filter(x => x.id != id)
                         } else if (this.edit_list.status === 2) {
