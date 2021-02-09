@@ -55,7 +55,7 @@ class TimeRangeController extends Controller
 
         $request->validate([
             'start_time' => 'required|date',
-            'end_time' => 'required|date|after:start_time',
+            'end_time' => 'required|date|after_or_equal:start_time',
         ], [
             'after' => '結束時間必須在開始時間之後。',
         ]);
