@@ -203,6 +203,12 @@ class PDFController extends Controller
         // return $data;
     }
 
+    public function refundPdf(Request $request) {
+        $id = $request->id;
+        $list = CashierList::find($id);
+        return $list;
+    }
+
     public function test()
     {
         $barcode_username = (new DNS1D)->getBarcodeHTML('4445645656', 'C39+');

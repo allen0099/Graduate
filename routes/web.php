@@ -165,6 +165,9 @@ Route::group([
 
     Route::get('preserve_pdf', [PDFController::class, 'preservePdf'])
         ->name('preserve-pdf');
+    
+    Route::get('refund_pdf', [PDFController::class, 'refundPdf'])
+        ->name('refund_pdf-pdf');
 });
 
 // Student routes group
