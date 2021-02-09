@@ -101,6 +101,9 @@ Route::group([
     Route::get('/cashier_list', [ListController::class, 'getListByStatus'])
         ->name('cashier_list');
 
+    Route::get('/sets', [ListController::class, 'getSetsByStatus'])
+        ->name('sets');
+
     Route::post('/update_cashier_list', [ListController::class, 'updateList'])
         ->name('update_cashier_list');
 

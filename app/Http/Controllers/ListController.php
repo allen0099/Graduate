@@ -61,6 +61,15 @@ class ListController extends Controller
         return CashierList::all()->where('status', $request->status_code);
     }
 
+    public function getSetsByStatus(Request $request)
+    {
+        $request->validate([
+            'status_code' => ['required', Rule::in(CashierList::CODE_ARRAY)],
+        ]);
+
+        return Set::all()->where('cashier_list.status', $request->status_code);
+    }
+
     public function createNewList(Request $request)
     {
         $request->validate([
