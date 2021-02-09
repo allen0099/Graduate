@@ -15,6 +15,8 @@ const UploadRequest = axios.create({
     }
 });
 
+/******** Admin ********/
+
 // Admin Setting
 export const apiInventoryUpdate = (id, res) =>
     Request.patch(`/item/${id}`, res);
@@ -46,8 +48,27 @@ export const apiRefundCloth = stu_username =>
 
 export const apiNotReturnedTotal = () => Request.get("/not_returned_total");
 
+// Admin Refund
+export const apiNoneListedSets = (start_date, end_date) =>
+    Request.get(
+        `/not_listed_sets?start_date=${start_date}&end_date=${end_date}`
+    );
+
+export const apiNewCashierList = id => Request.get("/new_cashier_list", id);
+
+export const apiUpdateListStatus = (id, status) =>
+    Request.post("/update_cashier_list", { id, status });
+
+export const apiListByStatus = status_code =>
+    Request.get("/cashier_list", status_code);
+
 // Admin pdf
 export const apiPreservePdf = () => Request.get("/preserve_pdf");
+
+// Admin Upload
+export const apiUploadFile = file => UploadRequest.post("/test_upload", file);
+
+/******** Student ********/
 
 // Student order
 export const apiSearchOwner = () => Request.get(`/order_owner`);
@@ -58,6 +79,3 @@ export const apiCreateOrder = order => Request.post("/order", order);
 // Student myorder
 export const apiPreserveDate = (order_id, preserve_date) =>
     Request.post("/preserve_order", { order_id, preserve_date });
-
-// Upload
-export const apiUploadFile = file => UploadRequest.post("/test_upload", file);

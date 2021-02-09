@@ -187,5 +187,8 @@ Route::get('preserve', [PDFController::class, 'preservePdf'])
 Route::get('/receipt_pdf', [PDFController::class, 'receiptPdf'])
     ->name('receipt_pdf');
 
-    Route::get('/upload', fn() => Inertia::render('Admin/Setting/UploadFile'))
-        ->name('upload');
+Route::get('/upload', fn() => Inertia::render('Admin/Setting/UploadFile'))
+    ->name('upload');
+
+Route::post('/test_upload', [PDFController::class, 'upload'])
+    ->name('test_upload');

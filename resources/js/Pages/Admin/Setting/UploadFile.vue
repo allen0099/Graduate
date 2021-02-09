@@ -8,9 +8,13 @@
         <v-file-input
             v-model="file"
             label="click me"
+            name="file"
+            type="file"
         ></v-file-input>
 
         <v-btn @click="upload">上傳</v-btn>
+
+        <v-card>{{ file }}</v-card>
 
         <v-card v-if="res">{{ res }}</v-card>
 
@@ -33,8 +37,11 @@
         }),
         methods: {
             async upload() {
-                await apiUploadFile(this.file).then(res => {
-                    this.res = res
+                let form_data = new FormData()
+                form_data.append('file', this.file)
+                console.log(form_data)
+                await apiUploadFile(form_data).then(res => {
+                    this.res = res.data
                 })
             }
         }
