@@ -95,7 +95,7 @@ class ListController extends Controller
 
         $list = CashierList::find($request->id);
 
-        if ($request->status === 'delete') {
+        if ($request->status === '0') {
             $list->delete();
 
             return response()->noContent();
