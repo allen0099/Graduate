@@ -57,12 +57,14 @@
                             tile
                             :color="colorList[order.status_code].bg"
                         >
-                            <v-card-text class="font-weight-bold">
+                            <v-card-title class="font-weight-bold">
+                                {{ order.owner.username[0] > "5" ? "碩士服" : "學士服" }}
+                                <v-spacer></v-spacer>
                                 <v-row dense>
                                     <v-col
                                         cols="12"
                                         class="d-flex justify-end"
-                                        v-if="order.status_code === Status.created"
+                                        v-if="order.status_code === Status.created && order.owner.username == username"
                                     >
                                         <v-btn
                                             outlined
@@ -92,9 +94,9 @@
                                     <v-col
                                         cols="12"
                                         class="d-flex justify-end"
-                                        v-if="order.status_code === Status.paid"
+                                        v-if="order.status_code === Status.paid && order.owner.username == username"
                                     >
-                                        <v-btn
+                                        <!-- <v-btn
                                             outlined
                                             color="indigo"
                                             class="mr-3"
@@ -106,7 +108,7 @@
                                             <v-icon right>
                                                 mdi-download
                                             </v-icon>
-                                        </v-btn>
+                                        </v-btn> -->
                                         <v-btn
                                             outlined
                                             color="teal darken-2"
@@ -120,6 +122,29 @@
                                             </v-icon>
                                         </v-btn>
                                     </v-col>
+                                    <v-col
+                                        cols="12"
+                                        class="d-flex justify-end"
+                                        v-if="order.status_code === Status.received"
+                                    >
+                                        <v-btn
+                                            outlined
+                                            color="indigo"
+                                            class="mr-3"
+                                            dense
+                                            :href="`${route('order-pdf')}?document_id=${order.document_id}`"
+                                            download
+                                        >
+                                            下載歸還單
+                                            <v-icon right>
+                                                mdi-download
+                                            </v-icon>
+                                        </v-btn>
+                                    </v-col>
+                                </v-row>
+                            </v-card-title>
+                            <v-card-text class="font-weight-bold">
+                                <v-row dense>
                                     <v-col
                                         cols="12"
                                         md="4"
@@ -450,6 +475,7 @@
         },
         name: "StudentMyorder",
         data: () => ({
+            username: '',
             cancelDialog: false,
             reservationDialog: false,
             pageLoading: false,
@@ -494,9 +520,18 @@
                 return true
             },
             init() {
+                this.username = this.$page.user.username
                 this.orderList = this.$page.orders.own.map(x => Object.assign({
                     show: false
                 }, x))
+
+                if (this.$page.orders.shared) {
+                    this.orderList.push({
+                        ...this.$page.orders.shared,
+                        show: false
+                    });
+                }
+
                 this.time_range = this.$page.configs.time_range[this.$page.user.username[0] < "5" ? 2 : 3]
 
                 Date.prototype.Format = function (fmt) {
@@ -618,8 +653,10 @@
         },
         async mounted() {
             await this.onResize()
-            await this.init()
         },
+        created() {
+            this.init()
+        }
     }
 
 </script>

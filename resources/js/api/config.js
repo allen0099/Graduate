@@ -16,6 +16,12 @@ export const Status = {
     canceled
 };
 
+export const Refond_code = {
+    init: 1, // 批次建立
+    progress: 2, // 送出納組
+    finished: 3 // 完成還款
+};
+
 export const StatusMsg = [
     "已結單",
     "未付款",
