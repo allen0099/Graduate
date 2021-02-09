@@ -49,7 +49,7 @@ class ListController extends Controller
 
         return [...Set::all()
             ->whereNull('list_id')
-            ->whereBetween('returned', [$start_date, $end_date])->toArray()];
+            ->whereBetween('returned', [$start_date, $end_date])];
     }
 
     public function getListByStatus(Request $request)

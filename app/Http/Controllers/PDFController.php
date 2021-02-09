@@ -62,17 +62,18 @@ class PDFController extends Controller
 
                 $pdf = PDF::loadView('pdf/order', $data)->setPaper('a4', 'potrait');
 
-                return $pdf->stream('訂單-'.$result->owner->username.'.pdf');
+                return $pdf->stream('訂單-' . $result->owner->username . '.pdf');
                 // return $data;
             }
         }
         return abort(404);
     }
 
-    public function preservePdf(){
+    public function preservePdf()
+    {
         // $Bachelor_start = Carbon::createFromFormat('Y-m-d', TimeRange::getBachelorReceiveStartTime());
         // $Bachelor_end = Carbon::createFromFormat('Y-m-d', TimeRange::getBachelorReceiveEndTime());
-        
+
         $disk = Storage::disk('pdf');
         $Bachelor_start = TimeRange::getBachelorReceiveStartTime();
         $Bachelor_end = TimeRange::getBachelorReceiveEndTime();
@@ -81,14 +82,14 @@ class PDFController extends Controller
 
         $res = [];
 
-        if(today()->addDays(1) >= $Bachelor_start){
+        if (today()->addDays(1) >= $Bachelor_start) {
             $start = today()->addDays(1) > $Bachelor_start ? $Bachelor_start : today()->addDays(1);
             $end = today()->addDays(1) > $Bachelor_end ? $Bachelor_end : today()->addDays(1);
-            while($start <= $end){
-                if($disk->exists('preseve/學士服預約清單'.$start->format('Y-m-d').'.pdf')){
+            while ($start <= $end) {
+                if ($disk->exists('preseve/學士服預約清單' . $start->format('Y-m-d') . '.pdf')) {
                     array_push($res, [
-                        'filepath'=>$disk->url('preseve/學士服預約清單'.$start->format('Y-m-d').'.pdf'),
-                        'filename' => '學士服預約清單'.$start->format('Y-m-d').'.pdf'
+                            'filepath' => $disk->url('preseve/學士服預約清單' . $start->format('Y-m-d') . '.pdf'),
+                            'filename' => '學士服預約清單' . $start->format('Y-m-d') . '.pdf'
                         ]
                     );
                     $start->addDays(1);
@@ -102,11 +103,11 @@ class PDFController extends Controller
                 $data = ['date' => $start->format('Y-m-d')];
                 $pdf = PDF::loadView('pdf/preserve', $data)->setPaper('a4', 'potrait');
                 $content = $pdf->download()->getOriginalContent();
-                Storage::put('pdf/preseve/學士服預約清單'.$start->format('Y-m-d').'.pdf', $content);
-                
+                Storage::put('pdf/preseve/學士服預約清單' . $start->format('Y-m-d') . '.pdf', $content);
+
                 array_push($res, [
-                    'filepath'=>$disk->url('preseve/學士服預約清單'.$start->format('Y-m-d').'.pdf'),
-                    'filename' => '學士服預約清單'.$start->format('Y-m-d').'.pdf'
+                        'filepath' => $disk->url('preseve/學士服預約清單' . $start->format('Y-m-d') . '.pdf'),
+                        'filename' => '學士服預約清單' . $start->format('Y-m-d') . '.pdf'
                     ]
                 );
                 $start->addDays(1);
@@ -118,14 +119,14 @@ class PDFController extends Controller
         $start = null;
         $end = null;
 
-        if(today()->addDays(1) >= $Master_start){
+        if (today()->addDays(1) >= $Master_start) {
             $start = today()->addDays(1) > $Master_start ? $Master_start : today()->addDays(1);
             $end = today()->addDays(1) > $Master_end ? $Master_end : today()->addDays(1);
-            while($start <= $end){
-                if($disk->exists('preseve/碩士服預約清單'.$start->format('Y-m-d').'.pdf')){
+            while ($start <= $end) {
+                if ($disk->exists('preseve/碩士服預約清單' . $start->format('Y-m-d') . '.pdf')) {
                     array_push($res, [
-                        'filepath'=>$disk->url('preseve/碩士服預約清單'.$start->format('Y-m-d').'.pdf'),
-                        'filename' => '碩士服預約清單'.$start->format('Y-m-d').'.pdf'
+                            'filepath' => $disk->url('preseve/碩士服預約清單' . $start->format('Y-m-d') . '.pdf'),
+                            'filename' => '碩士服預約清單' . $start->format('Y-m-d') . '.pdf'
                         ]
                     );
                     $start->addDays(1);
@@ -138,11 +139,11 @@ class PDFController extends Controller
                 $data = ['date' => $start->format('Y-m-d')];
                 $pdf = PDF::loadView('pdf/preserve', $data)->setPaper('a4', 'potrait');
                 $content = $pdf->download()->getOriginalContent();
-                Storage::put('pdf/preseve/碩士服預約清單'.$start->format('Y-m-d').'.pdf', $content);
-                
+                Storage::put('pdf/preseve/碩士服預約清單' . $start->format('Y-m-d') . '.pdf', $content);
+
                 array_push($res, [
-                    'filepath'=>$disk->url('preseve/碩士服預約清單'.$start->format('Y-m-d').'.pdf'),
-                    'filename' => '碩士服預約清單'.$start->format('Y-m-d').'.pdf'
+                        'filepath' => $disk->url('preseve/碩士服預約清單' . $start->format('Y-m-d') . '.pdf'),
+                        'filename' => '碩士服預約清單' . $start->format('Y-m-d') . '.pdf'
                     ]
                 );
                 $start->addDays(1);
@@ -152,14 +153,15 @@ class PDFController extends Controller
         return $res;
     }
 
-    public function receiptPdf(Request $request){
+    public function receiptPdf(Request $request)
+    {
         if (Auth::user()->role !== User::ADMIN) {
             $find_set = Set::where('student_id', Auth::user()->id);
-        } else if (Auth::user()->role === User::ADMIN){
+        } else if (Auth::user()->role === User::ADMIN) {
             $student_id = $request->student_id;
-            if(!is_null($student_id)){
+            if (!is_null($student_id)) {
                 $find_studnet = User::where('username', $student_id);
-                if($find_studnet->count() === 0){
+                if ($find_studnet->count() === 0) {
                     return abort(404);
                 }
                 $find_set = Set::where('student_id', $find_studnet->first()->id);
@@ -170,7 +172,7 @@ class PDFController extends Controller
             return abort(403);
         }
 
-        if($find_set->count() === 0){
+        if ($find_set->count() === 0) {
             return abort(404);
         }
 
@@ -184,17 +186,15 @@ class PDFController extends Controller
 
         $pdf = PDF::loadView('pdf/receipt', $data)->setPaper('a4', 'potrait');
 
-        return $pdf->stream('歸還證明單-'.$set->student->username.'.pdf');
+        return $pdf->stream('歸還證明單-' . $set->student->username . '.pdf');
         // return $data;
     }
 
-    public function test(){
-        
+    public function test()
+    {
         $barcode_username = (new DNS1D)->getBarcodeHTML('4445645656', 'C39+');
         error_log($barcode_username);
         // return '<img src="data:image/png; base64, '.$barcode_username.'" />';
         return $barcode_username;
     }
-
-
 }
