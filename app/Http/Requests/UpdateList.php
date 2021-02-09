@@ -28,7 +28,7 @@ class UpdateList extends FormRequest
     {
         return [
             'id' => ['required', 'exists:lists,id'],
-            'status' => ['required', Rule::in(array_merge(CashierList::CODE_ARRAY, 0))],
+            'status' => ['required', Rule::in(array_merge(CashierList::CODE_ARRAY, [0]))],
         ];
     }
 }
