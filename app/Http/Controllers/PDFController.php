@@ -26,6 +26,19 @@ class PDFController extends Controller
             : abort(404);
     }
 
+    public function uploadPdf(Request $request)
+    {
+        $request->validate([
+            'name' => ['required'],
+            'pdf_file' => ['required', 'mimes:pdf', 'max:5000'],
+        ]);
+
+        $disk = Storage::disk('pdf');
+        $disk->putFileAs('', $request->pdf_file, $request->name . '.pdf');
+
+        return response()->noContent();
+    }
+
     public function orderPdf(Request $request)
     {
         $document_id = $request->document_id;

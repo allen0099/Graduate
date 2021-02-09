@@ -119,6 +119,9 @@ Route::group([
     Route::post('/refund_order', [OrderController::class, 'refundOrder'])
         ->name('refund_order');
 
+    Route::post('/upload_pdf', [PDFController::class, 'uploadPdf'])
+        ->name('upload_pdf');
+
     Route::post('/edit_price', EditSetPriceController::class)
         ->name('edit_price');
 
@@ -192,6 +195,3 @@ Route::get('/receipt_pdf', [PDFController::class, 'receiptPdf'])
 
 Route::get('/upload', fn() => Inertia::render('Admin/Setting/UploadFile'))
     ->name('upload');
-
-Route::post('/test_upload', [PDFController::class, 'upload'])
-    ->name('test_upload');
