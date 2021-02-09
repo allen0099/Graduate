@@ -26,7 +26,7 @@
                     <v-col>
                         <v-select
                             v-model="end_date"
-                            :items="dateList"
+                            :items="dateList.filter(x => x >= this.start_date)"
                             label="結束日期"
                         ></v-select>
                     </v-col>
