@@ -80,4 +80,9 @@ class Set extends Model
     {
         return $this->belongsTo('App\Models\Item', 'size_item');
     }
+
+    public function cashier_list()
+    {
+        return $this->belongsTo('App\Models\CashierList', 'list_id');
+    }
 }
