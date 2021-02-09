@@ -26,7 +26,7 @@ class CheckStartAndEndDate extends FormRequest
     {
         return [
             'start_date' => ['date'],
-            'end_date' => ['date', 'after:start_date'],
+            'end_date' => ['date', 'after_or_equal:start_date'],
         ];
     }
 }

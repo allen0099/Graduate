@@ -43,8 +43,8 @@ class ListController extends Controller
             $start_date = TimeRange::find(TimeRange::RET)->start_time;
             $end_date = today();
         } else {
-            $start_date = $request->start_date;
-            $end_date = $request->end_date;
+            $start_date = Carbon::parse($request->start_date);
+            $end_date = Carbon::parse($request->end_date);
         }
 
         return Set::all()
