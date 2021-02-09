@@ -8,27 +8,32 @@
             flat
         >
             <v-card-title>
-                還款
+                待還款名單 {{ dateList }}
                 <v-spacer></v-spacer>
-                <v-btn @click="dialog_refund = true">生成還款名單</v-btn>
             </v-card-title>
             <v-card-text class="font-weight-bold">
                 <v-row
                     dense
-                    v-for="(item, index) in NotReturnedTotal"
-                    :key="`NotReturnedTotal-${index}`"
-                    class="ml-3"
-                    v-if="dateList.indexOf(new Date(item.date).Format('yyyy-MM-dd')) > -1"
+                    align="center"
                 >
-                    <v-col
-                        cols="5"
-                        md="2"
-                        sm="3"
-                        xs="4"
-                    >
-                        日期：{{ new Date(item.date).Format("yyyy-MM-dd") }}
+                    <v-col>
+                        <v-select
+                            v-model="start_date"
+                            :items="dateList"
+                            label="起始日期"
+                        ></v-select>
                     </v-col>
-                    <v-col> 尚未處理還款數量：{{ item.count }}</v-col>
+                    <v-col>
+                        <v-select
+                            v-model="end_date"
+                            :items="dateList"
+                            label="結束日期"
+                        ></v-select>
+                    </v-col>
+                    <v-btn
+                        @click="search_set"
+                        class="ml-3"
+                    >查詢</v-btn>
                 </v-row>
             </v-card-text>
         </v-card>
@@ -38,8 +43,37 @@
             flat
         >
             <v-card-title>
-                還款中
+                還款批次列表
             </v-card-title>
+            <v-card-text>
+                <v-data-table
+                    :headers="headers.filter(x=>x.code==0 || x.code==1)"
+                    :items="list"
+                    :search="search"
+                    class="elevation-1"
+                >
+                    <template v-slot:top>
+                        <v-text-field
+                            v-model="search"
+                            label="Search (UPPER CASE ONLY)"
+                            class="mx-4"
+                        ></v-text-field>
+                    </template>
+
+                    <template v-slot:item.date="{ item }">
+                        {{ new Date(item.created_at).Format("yyyy-MM-dd HH:mm") }}
+                    </template>
+                    <template v-slot:item.download="{ item }">
+                        <v-btn>下載名單</v-btn>
+                    </template>
+                    <template v-slot:item.delete="{ item }">
+                        <v-btn>刪除</v-btn>
+                    </template>
+                    <template v-slot:item.send="{ item }">
+                        <v-btn>送出</v-btn>
+                    </template>
+                </v-data-table>
+            </v-card-text>
         </v-card>
         <v-divider class="mx-5 v-divider-bold" />
         <v-card
@@ -47,8 +81,78 @@
             flat
         >
             <v-card-title>
+                已送至出納組
+            </v-card-title>
+            <v-card-text>
+                <v-data-table
+                    :headers="headers.filter(x=>x.code==0 || x.code==2)"
+                    :items="list"
+                    :search="search"
+                    class="elevation-1"
+                >
+                    <template v-slot:top>
+                        <v-text-field
+                            v-model="search"
+                            label="Search (UPPER CASE ONLY)"
+                            class="mx-4"
+                        ></v-text-field>
+                    </template>
+
+                    <template v-slot:item.date="{ item }">
+                        {{ new Date(item.created_at).Format("yyyy-MM-dd HH:mm") }}
+                    </template>
+                    <template v-slot:item.download="{ item }">
+                        <v-btn>下載名單</v-btn>
+                    </template>
+                    <template v-slot:item.back="{ item }">
+                        <v-btn>退回</v-btn>
+                    </template>
+                    <template v-slot:item.done="{ item }">
+                        <v-btn>完成</v-btn>
+                    </template>
+                </v-data-table>
+            </v-card-text>
+        </v-card>
+
+        <v-card
+            class="mt-3"
+            flat
+        >
+            <v-card-title>
                 已還款
             </v-card-title>
+            <v-card-text>
+                <v-data-table
+                    :headers="headers.filter(x=>x.code==0 || x.code==3)"
+                    :items="list"
+                    :search="search"
+                    class="elevation-1"
+                >
+                    <template v-slot:top>
+                        <v-text-field
+                            v-model="search"
+                            label="Search (UPPER CASE ONLY)"
+                            class="mx-4"
+                        ></v-text-field>
+                    </template>
+
+                    <template v-slot:item.date="{ item }">
+                        {{ new Date(item.created_at).Format("yyyy-MM-dd HH:mm") }}
+                    </template>
+                    <template v-slot:item.download="{ item }">
+                        <v-btn>下載名單</v-btn>
+                    </template>
+                    <template v-slot:item.delete="{ item }">
+                        <v-btn>刪除</v-btn>
+                    </template>
+                    <template v-slot:item.back="{ item }">
+                        <v-btn>退回</v-btn>
+                    </template>
+                    <template v-slot:item.send="{ item }">
+                        <v-btn>送出</v-btn>
+                    </template>
+                </v-data-table>
+            </v-card-text>
         </v-card>
 
         <v-dialog
@@ -72,7 +176,7 @@
         </v-dialog>
 
         <v-dialog
-            v-model="dialog_refund"
+            v-model="dialog_search_set"
             persistent
             max-width="600px"
         >
@@ -136,6 +240,27 @@
                 </v-card>
             </v-dialog>
         </v-dialog>
+
+        <v-dialog
+            v-model="pageLoading"
+            persistent
+            width="300"
+        >
+            <v-card
+                color="primary"
+                dark
+            >
+                <v-card-text>
+                    Loading...
+                    <v-progress-linear
+                        indeterminate
+                        color="white"
+                        class="mb-0"
+                    ></v-progress-linear>
+                </v-card-text>
+            </v-card>
+        </v-dialog>
+
         <v-snackbar
             v-model="snackbar"
             :timeout="2000"
@@ -167,7 +292,7 @@
 <script>
     import VuetifyLayout from '@/Layouts/VuetifyLayout'
     import {
-        apiNotReturnedTotal
+        apiNoneListedSets
     } from '@/api/api'
 
     import {
@@ -181,15 +306,114 @@
         },
         name: "AdminRefund",
         data: () => ({
-            dialog_refund: false,
+            dialog_search_set: false,
             pageLoading: false,
             snackbar: false,
             snackbar_true: false,
             msg: '',
-            NotReturnedTotal: [],
             dateList: [],
             start_date: null,
             end_date: null,
+            search: '',
+            search_sets: [],
+            list: [{
+                list_id: 'list_id-00000000001',
+                created_at: '2021-02-04T15:59:59.000000Z',
+                count: 100,
+            }, {
+                list_id: 'list_id-00000000002',
+                created_at: '2021-02-04T15:59:59.000000Z',
+                count: 100,
+            }, {
+                list_id: 'list_id-00000000003',
+                created_at: '2021-02-04T15:59:59.000000Z',
+                count: 100,
+            }, {
+                list_id: 'list_id-00000000004',
+                created_at: '2021-02-04T15:59:59.000000Z',
+                count: 100,
+            }, {
+                list_id: 'list_id-00000000005',
+                created_at: '2021-02-04T15:59:59.000000Z',
+                count: 100,
+            }],
+            headers: [{
+                    text: '批次編號',
+                    align: 'start',
+                    sortable: true,
+                    value: 'list_id',
+                    code: 0
+                }, {
+                    text: '建立時間',
+                    align: 'center',
+                    sortable: false,
+                    value: 'date',
+                    code: 1
+                },
+                {
+                    text: '送出時間',
+                    align: 'center',
+                    sortable: false,
+                    value: 'date',
+                    code: 2
+                },
+                {
+                    text: '完成時間',
+                    align: 'center',
+                    sortable: false,
+                    value: 'date',
+                    code: 3
+                },
+                {
+                    text: '數量',
+                    align: 'center',
+                    sortable: false,
+                    value: 'count',
+                    code: 0
+                },
+                {
+                    text: '名單下載',
+                    align: 'center',
+                    sortable: false,
+                    value: 'download',
+                    code: 0
+                },
+                {
+                    text: '刪除',
+                    align: 'center',
+                    sortable: false,
+                    value: 'delete',
+                    code: 1
+                },
+                {
+                    text: '送出',
+                    align: 'center',
+                    sortable: false,
+                    value: 'send',
+                    code: 1
+                },
+                {
+                    text: '退回',
+                    align: 'center',
+                    sortable: false,
+                    value: 'back',
+                    code: 2
+                },
+                {
+                    text: '退回',
+                    align: 'center',
+                    sortable: false,
+                    value: 'back',
+                    code: 3
+                },
+                {
+                    text: '完成',
+                    align: 'center',
+                    sortable: false,
+                    value: 'done',
+                    code: 2
+                }
+            ],
         }),
         methods: {
             async init() {
@@ -221,8 +445,8 @@
 
                 let today = new Date(new Date().Format("yyyy-MM-dd") + " 00:00:00")
 
-                let start_time = new Date(time_range.start_time + " 00:00:00")
-                let end_time = new Date(time_range.end_time + " 00:00:00")
+                let start_time = new Date(time_range.start_time)
+                let end_time = new Date(time_range.end_time)
 
                 this.dateList = []
 
@@ -232,14 +456,9 @@
                     }
                 }
 
-                await apiNotReturnedTotal().then(res => {
-                    if (res.status === 200) {
-                        this.NotReturnedTotal = res.data
-                    }
-                })
             },
             refund_cancel() {
-                this.dialog_refund = false
+                this.dialog_search_set = false
                 this.start_date = null
                 this.end_date = null
 
@@ -247,6 +466,27 @@
             refund_save() {
                 this.dateList
                 this.refund_cancel()
+            },
+            async search_set() {
+                this.pageLoading = true
+                await apiNoneListedSets(this.start_date, this.end_date).then(res => {
+                    if (res.status === 200) {
+                        this.search_sets = res.data
+                        console.log(this.search_sets)
+                    } else {
+                        this.msg = '查詢失敗'
+                        this.snackbar = true
+                        this.snackbar_true = false
+                    }
+                    this.pageLoading = false
+                    this.dialog_search_set = true
+                }).catch((err) => {
+                    console.log(err)
+                    this.msg = '查詢失敗'
+                    this.snackbar = true
+                    this.snackbar_true = false
+                })
+                this.pageLoading = false
             }
         },
         created() {
