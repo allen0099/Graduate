@@ -47,9 +47,9 @@ class ListController extends Controller
             $end_date = Carbon::parse($request->end_date);
         }
 
-        return Set::all()
+        return [...Set::all()
             ->whereNull('list_id')
-            ->whereBetween('returned', [$start_date, $end_date]);
+            ->whereBetween('returned', [$start_date, $end_date])->toArray()];
     }
 
     public function getListByStatus(Request $request)
