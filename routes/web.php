@@ -92,7 +92,7 @@ Route::group([
     Route::get('/not_returned_total', [ListController::class, 'notReturnedTotal'])
         ->name('not_returned_total');
 
-    Route::get('/new_cashier_list', [ListController::class, 'createNewList'])
+    Route::post('/new_cashier_list', [ListController::class, 'createNewList'])
         ->name('new_cashier_list');
 
     Route::get('/not_listed_sets', [ListController::class, 'getNotListedSets'])
