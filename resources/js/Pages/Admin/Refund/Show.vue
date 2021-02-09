@@ -8,7 +8,7 @@
             flat
         >
             <v-card-title>
-                待還款名單 {{ dateList }}
+                待還款名單
                 <v-spacer></v-spacer>
             </v-card-title>
             <v-card-text class="font-weight-bold">
@@ -33,6 +33,7 @@
                     <v-btn
                         @click="search_set"
                         class="ml-3"
+                        :disabled="!start_date || !end_date"
                     >查詢</v-btn>
                 </v-row>
             </v-card-text>
@@ -48,29 +49,32 @@
             <v-card-text>
                 <v-data-table
                     :headers="headers.filter(x=>x.code==0 || x.code==1)"
-                    :items="list"
+                    :items="init_list"
                     :search="search"
                     class="elevation-1"
                 >
                     <template v-slot:top>
                         <v-text-field
-                            v-model="search"
-                            label="Search (UPPER CASE ONLY)"
+                            v-model="init_list_search"
+                            label="搜尋"
                             class="mx-4"
                         ></v-text-field>
                     </template>
 
                     <template v-slot:item.date="{ item }">
-                        {{ new Date(item.created_at).Format("yyyy-MM-dd HH:mm") }}
+                        {{ new Date(item.created_at).Format("MM-dd HH:mm") }}
+                    </template>
+                    <template v-slot:item.count="{ item }">
+                        {{ item.sets.length }}
                     </template>
                     <template v-slot:item.download="{ item }">
-                        <v-btn>下載名單</v-btn>
+                        <v-btn>下載</v-btn>
                     </template>
                     <template v-slot:item.delete="{ item }">
-                        <v-btn>刪除</v-btn>
+                        <v-btn @click="alert_open(item, '刪除', 0)">刪除</v-btn>
                     </template>
                     <template v-slot:item.send="{ item }">
-                        <v-btn>送出</v-btn>
+                        <v-btn @click="alert_open(item, '送出', 2)">送出</v-btn>
                     </template>
                 </v-data-table>
             </v-card-text>
@@ -86,29 +90,32 @@
             <v-card-text>
                 <v-data-table
                     :headers="headers.filter(x=>x.code==0 || x.code==2)"
-                    :items="list"
+                    :items="progress_list"
                     :search="search"
                     class="elevation-1"
                 >
                     <template v-slot:top>
                         <v-text-field
-                            v-model="search"
-                            label="Search (UPPER CASE ONLY)"
+                            v-model="progress_list_search"
+                            label="搜尋"
                             class="mx-4"
                         ></v-text-field>
                     </template>
 
                     <template v-slot:item.date="{ item }">
-                        {{ new Date(item.created_at).Format("yyyy-MM-dd HH:mm") }}
+                        {{ new Date(item.updated_at).Format("MM-dd HH:mm") }}
+                    </template>
+                    <template v-slot:item.count="{ item }">
+                        {{ item.sets.length }}
                     </template>
                     <template v-slot:item.download="{ item }">
-                        <v-btn>下載名單</v-btn>
+                        <v-btn>下載</v-btn>
                     </template>
                     <template v-slot:item.back="{ item }">
-                        <v-btn>退回</v-btn>
+                        <v-btn @click="alert_open(item, '退回', 1)">退回</v-btn>
                     </template>
                     <template v-slot:item.done="{ item }">
-                        <v-btn>完成</v-btn>
+                        <v-btn @click="alert_open(item, '完成', 3)">完成</v-btn>
                     </template>
                 </v-data-table>
             </v-card-text>
@@ -124,32 +131,29 @@
             <v-card-text>
                 <v-data-table
                     :headers="headers.filter(x=>x.code==0 || x.code==3)"
-                    :items="list"
+                    :items="finished_list"
                     :search="search"
                     class="elevation-1"
                 >
                     <template v-slot:top>
                         <v-text-field
-                            v-model="search"
-                            label="Search (UPPER CASE ONLY)"
+                            v-model="finished_list_search"
+                            label="搜尋"
                             class="mx-4"
                         ></v-text-field>
                     </template>
 
                     <template v-slot:item.date="{ item }">
-                        {{ new Date(item.created_at).Format("yyyy-MM-dd HH:mm") }}
+                        {{ new Date(item.updated_at).Format("MM-dd HH:mm") }}
+                    </template>
+                    <template v-slot:item.count="{ item }">
+                        {{ item.sets.length }}
                     </template>
                     <template v-slot:item.download="{ item }">
-                        <v-btn>下載名單</v-btn>
-                    </template>
-                    <template v-slot:item.delete="{ item }">
-                        <v-btn>刪除</v-btn>
+                        <v-btn>下載</v-btn>
                     </template>
                     <template v-slot:item.back="{ item }">
-                        <v-btn>退回</v-btn>
-                    </template>
-                    <template v-slot:item.send="{ item }">
-                        <v-btn>送出</v-btn>
+                        <v-btn @click="alert_open(item, '退回', 2)">退回</v-btn>
                     </template>
                 </v-data-table>
             </v-card-text>
@@ -178,43 +182,52 @@
         <v-dialog
             v-model="dialog_search_set"
             persistent
-            max-width="600px"
+            max-width="1200px"
         >
             <v-card>
-                <v-card-title>生成還款名單</v-card-title>
+                <v-card-title>建立還款批次名單 {{start_date}} ～ {{end_date}}</v-card-title>
                 <v-card-text class="font-weight-bold">
-                    <v-row dense>
-                        <v-col cols="12">將該時間範圍的所有尚未處理還款的學生集合生成還款名單</v-col>
-                        <v-col>
-                            <v-select
-                                v-model="start_date"
-                                :items="dateList"
-                                label="起始日期"
-                            ></v-select>
-                        </v-col>
-                        <v-col>
-                            <v-select
-                                v-model="end_date"
-                                :items="dateList"
-                                label="結束日期"
-                            ></v-select>
-                        </v-col>
-                    </v-row>
+                    <v-text-field
+                        v-model="search_sets_search"
+                        class="mb-3"
+                        label="搜尋"
+                        single-line
+                        hide-details
+                        clearable
+                    ></v-text-field>
+                    <v-data-table
+                        v-model="selected_set"
+                        :headers="headers_search_sets"
+                        :items="search_sets"
+                        item-key="id"
+                        :search="search_sets_search"
+                        show-select
+                        class="elevation-1"
+                    >
+                        <template v-slot:item.set="{ item }">
+                            {{ item.cloth.spec }}, {{ item.accessory.spec }}
+                        </template>
+                        <template v-slot:item.date="{ item }">
+                            {{ new Date(item.returned).Format("MM-dd HH:mm") }}
+                        </template>
+                    </v-data-table>
                 </v-card-text>
                 <v-spacer></v-spacer>
                 <v-card-actions>
+                    <span class="ml-3"> 已勾選 {{ selected_set.length }} 筆，共 {{search_sets.length}}
+                        筆</span>
                     <v-spacer></v-spacer>
                     <v-btn
                         color="error"
                         text
-                        @click="refund_cancel"
+                        @click="list_cancel"
                     >
                         取消
                     </v-btn>
                     <v-btn
                         color="primary"
                         text
-                        @click="refund_save"
+                        @click="list_build"
                     >
                         建立
                     </v-btn>
@@ -240,6 +253,60 @@
                 </v-card>
             </v-dialog>
         </v-dialog>
+
+
+        <v-dialog
+            v-model="dialog_alert"
+            persistent
+            max-width="400"
+        >
+            <v-card>
+                <v-card-title>
+                    {{ '還款批次列表' }} - {{ btn_name }}
+                </v-card-title>
+                <v-card-text class="font-weight-bold">
+                    確定要{{ btn_name }}?
+                </v-card-text>
+                <v-spacer></v-spacer>
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn
+                        color="error"
+                        text
+                        @click="alert_cancel"
+                    >
+                        取消
+                    </v-btn>
+                    <v-btn
+                        color="primary"
+                        text
+                        @click="alert_confirm"
+                    >
+                        確定
+                    </v-btn>
+                </v-card-actions>
+            </v-card>
+            <v-dialog
+                v-model="pageLoading"
+                persistent
+                width="300"
+            >
+                <v-card
+                    color="primary"
+                    dark
+                >
+                    <v-card-text>
+                        Loading...
+                        <v-progress-linear
+                            indeterminate
+                            color="white"
+                            class="mb-0"
+                        ></v-progress-linear>
+                    </v-card-text>
+                </v-card>
+            </v-dialog>
+        </v-dialog>
+
 
         <v-dialog
             v-model="pageLoading"
@@ -292,12 +359,16 @@
 <script>
     import VuetifyLayout from '@/Layouts/VuetifyLayout'
     import {
-        apiNoneListedSets
+        apiNoneListedSets,
+        apiNewCashierList,
+        apiGetListByStatus,
+        apiUpdateListStatus
     } from '@/api/api'
 
     import {
         Status,
         StatusMsg,
+        Refond_code
     } from '@/api/config'
 
     export default {
@@ -306,7 +377,10 @@
         },
         name: "AdminRefund",
         data: () => ({
+            set_type: 0,
+            btn_name: '',
             dialog_search_set: false,
+            dialog_alert: false,
             pageLoading: false,
             snackbar: false,
             snackbar_true: false,
@@ -315,33 +389,48 @@
             start_date: null,
             end_date: null,
             search: '',
+            init_list_search: '',
+            progress_list_search: '',
+            finished_list_search: '',
+            search_sets_search: '',
             search_sets: [],
-            list: [{
-                list_id: 'list_id-00000000001',
-                created_at: '2021-02-04T15:59:59.000000Z',
-                count: 100,
+            selected_set: [],
+            headers_search_sets: [{
+                text: '學號',
+                align: 'start',
+                sortable: false,
+                value: 'student.username',
             }, {
-                list_id: 'list_id-00000000002',
-                created_at: '2021-02-04T15:59:59.000000Z',
-                count: 100,
+                text: '姓名',
+                align: 'start',
+                value: 'student.name',
             }, {
-                list_id: 'list_id-00000000003',
-                created_at: '2021-02-04T15:59:59.000000Z',
-                count: 100,
+                text: '系級',
+                align: 'start',
+                value: 'student.school_class.class_name',
             }, {
-                list_id: 'list_id-00000000004',
-                created_at: '2021-02-04T15:59:59.000000Z',
-                count: 100,
+                text: '衣服',
+                align: 'start',
+                value: 'cloth.name',
             }, {
-                list_id: 'list_id-00000000005',
-                created_at: '2021-02-04T15:59:59.000000Z',
-                count: 100,
-            }],
+                text: '規格',
+                align: 'start',
+                value: 'set',
+            }, {
+                text: '歸還日期',
+                align: 'start',
+                value: 'date',
+            }, ],
+            init_list: [],
+            progress_list: [],
+            finished_list: [],
+            edit_list: null,
+            edit_status_code: 0,
             headers: [{
                     text: '批次編號',
                     align: 'start',
                     sortable: true,
-                    value: 'list_id',
+                    value: 'id',
                     code: 0
                 }, {
                     text: '建立時間',
@@ -417,6 +506,7 @@
         }),
         methods: {
             async init() {
+                this.pageLoading = true
                 Date.prototype.Format = function (fmt) {
                     var o = {
                         "M+": this.getMonth() + 1, //月份
@@ -456,23 +546,71 @@
                     }
                 }
 
+                await apiGetListByStatus(Refond_code.init).then(res => {
+                    if (res.status === 200) {
+                        this.init_list = res.data
+                    }
+                })
+
+                await apiGetListByStatus(Refond_code.progress).then(res => {
+                    if (res.status === 200) {
+                        this.progress_list = res.data
+                    }
+                })
+
+                await apiGetListByStatus(Refond_code.finished).then(res => {
+                    if (res.status === 200) {
+                        this.finished_list = res.data
+                    }
+                })
+                this.pageLoading = false
             },
-            refund_cancel() {
+            list_cancel() {
+                this.pageLoading = false
                 this.dialog_search_set = false
                 this.start_date = null
                 this.end_date = null
-
+                this.search_sets_search = ''
+                this.selected_set = []
+                this.search_sets = []
             },
-            refund_save() {
-                this.dateList
-                this.refund_cancel()
+            async list_build() {
+                this.pageLoading = true
+                let id_list = this.selected_set.map(x => x.id)
+                await apiNewCashierList(id_list).then(res => {
+                    if (res.status === 200) {
+                        this.init_list.push(res.data)
+                        this.msg = '新增成功'
+                        this.snackbar = true
+                        this.snackbar_true = true
+                    } else {
+                        this.msg = '連線錯誤'
+                        this.snackbar = true
+                        this.snackbar_true = false
+                    }
+                }).catch((err) => {
+                    console.log(err)
+                    this.msg = '不明錯誤'
+                    this.snackbar = true
+                    this.snackbar_true = false
+                })
+                await this.list_cancel()
             },
             async search_set() {
                 this.pageLoading = true
+                this.search_sets_search = ''
+                this.selected_set = []
+                this.search_sets = []
+                if (this.start_date > this.end_date) {
+                    this.msg = '起始時間不可晚於結束時間'
+                    this.snackbar = true
+                    this.snackbar_true = false
+                    this.pageLoading = false
+                    return
+                }
                 await apiNoneListedSets(this.start_date, this.end_date).then(res => {
                     if (res.status === 200) {
                         this.search_sets = res.data
-                        console.log(this.search_sets)
                     } else {
                         this.msg = '查詢失敗'
                         this.snackbar = true
@@ -487,6 +625,59 @@
                     this.snackbar_true = false
                 })
                 this.pageLoading = false
+            },
+
+            alert_open(item, btn_name, status_code) {
+                this.dialog_alert = true
+                this.btn_name = btn_name
+                this.edit_list = Object.assign({}, item)
+                this.edit_status_code = status_code
+            },
+            alert_cancel() {
+                this.dialog_alert = false
+                this.btn_name = ''
+                this.edit_list = null
+                this.edit_status_code = 0
+                this.pageLoading = false
+            },
+            async alert_confirm() {
+                this.pageLoading = true
+                let id = this.edit_list.id
+                await apiUpdateListStatus(id, this.edit_status_code).then(res => {
+                    if (res.status === 200) {
+                        if (this.edit_list.status === 1) {
+                            this.init_list = this.init_list.filter(x => x.id != id)
+                        } else if (this.edit_list.status === 2) {
+                            this.progress_list = this.progress_list.filter(x => x.id != id)
+                        } else if (this.edit_list.status === 3) {
+                            this.finished_list = this.finished_list.filter(x => x.id != id)
+                        }
+
+                        this.edit_list.status = this.edit_status_code
+                        if (this.edit_status_code === 1) {
+                            this.init_list.push(res.data)
+                        } else if (this.edit_status_code === 2) {
+                            this.progress_list.push(res.data)
+                        } else if (this.edit_status_code === 3) {
+                            this.finished_list.push(res.data)
+                        }
+
+                        this.msg = this.btn_name + '成功'
+                        this.snackbar = true
+                        this.snackbar_true = true
+
+                    } else {
+                        this.msg = '連線失敗'
+                        this.snackbar = true
+                        this.snackbar_true = false
+                    }
+                }).catch((err) => {
+                    console.log(err)
+                    this.msg = '連線失敗'
+                    this.snackbar = true
+                    this.snackbar_true = false
+                })
+                await this.alert_cancel()
             }
         },
         created() {

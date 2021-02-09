@@ -54,13 +54,14 @@ export const apiNoneListedSets = (start_date, end_date) =>
         `/not_listed_sets?start_date=${start_date}&end_date=${end_date}`
     );
 
-export const apiNewCashierList = id => Request.get("/new_cashier_list", id);
+export const apiNewCashierList = id =>
+    Request.post("/new_cashier_list", { id });
 
 export const apiUpdateListStatus = (id, status) =>
     Request.post("/update_cashier_list", { id, status });
 
-export const apiListByStatus = status_code =>
-    Request.get("/cashier_list", status_code);
+export const apiGetListByStatus = status_code =>
+    Request.get(`/cashier_list?status_code=${status_code}`);
 
 // Admin pdf
 export const apiPreservePdf = () => Request.get("/preserve_pdf");
