@@ -68,7 +68,10 @@
                         {{ item.sets.length }}
                     </template>
                     <template v-slot:item.download="{ item }">
-                        <v-btn>下載</v-btn>
+                        <v-btn
+                            :href="`/refund_pdf?id=${item.id}`"
+                            target="_blank"
+                        >下載</v-btn>
                     </template>
                     <template v-slot:item.delete="{ item }">
                         <v-btn @click="alert_open(item, '刪除', 0)">刪除</v-btn>
@@ -109,7 +112,10 @@
                         {{ item.sets.length }}
                     </template>
                     <template v-slot:item.download="{ item }">
-                        <v-btn>下載</v-btn>
+                        <v-btn
+                            :href="`/refund_pdf?id=${item.id}`"
+                            target="_blank"
+                        >下載</v-btn>
                     </template>
                     <template v-slot:item.back="{ item }">
                         <v-btn @click="alert_open(item, '退回', 1)">退回</v-btn>
@@ -150,7 +156,10 @@
                         {{ item.sets.length }}
                     </template>
                     <template v-slot:item.download="{ item }">
-                        <v-btn>下載</v-btn>
+                        <v-btn
+                            :href="`/refund_pdf?id=${item.id}`"
+                            target="_blank"
+                        >下載</v-btn>
                     </template>
                     <template v-slot:item.back="{ item }">
                         <v-btn @click="alert_open(item, '退回', 2)">退回</v-btn>
@@ -362,7 +371,7 @@
         apiNoneListedSets,
         apiNewCashierList,
         apiGetListByStatus,
-        apiUpdateListStatus
+        apiUpdateListStatus,
     } from '@/api/api'
 
     import {

@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Set;
 use App\Models\TimeRange;
 use App\Models\Config;
+use App\Models\CashierList;
 use Carbon\Carbon;
 use Barryvdh\DomPDF\Facade as PDF;
 use Illuminate\Http\Request;
@@ -205,8 +206,21 @@ class PDFController extends Controller
 
     public function refundPdf(Request $request) {
         $id = $request->id;
-        $list = CashierList::find($id);
-        return $list;
+        if(!is_null($id)){
+            $list = CashierList::find($id);
+            
+            $state =  ['meow', '尚未還款', '還款中', '已還款'];
+            if(!is_null($list)){
+                $data = [
+                    'list' => $list,
+                    'state' => $state[$list->status],
+                ];
+
+                $pdf = PDF::loadView('pdf/refund', $data)->setPaper('a4', 'potrait');
+                return $pdf->stream('還款名單-' . $list->id . '-' . $state[$list->status] .'.pdf');
+            }
+        }
+        return abort(404);
     }
 
     public function test()

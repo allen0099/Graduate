@@ -63,6 +63,8 @@ export const apiUpdateListStatus = (id, status) =>
 export const apiGetListByStatus = status_code =>
     Request.get(`/cashier_list?status_code=${status_code}`);
 
+// export const apiRefundPdf = id => Request.get(`/refund_pdf?id=${id}`);
+
 // Admin pdf
 export const apiPreservePdf = () => Request.get("/preserve_pdf");
 
