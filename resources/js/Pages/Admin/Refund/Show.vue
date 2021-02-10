@@ -237,6 +237,7 @@
                         color="primary"
                         text
                         @click="list_build"
+                        :disabled="selected_set.length == 0"
                     >
                         建立
                     </v-btn>
