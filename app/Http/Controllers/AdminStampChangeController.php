@@ -17,17 +17,17 @@ class AdminStampChangeController extends Controller
         $this->saveNewImage($request);
 
         // return '<img src="data:image/jpeg;base64,' . $base64_image . '" alt="未設定圖檔">';
-        $data = [
-            'ok'=> true
-        ];
+        // $data = [
+        //     'ok'=> true
+        // ];
 
-        return $data;
+        // return $data;
     }
 
     private function validateImage(Request $request)
     {
         $request->validate([
-            'image' => 'required|image|mimes:jpg,jpeg,png',
+            'image' => 'required|image|mimes:jpg,jpeg,png|max:2048',
         ], [
             'required' => '不能沒有圖檔',
             'image' => '不能為非圖檔類型',
@@ -36,8 +36,11 @@ class AdminStampChangeController extends Controller
 
     private function saveNewImage(Request $request)
     {
+        // $disk = Storage::disk('picture');
+        $filename = $request->image->hashName();
+        // $request->image->storeAs('/public/picture', $filename);
         $user = User::find(Auth::id());
-        $user->stamp = base64_encode(file_get_contents($request->file('image')));
+        $user->stamp = $filename;
         $user->save();
     }
 }
