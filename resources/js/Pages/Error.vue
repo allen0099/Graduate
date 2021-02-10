@@ -1,17 +1,41 @@
 <template>
-    <div
-        class="relative flex items-top justify-center min-h-screen bg-gray-100 dark:bg-gray-900 sm:items-center sm:pt-0">
-        <div class="max-w-xl mx-auto sm:px-6 lg:px-8">
-            <div class="flex items-center pt-8 sm:justify-start sm:pt-0">
-                <div class="px-4 text-lg text-gray-500 border-r border-gray-400 tracking-wider">
-                    {{ code }}
-                </div>
-                <div class="ml-4 text-lg text-gray-500 uppercase tracking-wider">
-                    {{ message }}
-                </div>
-            </div>
-        </div>
-    </div>
+    <v-app>
+        <v-main class="d-flex align-center">
+            <v-card
+                flat
+                class="d-flex justify-center mb-5"
+            >
+                <span class="text-h4 grey--text text--darken-3">{{ code }}</span>
+                <v-divider
+                    class="mx-5 v-divider-black"
+                    vertical
+                ></v-divider>
+                <span class="text-h4 grey--text text--darken-3">{{ message }}</span>
+            </v-card>
+            <v-card
+                flat
+                class="d-flex justify-center"
+            >
+                <v-btn
+                    text
+                    href="/"
+                >
+                    <i class="mr-2">
+                        <svg
+                            style="width:24px;height:24px"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                fill="currentColor"
+                                d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z"
+                            />
+                        </svg>
+                    </i>
+                    Go to Home
+                </v-btn>
+            </v-card>
+        </v-main>
+    </v-app>
 </template>
 
 <script>
@@ -28,3 +52,4 @@
     }
 
 </script>
+<style src="vuetify/dist/vuetify.min.css" />
