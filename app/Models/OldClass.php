@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class DepartmentClass extends Model
+class OldClass extends Model
 {
     use HasFactory;
 
@@ -21,7 +21,7 @@ class DepartmentClass extends Model
      *
      * @var string
      */
-    protected $table = 'department_classes';
+    protected $table = 'old_classes';
 
     /**
      * The attributes that should be hidden for arrays.
@@ -31,18 +31,6 @@ class DepartmentClass extends Model
     protected $hidden = [
         'id',
         'department_id',
-    ];
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var string[]
-     */
-    protected $fillable = [
-        'department_id',
-        'class_id',
-        'class_name',
-        'default_color',
     ];
 
     public function students()
