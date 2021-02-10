@@ -17,7 +17,8 @@ class CreateSetsTable extends Migration
             $table->id();
 
             $table->foreignId('student_id')
-                ->constrained('users');
+                ->constrained('users')
+                ->cascadeOnDelete();
 
             $table->foreignId('order_id')
                 ->constrained('orders')

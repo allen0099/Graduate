@@ -23,7 +23,8 @@ class CreateUsersTable extends Migration
             $table->string('role');
 
             $table->foreignId('class_id')->nullable()
-                ->constrained('department_classes'); // student
+                ->constrained('department_classes')
+                ->cascadeOnDelete(); // student
 
             $table->boolean('filled_pay_form')->default(false);
 
