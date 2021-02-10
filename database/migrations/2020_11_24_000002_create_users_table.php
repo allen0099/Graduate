@@ -27,7 +27,7 @@ class CreateUsersTable extends Migration
 
             $table->boolean('filled_pay_form')->default(false);
 
-            $table->text('stamp')->nullable(); // admin
+            $table->longText('stamp')->nullable(); // admin
 
             $table->text('two_factor_secret')->nullable();
             $table->text('two_factor_recovery_codes')->nullable();
