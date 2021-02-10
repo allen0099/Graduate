@@ -17,7 +17,11 @@ class AdminStampChangeController extends Controller
         $this->saveNewImage($request);
 
         // return '<img src="data:image/jpeg;base64,' . $base64_image . '" alt="未設定圖檔">';
-        return redirect()->route('profile')->with('success', '印鑑變更成功！');
+        $data = [
+            'ok'=> true
+        ];
+
+        return $data;
     }
 
     private function validateImage(Request $request)
@@ -33,7 +37,7 @@ class AdminStampChangeController extends Controller
     private function saveNewImage(Request $request)
     {
         $user = User::find(Auth::id());
-        $user->base64Img = base64_encode(file_get_contents($request->file('image')));
+        $user->stamp = base64_encode(file_get_contents($request->file('image')));
         $user->save();
     }
 }

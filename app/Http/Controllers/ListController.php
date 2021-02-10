@@ -73,6 +73,7 @@ class ListController extends Controller
     public function createNewList(Request $request)
     {
         $request->validate([
+            'id' => "required|array|min:0",
             'id.*' => ['required', 'exists:sets,id'],
         ]);
 

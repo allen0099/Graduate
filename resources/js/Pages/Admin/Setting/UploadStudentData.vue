@@ -1,84 +1,53 @@
-<!-- vuetify fixed -->
 <template>
-    <jet-form-section @submitted="updateProfileInformation">
-        <template #title>
-            上傳學生資料
-        </template>
-
-        <!-- form grid-cols-6 -->
-        <template #form>
-            <div class="col-span-6 sm:col-span-4">
-                <jet-label
-                    for="std_data"
-                    value="限 csv 檔案"
-                />
-                <v-file-input
-                    accept=".csv"
-                    label="學生資料"
-                    ref="std_data"
-                    id="std_data"
-                ></v-file-input>
-
-                <!-- <jet-input-error
-                    :message="form.error('photo')"
-                    class="mt-2"
-                /> -->
-            </div>
-        </template>
-
-        <template #actions>
-            <jet-action-message
-                :on="form.recentlySuccessful"
-                class="mr-3"
+    <v-card flat>
+        <v-row dense>
+            <v-col
+                cols="12"
+                sm="4"
             >
-                已上傳
-            </jet-action-message>
-
-            <jet-button
-                :class="{ 'opacity-25': form.processing }"
-                :disabled="form.processing"
+                <v-card flat>
+                    <v-card-title>學生資料上傳</v-card-title>
+                </v-card>
+            </v-col>
+            <v-col
+                cols="12"
+                sm="8"
             >
-                上傳
-            </jet-button>
-        </template>
-    </jet-form-section>
+                <v-card
+                    elevation="1"
+                    class="pa-3"
+                >
+                    <v-card-text>
+                        <v-file-input
+                            accept=".csv"
+                            label="學生資料"
+                            ref="std_data"
+                            id="std_data"
+                        ></v-file-input>
+                    </v-card-text>
+
+                    <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn dark>上傳</v-btn>
+                    </v-card-actions>
+
+                </v-card>
+            </v-col>
+        </v-row>
+    </v-card>
 </template>
 
 <script>
-    import JetButton from '@/Jetstream/Button'
-    import JetFormSection from '@/Jetstream/FormSection'
-    import JetInput from '@/Jetstream/Input'
-    import JetInputError from '@/Jetstream/InputError'
-    import JetLabel from '@/Jetstream/Label'
-    import JetActionMessage from '@/Jetstream/ActionMessage'
-
     export default {
-        components: {
-            JetActionMessage,
-            JetButton,
-            JetFormSection,
-            JetLabel,
-        },
-
+        name: "UploadStudentData",
         data() {
             return {
-                form: this.$inertia.form({
-                    '_method': 'PUT',
-                    std_data: null,
-                }, {
-                    bag: 'uploadStudentData',
-                })
+
             }
         },
 
         methods: {
-            uploadStudentData() {
-                if (this.$refs.std_data) {
-                    this.form.std_data = this.$refs.std_data.files[0]
-                }
 
-                this.form.post(route('user-profile-information.update'));
-            },
         },
     }
 

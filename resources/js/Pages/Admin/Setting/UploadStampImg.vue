@@ -1,134 +1,132 @@
-<!-- vuetify fixed -->
 <template>
-    <jet-form-section @submitted="updateProfileInformation">
-        <template #title>
-            上傳經手人印鑑圖鑑
-        </template>
-
-        <!-- form grid-cols-6 -->
-        <template #form>
-            <div class="col-span-6 sm:col-span-4">
-                <!-- Profile Photo File Input -->
-                <input
-                    type="file"
-                    class="hidden"
-                    ref="photo"
-                    @change="updatePhotoPreview"
-                    accept="image/png, image/jpeg, image/bmp"
-                >
-
-                <jet-label
-                    for="photo"
-                    value="當前圖片"
-                />
-
-                <!-- Current Profile Photo -->
-                <div
-                    class="mt-2"
-                    v-show="! photoPreview"
-                >
-                    <img
-                        src="https://jetstream.laravel.com/assets/img/logo.svg"
-                        alt="Current Profile Photo"
-                        class="h-30 w-100 object-cover"
-                    >
-                </div>
-
-                <div
-                    class="mt-2"
-                    v-show="photoPreview"
-                >
-                    <img
-                        :src="photoPreview"
-                        alt="Current Profile Photo"
-                        class="h-30 w-100 object-cover"
-                    >
-                </div>
-
-                <jet-secondary-button
-                    class="mt-5 mr-2"
-                    type="button"
-                    @click.native.prevent="selectNewPhoto"
-                >
-                    選擇圖片
-                </jet-secondary-button>
-
-                <jet-secondary-button
-                    type="button"
-                    class="mt-5"
-                    @click.native.prevent="deletePhoto"
-                >
-                    移除圖片
-                </jet-secondary-button>
-
-                <!-- <jet-input-error
-                    :message="form.error('photo')"
-                    class="mt-2"
-                /> -->
-            </div>
-        </template>
-
-        <template #actions>
-            <jet-action-message
-                :on="form.recentlySuccessful"
-                class="mr-3"
+    <v-card flat>
+        <v-row dense>
+            <v-col
+                cols="12"
+                sm="4"
             >
-                已上傳
-            </jet-action-message>
-
-            <jet-button
-                :class="{ 'opacity-25': form.processing }"
-                :disabled="form.processing"
+                <v-card flat>
+                    <v-card-title>經手人印鑑圖鑑上傳</v-card-title>
+                </v-card>
+            </v-col>
+            <v-col
+                cols="12"
+                sm="8"
             >
-                上傳
-            </jet-button>
-        </template>
-    </jet-form-section>
+                <v-card
+                    elevation="1"
+                    class="pa-3"
+                >
+                    <v-card-text>
+                        <input
+                            type="file"
+                            class="hidden"
+                            ref="photo"
+                            @change="updatePhotoPreview"
+                            accept="image/png, image/jpeg"
+                        >
+
+                        <span>※ 只能上傳 jpg、png 檔，大小不可超過 2MB</span>
+                        <div class="mt-3 mb-5">
+                            <v-img
+                                max-height="250"
+                                max-width="250"
+                                :src="photoPreview"
+                            ></v-img>
+                        </div>
+
+                        <v-btn
+                            outlined
+                            class="mr-3"
+                            @click.native.prevent="selectNewPhoto"
+                        >選擇圖片</v-btn>
+
+                        <v-btn
+                            outlined
+                            @click.native.prevent="deletePhoto"
+                        >移除圖片</v-btn>
+
+                    </v-card-text>
+
+                    <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn
+                            dark
+                            @click="submit"
+                        >上傳</v-btn>
+                    </v-card-actions>
+
+                </v-card>
+            </v-col>
+        </v-row>
+        <v-dialog
+            v-model="pageLoading"
+            persistent
+            width="300"
+        >
+            <v-card
+                color="primary"
+                dark
+            >
+                <v-card-text>
+                    Loading...
+                    <v-progress-linear
+                        indeterminate
+                        color="white"
+                        class="mb-0"
+                    ></v-progress-linear>
+                </v-card-text>
+            </v-card>
+        </v-dialog>
+        <v-snackbar
+            v-model="snackbar"
+            :timeout="2000"
+        >
+            <v-icon
+                dark
+                right
+                class="mr-2"
+                :color="snackbar_true ? 'success' : 'error'"
+            >
+                {{ snackbar_true ? 'mdi-checkbox-marked-circle' : 'mdi-alert ' }}
+            </v-icon>
+            {{ msg }}
+
+            <template v-slot:action="{ attrs }">
+                <v-btn
+                    :color="snackbar_true ? 'success' : 'error'"
+                    text
+                    v-bind="attrs"
+                    @click="snackbar = false"
+                >
+                    關閉
+                </v-btn>
+            </template>
+        </v-snackbar>
+    </v-card>
 </template>
 
 <script>
-    import JetButton from '@/Jetstream/Button'
-    import JetFormSection from '@/Jetstream/FormSection'
-    import JetInput from '@/Jetstream/Input'
-    import JetInputError from '@/Jetstream/InputError'
-    import JetLabel from '@/Jetstream/Label'
-    import JetActionMessage from '@/Jetstream/ActionMessage'
-    import JetSecondaryButton from '@/Jetstream/SecondaryButton'
+    import {
+        apiUpdateStamp
+    } from '@/api/api'
 
     export default {
-        components: {
-            JetActionMessage,
-            JetButton,
-            JetFormSection,
-            JetLabel,
-            JetSecondaryButton,
-            JetInput,
-            JetInputError
-        },
-
+        name: "UploadStampImg",
         data() {
             return {
-                form: this.$inertia.form({
-                    '_method': 'PUT',
-                    photo: null,
-                }, {
-                    bag: 'uploadStudentData',
-                }),
+                pageLoading: false,
+                snackbar: false,
+                snackbar_true: false,
+                msg: '',
                 photoPreview: null
             }
         },
 
         methods: {
-            updateProfileInformation() {
-                if (this.$refs.photo) {
-                    this.form.photo = this.$refs.photo.files[0]
-                }
-
-                this.form.post(route('user-profile-information.update'), {
-                    preserveScroll: true
-                });
+            init() {
+                this.photoPreview = "data:image/jpeg;base64," + this.$page.user.stamp
             },
-
             selectNewPhoto() {
                 this.$refs.photo.click();
             },
@@ -144,13 +142,51 @@
             },
 
             deletePhoto() {
-                this.$inertia.delete(route('current-user-photo.destroy'), {
-                    preserveScroll: true,
-                }).then(() => {
-                    this.photoPreview = null
-                });
+                this.photoPreview = null
+                this.$refs.photo.files[0] = null
             },
+
+            async submit() {
+                this.pageLoading = true
+
+                let target = this.$refs.photo.files[0]
+
+                if (target && (
+                        target.type === 'image/jpeg' ||
+                        target.type === 'image/png' ||
+                        target.type === 'image/bmp') && target.size < 2 * 1024 * 1024) {
+                    let image = new FormData();
+                    image.append('image', this.$refs.photo.files[0]);
+
+                    await apiUpdateStamp(image).then(res => {
+                        if (res.status === 200 && res.data.ok) {
+                            this.msg = '上傳成功'
+                            this.snackbar = true
+                            this.snackbar_true = true
+                        } else {
+                            this.msg = '上傳失敗'
+                            this.snackbar = true
+                            this.snackbar_true = false
+                        }
+                        this.pageLoading = false
+                    }).catch((err) => {
+                        console.log(err)
+                        this.msg = '連線錯誤'
+                        this.snackbar = true
+                        this.snackbar_true = false
+                        this.pageLoading = false
+                    })
+                } else {
+                    this.msg = '檔案格式錯誤或檔案太大'
+                    this.snackbar = true
+                    this.snackbar_true = false
+                    this.pageLoading = false
+                }
+            }
         },
+        mounted() {
+            this.init()
+        }
     }
 
 </script>
