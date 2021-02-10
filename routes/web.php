@@ -4,6 +4,7 @@ use App\Http\Controllers\AdminShowOrderController;
 use App\Http\Controllers\AdminStampChangeController;
 use App\Http\Controllers\DepartmentClassController;
 use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\DepartmentStampChangeController;
 use App\Http\Controllers\EditSetPriceController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\ListController;
@@ -167,7 +168,10 @@ Route::group([
         ->name('preserve-pdf');
     
     Route::get('refund_pdf', [PDFController::class, 'refundPdf'])
-        ->name('refund_pdf-pdf');
+        ->name('refund-pdf');
+    
+    Route::post('department_stamp', [DepartmentStampChangeController::class, 'update'])
+        ->name('department-stamp');
 });
 
 // Student routes group

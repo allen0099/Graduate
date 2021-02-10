@@ -78,4 +78,9 @@ class Config extends Model
     {
         return Config::where('key', '歸還地點')->first()->value;
     }
+
+    public static function getDepartmentStamp()
+    {
+        return Config::where('key', 'department_stamp')->first()->value;
+    }
 }

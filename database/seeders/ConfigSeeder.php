@@ -34,5 +34,9 @@ class ConfigSeeder extends Seeder
             'key' => 'master_margin_price',
             'value' => '800',
         ]);
+        DB::table('configs')->insert([
+            'key' => 'department_stamp',
+            'value' => null,
+        ]);
     }
 }

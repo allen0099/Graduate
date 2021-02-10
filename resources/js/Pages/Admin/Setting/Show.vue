@@ -32,6 +32,8 @@
                             <UploadStudentData class="mt-3"></UploadStudentData>
                             <jet-section-border />
                             <UploadStampImg class="mt-3"></UploadStampImg>
+                            <jet-section-border />
+                            <UploadDepartmentStamp class="mt-3"></UploadDepartmentStamp>
                         </v-card-text>
                     </v-card>
                 </v-tab-item>
@@ -383,6 +385,7 @@
     import JetSectionBorder from '@/Jetstream/SectionBorder'
     import UploadStudentData from '@/Pages/Admin/Setting/UploadStudentData'
     import UploadStampImg from '@/Pages/Admin/Setting/UploadStampImg'
+    import UploadDepartmentStamp from '@/Pages/Admin/Setting/UploadDepartmentStamp'
     import TimeSetting from '@/Pages/Admin/Setting/TimeSetting'
     import LocationSetting from '@/Pages/Admin/Setting/LocationSetting'
     import DepartmentColorSettimg from '@/Pages/Admin/Setting/DepartmentColorSettimg'
@@ -397,6 +400,7 @@
             JetSectionBorder,
             UploadStudentData,
             UploadStampImg,
+            UploadDepartmentStamp,
             TimeSetting,
             LocationSetting,
             DepartmentColorSettimg
