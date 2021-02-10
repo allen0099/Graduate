@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class AdminStampChangeController extends Controller
 {
@@ -16,12 +17,7 @@ class AdminStampChangeController extends Controller
         // 儲存進資料庫
         $this->saveNewImage($request);
 
-        // return '<img src="data:image/jpeg;base64,' . $base64_image . '" alt="未設定圖檔">';
-        // $data = [
-        //     'ok'=> true
-        // ];
-
-        // return $data;
+        return response()->noContent();
     }
 
     private function validateImage(Request $request)
@@ -36,11 +32,9 @@ class AdminStampChangeController extends Controller
 
     private function saveNewImage(Request $request)
     {
-        // $disk = Storage::disk('picture');
-        $filename = $request->image->hashName();
-        // $request->image->storeAs('/public/picture', $filename);
+        $filename = Storage::putFile('picture', $request->image);
         $user = User::find(Auth::id());
-        $user->stamp = $filename;
+        $user->stamp = Storage::disk('local')->url($filename);
         $user->save();
     }
 }

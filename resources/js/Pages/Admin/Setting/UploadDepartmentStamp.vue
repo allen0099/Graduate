@@ -29,6 +29,13 @@
                         <span>※ 只能上傳 jpg、png 檔，大小不可超過 2MB</span>
                         <div class="mt-3 mb-5">
                             <v-img
+                                v-if="!photoPreview"
+                                max-height="250"
+                                max-width="250"
+                                :src="stamp"
+                            ></v-img>
+                            <v-img
+                                v-else
                                 max-height="250"
                                 max-width="250"
                                 :src="photoPreview"
@@ -119,13 +126,14 @@
                 snackbar: false,
                 snackbar_true: false,
                 msg: '',
+                stamp: null,
                 photoPreview: null
             }
         },
 
         methods: {
             init() {
-                this.photoPreview = "data:image/jpeg;base64," + this.$page.configs.department_stamp
+                this.stamp = this.$page.user.stamp
             },
             selectNewPhoto() {
                 this.$refs.photo.click();
