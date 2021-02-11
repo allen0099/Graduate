@@ -9,6 +9,7 @@ use App\Models\OldClass;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 
 class UserController extends Controller
@@ -50,8 +51,14 @@ class UserController extends Controller
             'image' => '不能為非圖檔類型',
         ]);
 
-        $filename = $request->file('image')->store('', 'picture');
         $user = User::find(Auth::id());
+        $disk = Storage::disk('picture');
+
+        if ($disk->exists($user->stamp)) {
+            $disk->delete($user->stamp);
+        }
+
+        $filename = $request->file('image')->store('', 'picture');
         $user->stamp = $filename;
         $user->save();
 
