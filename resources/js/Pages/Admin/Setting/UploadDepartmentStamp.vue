@@ -26,7 +26,7 @@
                             accept="image/png, image/jpeg"
                         >
 
-                        <span>※ 只能上傳 jpg、png 檔，大小不可超過 2MB</span>
+                        <span>※ 只能上傳 jpg、png 檔，大小不可超過 2 MB</span>
                         <div class="mt-3 mb-5">
                             <v-img
                                 v-if="!photoPreview"
