@@ -22,13 +22,14 @@ class UserController extends Controller
 
         $path = $request->file('csv_file')->store('', 'public');
 
-        OldClass::all()
-            ->each(function ($_class) {
-                $_class->delete();
-            });
-
         DepartmentClass::all()
             ->each(function ($origin_data) {
+                $oc = OldClass::where('class_id', $origin_data->class_id)->first();
+
+                if (!is_null($oc)) {
+                    $oc->delete();
+                }
+
                 $nc = $origin_data->replicate();
                 $nc->setTable('old_classes');
                 $nc->save();

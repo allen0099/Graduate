@@ -47,9 +47,7 @@ class ClassImport implements ToModel, WithValidation, WithHeadingRow, WithCustom
                 'department_id' => $department->id,
                 'class_id' => $cid,
                 'class_name' => $cname,
-                'default_color' => (is_null($old))
-                    ? null
-                    : $old->default_color,
+                'default_color' => $old->default_color,
             ]);
         }
 
