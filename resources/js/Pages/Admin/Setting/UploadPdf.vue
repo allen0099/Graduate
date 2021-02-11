@@ -37,6 +37,7 @@
                             class="mr-3"
                             :href="`/pdf/${title}.pdf`"
                             target="_blank"
+                            v-if="file"
                         >預覽</v-btn>
                         <v-btn
                             dark
@@ -96,7 +97,8 @@
 
 <script>
     import {
-        apiUploadPdf
+        apiUploadPdf,
+        apiCheckExist
     } from '@/api/api'
     export default {
         name: "UploadPdf",
@@ -107,11 +109,17 @@
                 snackbar: false,
                 snackbar_true: false,
                 msg: '',
-                file: new File([], this.title + ".pdf"),
+                file: null,
             }
         },
 
         methods: {
+            async init() {
+                let filepath = '/pdf/' + this.title + ".pdf"
+                await apiCheckExist(filepath).then(res => {
+                    this.file = new File([], this.title + ".pdf")
+                })
+            },
             async upload() {
                 this.pageLoading = true
                 if (this.file.size === 0) {
@@ -144,6 +152,9 @@
                 })
             }
         },
+        mounted() {
+            this.init()
+        }
     }
 
 </script>
