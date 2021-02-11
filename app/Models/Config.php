@@ -97,4 +97,14 @@ class Config extends Model
             ? $disk->url($filename)
             : null;
     }
+
+        public static function getDepartmentStampFilename()
+    {
+        $filename = Config::where('key', 'department_stamp')->first()->value;
+        $disk = Storage::disk('picture');
+
+        return $disk->exists($filename)
+            ? $filename
+            : null;
+    }
 }

@@ -223,7 +223,7 @@
         </div>
         @if ($part === 0)
             <hr class="half-bar" />
-            <img class="img" src="{{ public_path('asset/Tamkang_University_logo.svg.png') }}" />
+            <img class="img" src="{{ public_path('picture/' . $department_stamp) }}" />
         @endif
     @endfor
 </body>

@@ -71,7 +71,8 @@ class PDFController extends Controller
                     'cloth_type' => $cloth_type,
                     'location' => $location->value,
                     'paid_time' => $paid_time,
-                    'rec_time' => $rec_time
+                    'rec_time' => $rec_time,
+                    'department_stamp' => Config::getDepartmentStampFilename()
                 ];
 
                 $pdf = PDF::loadView('pdf/order', $data)->setPaper('a4', 'potrait');
