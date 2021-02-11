@@ -133,7 +133,7 @@
 
         methods: {
             init() {
-                this.stamp = this.$page.user.stamp
+                this.stamp = this.$page.user.stamp_url
             },
             selectNewPhoto() {
                 this.$refs.photo.click();

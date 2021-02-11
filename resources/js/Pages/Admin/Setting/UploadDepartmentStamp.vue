@@ -133,7 +133,7 @@
 
         methods: {
             init() {
-                this.stamp = this.$page.user.stamp
+                this.stamp = this.$page.configs.department_stamp_url
             },
             selectNewPhoto() {
                 this.$refs.photo.click();
@@ -167,7 +167,7 @@
                     image.append('image', this.$refs.photo.files[0]);
 
                     await apiUpdateDepartmentStamp(image).then(res => {
-                        if (res.status === 200 && res.data.ok) {
+                        if (res.status === 204) {
                             this.msg = '上傳成功'
                             this.snackbar = true
                             this.snackbar_true = true
