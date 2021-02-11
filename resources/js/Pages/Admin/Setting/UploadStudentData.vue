@@ -104,6 +104,13 @@
 
         methods: {
             async upload() {
+                if (!this.file) {
+                    this.msg = '請先選擇檔案'
+                    this.snackbar = true
+                    this.snackbar_true = false
+                    this.pageLoading = false
+                    return
+                }
                 this.pageLoading = true
                 let form_data = new FormData()
                 form_data.append('csv_file', this.file)

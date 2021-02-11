@@ -114,8 +114,8 @@
         methods: {
             async upload() {
                 this.pageLoading = true
-                if (!this.file) {
-                    this.msg = '上傳失敗'
+                if (this.file.size === 0) {
+                    this.msg = '請先選擇檔案'
                     this.snackbar = true
                     this.snackbar_true = false
                     this.pageLoading = false
