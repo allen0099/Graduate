@@ -18,6 +18,19 @@
                     class="pa-3"
                 >
                     <v-card-text>
+                        <span>※ 只能上傳 csv 檔</span>
+                        <v-tooltip bottom>
+                            <template v-slot:activator="{ on, attrs }">
+                                <v-icon
+                                    v-bind="attrs"
+                                    v-on="on"
+                                    small
+                                >
+                                    mdi-information-outline
+                                </v-icon>
+                            </template>
+                            <span>csv 檔案欄位名必須是 (名稱, 學號, 系年班代碼, 系年班簡稱)</span>
+                        </v-tooltip>
                         <v-file-input
                             v-model="file"
                             accept=".csv"
