@@ -36,8 +36,11 @@ class UserController extends Controller
                 $origin_data->delete();
             });
 
-        Excel::import(new ClassImport, public_path('storage') . '/' . $path);
-        Excel::import(new UsersImport, public_path('storage') . '/' . $path);
+        mb_detect_order('ASCII,UTF-8,BIG-5');
+        $encode = mb_detect_encoding($request->file('csv_file')->getContent());
+
+        Excel::import(new ClassImport($encode), public_path('storage') . '/' . $path);
+        Excel::import(new UsersImport($encode), public_path('storage') . '/' . $path);
 
         return response()->noContent();
     }

@@ -7,14 +7,22 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\ToModel;
+use Maatwebsite\Excel\Concerns\WithCustomCsvSettings;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Imports\HeadingRowFormatter;
 
 HeadingRowFormatter::default('none');
 
-class UsersImport implements ToModel, WithHeadingRow
+class UsersImport implements ToModel, WithHeadingRow, WithCustomCsvSettings
 {
     use Importable;
+
+    private string $encode;
+
+    public function __construct(string $encode)
+    {
+        $this->encode = $encode;
+    }
 
     /**
      * @param array $row
@@ -35,5 +43,12 @@ class UsersImport implements ToModel, WithHeadingRow
             'role' => User::STUDENT,
             'class_id' => DepartmentClass::where('class_id', $cid)->first()->id,
         ]);
+    }
+
+    public function getCsvSettings(): array
+    {
+        return [
+            'input_encoding' => $this->encode,
+        ];
     }
 }
