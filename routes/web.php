@@ -1,20 +1,16 @@
 <?php
 
 use App\Http\Controllers\AdminShowOrderController;
-use App\Http\Controllers\AdminStampChangeController;
+use App\Http\Controllers\ConfigController;
 use App\Http\Controllers\DepartmentClassController;
 use App\Http\Controllers\DepartmentController;
-use App\Http\Controllers\DepartmentStampChangeController;
-use App\Http\Controllers\EditSetPriceController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\ListController;
-use App\Http\Controllers\LocationUpdateController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PDFController;
 use App\Http\Controllers\RedirectAfterLoginController;
-use App\Http\Controllers\SearchUserController;
-use App\Http\Controllers\SearchOwnerController;
 use App\Http\Controllers\TimeRangeController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -54,7 +50,7 @@ Route::get('find_pdf', [PDFController::class, 'findPdf'])
 Route::group([
     'middleware' => ['auth:sanctum'],
 ], function () {
-    Route::get('/search_user', SearchUserController::class)
+    Route::get('/search_user', [UserController::class, 'searchUser'])
         ->name('search_user');
 
     Route::get('order-pdf', [PDFController::class, 'orderPdf'])
@@ -76,7 +72,7 @@ Route::group([
     'as' => 'user.' // for naming routes, all routes name in this group is prefix by 'user.'
 ], function () {
     // stamp update
-    Route::post('/stamp', [AdminStampChangeController::class, 'update'])
+    Route::post('/stamp', [UserController::class, 'updateAdminStamp'])
         ->name('admin-stamp.update')
         ->middleware('can:admin');
 });
@@ -123,8 +119,11 @@ Route::group([
     Route::post('/upload_pdf', [PDFController::class, 'uploadPdf'])
         ->name('upload_pdf');
 
-    Route::post('/edit_price', EditSetPriceController::class)
+    Route::post('/edit_price', [ConfigController::class, 'editSetPrice'])
         ->name('edit_price');
+
+    Route::post('/upload_student', [UserController::class, 'uploadStudentList'])
+        ->name('upload_student');
 
     Route::get('/meow', fn() => Inertia::render('Test', ['name' => 'Test meow']))
         ->name('meow'); // routes name as 'admin.meow'
@@ -161,16 +160,16 @@ Route::group([
     Route::apiResource('time', TimeRangeController::class,
         ['except' => ['index', 'show', 'destroy', 'store']]);
 
-    Route::post('/location', LocationUpdateController::class)
+    Route::post('/location', [ConfigController::class, 'updateLocation'])
         ->name('location');
 
     Route::get('preserve_pdf', [PDFController::class, 'preservePdf'])
         ->name('preserve-pdf');
-    
+
     Route::get('refund_pdf', [PDFController::class, 'refundPdf'])
         ->name('refund-pdf');
-    
-    Route::post('department_stamp', [DepartmentStampChangeController::class, 'update'])
+
+    Route::post('department_stamp', [ConfigController::class, 'updateDepartmentStamp'])
         ->name('department-stamp');
 });
 
@@ -184,7 +183,7 @@ Route::group([
         ->name('order');
     Route::get('/student/myorder', fn() => Inertia::render('Student/MyOrder/Show'))
         ->name('myorder');
-    Route::get('/order_owner', SearchOwnerController::class)
+    Route::get('/order_owner', [OrderController::class, 'searchOwner'])
         ->name('order_owner');
 });
 
@@ -202,3 +201,5 @@ Route::get('/receipt_pdf', [PDFController::class, 'receiptPdf'])
 
 Route::get('/upload', fn() => Inertia::render('Admin/Setting/UploadFile'))
     ->name('upload');
+
+Route::post('/test_upload', 'controller required');

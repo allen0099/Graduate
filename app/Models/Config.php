@@ -36,19 +36,18 @@ class Config extends Model
         return $t;
     }
 
-
     public static function getBachelorSetPriceValue()
     {
-        $price = Config::where('key', 'bachelor_price')->first()->value + 
-        Config::where('key', 'bachelor_margin_price')->first()->value;
+        $price = Config::where('key', 'bachelor_price')->first()->value +
+            Config::where('key', 'bachelor_margin_price')->first()->value;
 
         return $price;
     }
 
     public static function getMasterSetPriceValue()
     {
-        $price = Config::where('key', 'master_price')->first()->value + 
-        Config::where('key', 'master_margin_price')->first()->value;
+        $price = Config::where('key', 'master_price')->first()->value +
+            Config::where('key', 'master_margin_price')->first()->value;
 
         return $price;
     }

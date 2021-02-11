@@ -6,7 +6,9 @@ use App\Imports\ClassImport;
 use App\Imports\UsersImport;
 use App\Models\DepartmentClass;
 use App\Models\OldClass;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 
 class UserController extends Controller
@@ -37,5 +39,48 @@ class UserController extends Controller
         Excel::import(new UsersImport, public_path('storage') . '/' . $path);
 
         return response()->noContent();
+    }
+
+    public function updateAdminStamp(Request $request)
+    {
+        $request->validate([
+            'image' => 'required|image|mimes:jpg,jpeg,png|max:2048',
+        ], [
+            'required' => '不能沒有圖檔',
+            'image' => '不能為非圖檔類型',
+        ]);
+
+        $filename = $request->file('image')->store('', 'picture');
+        $user = User::find(Auth::id());
+        $user->stamp = $filename;
+        $user->save();
+
+        return response()->noContent();
+    }
+
+    public function searchUser(Request $request)
+    {
+        $search = $request->search;
+
+        if (!is_null($search)) {
+            $find_user = User::where('username', $search);
+
+            if ($find_user->count() === 0) {
+                return abort(404);
+            }
+
+            $user = $find_user->first();
+
+            if (Auth::user()->isRole(User::STUDENT)) {
+                if (!is_null($user->set)) {
+                    unset($user->set->student);
+                }
+
+                return $user->makeHidden(array_keys($user->toArray()))->makeVisible(['name', 'username', 'school_class', 'set', 'filled_pay_form']);
+            }
+
+            return $user;
+        }
+        return abort(404);
     }
 }

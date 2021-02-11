@@ -310,6 +310,22 @@ class OrderController extends Controller
         return response()->noContent();
     }
 
+    public function searchOwner(Request $request)
+    {
+        if (Auth::user()->isRole(User::STUDENT)) {
+            $find_set = Set::where('student_id', Auth::user()->id);
+            if ($find_set->count() === 0) {
+                return abort(404);
+            }
+
+            $owner = Order::findOrFail($find_set->first()->order_id)->owner;
+            $hidden = array_keys($owner->toArray());
+            return $owner->makeHidden($hidden)->makeVisible(['name', 'username', 'school_class', 'email']);
+        }
+
+        return abort(404);
+    }
+
     public static function showOrders()
     {
         if (Auth::check()) {
