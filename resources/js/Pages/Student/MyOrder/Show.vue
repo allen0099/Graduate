@@ -525,7 +525,7 @@
                     show: false
                 }, x))
 
-                if (this.$page.orders.shared) {
+                if (this.$page.orders.shared && !this.orderList.find(x => x.id === this.$page.orders.shared.id)) {
                     this.orderList.push({
                         ...this.$page.orders.shared,
                         show: false
