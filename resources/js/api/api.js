@@ -75,6 +75,8 @@ export const apiUpdateDepartmentStamp = image =>
     UploadRequest.post("/department_stamp", image);
 export const apiUploadStudent = csv_file =>
     UploadRequest.post("/upload_student", csv_file);
+export const apiUploadPdf = pdf_file =>
+    UploadRequest.post("/upload_pdf", pdf_file);
 
 /******** Student ********/
 

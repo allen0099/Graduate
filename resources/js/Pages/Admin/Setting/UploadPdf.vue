@@ -6,7 +6,9 @@
                 sm="4"
             >
                 <v-card flat>
-                    <v-card-title>學生資料上傳</v-card-title>
+                    <v-card-title>
+                        {{ title }}
+                    </v-card-title>
                 </v-card>
             </v-col>
             <v-col
@@ -18,18 +20,24 @@
                     class="pa-3"
                 >
                     <v-card-text>
+                        ※ 只能上傳 pdf 檔，大小不可超過 5 MB
                         <v-file-input
                             v-model="file"
-                            accept=".csv"
-                            label="學生資料"
-                            id="csv_file"
+                            accept=".pdf"
+                            :label="file ? '' : title"
+                            id="pdf_file"
                             type="file"
-                            name="csv_file"
+                            name="pdf_file"
                         ></v-file-input>
                     </v-card-text>
 
                     <v-card-actions>
                         <v-spacer></v-spacer>
+                        <v-btn
+                            class="mr-3"
+                            :href="`/pdf/${title}.pdf`"
+                            target="_blank"
+                        >預覽</v-btn>
                         <v-btn
                             dark
                             @click="upload"
@@ -88,34 +96,35 @@
 
 <script>
     import {
-        apiUploadStudent
+        apiUploadPdf
     } from '@/api/api'
     export default {
-        name: "UploadStudentData",
+        name: "UploadPdf",
+        props: ['title'],
         data() {
             return {
                 pageLoading: false,
                 snackbar: false,
                 snackbar_true: false,
                 msg: '',
-                file: null,
+                file: new File([], this.title + ".pdf"),
             }
         },
 
         methods: {
             async upload() {
-                if (!this.file) {
+                this.pageLoading = true
+                if (this.file.size === 0) {
                     this.msg = '請先選擇檔案'
                     this.snackbar = true
                     this.snackbar_true = false
                     this.pageLoading = false
                     return
                 }
-                this.pageLoading = true
                 let form_data = new FormData()
-                form_data.append('csv_file', this.file)
-                console.log(this.file)
-                await apiUploadStudent(form_data).then(res => {
+                form_data.append('pdf_file', this.file)
+                form_data.append('name', this.title)
+                await apiUploadPdf(form_data).then(res => {
                     if (res.status === 204) {
                         this.msg = '上傳成功'
                         this.snackbar = true

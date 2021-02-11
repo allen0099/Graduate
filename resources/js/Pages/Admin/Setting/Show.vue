@@ -34,6 +34,27 @@
                             <UploadStampImg class="mt-3"></UploadStampImg>
                             <jet-section-border />
                             <UploadDepartmentStamp class="mt-3"></UploadDepartmentStamp>
+                            <jet-section-border />
+                            <UploadPdf
+                                class="mt-3"
+                                title="學位服樣式"
+                            ></UploadPdf>
+                            <jet-section-border />
+                            <UploadPdf
+                                class="mt-3"
+                                title="公告1"
+                            ></UploadPdf>
+                            <jet-section-border />
+                            <UploadPdf
+                                class="mt-3"
+                                title="公告2"
+                            ></UploadPdf>
+                            <jet-section-border />
+                            <UploadPdf
+                                class="mt-3"
+                                title="公告3"
+                            >
+                            </UploadPdf>
                         </v-card-text>
                     </v-card>
                 </v-tab-item>
@@ -389,6 +410,7 @@
     import TimeSetting from '@/Pages/Admin/Setting/TimeSetting'
     import LocationSetting from '@/Pages/Admin/Setting/LocationSetting'
     import DepartmentColorSettimg from '@/Pages/Admin/Setting/DepartmentColorSettimg'
+    import UploadPdf from '@/Pages/Admin/Setting/UploadPdf'
     import {
         apiInventoryUpdate,
         apiPriceUpdate
@@ -403,7 +425,8 @@
             UploadDepartmentStamp,
             TimeSetting,
             LocationSetting,
-            DepartmentColorSettimg
+            DepartmentColorSettimg,
+            UploadPdf
         },
         name: "AdminSetting",
         data: () => ({
