@@ -202,4 +202,3 @@ Route::get('/receipt_pdf', [PDFController::class, 'receiptPdf'])
 Route::get('/upload', fn() => Inertia::render('Admin/Setting/UploadFile'))
     ->name('upload');
 
-Route::post('/test_upload', [ConfigController::class, 'test']);

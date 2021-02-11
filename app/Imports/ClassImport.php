@@ -5,15 +5,26 @@ namespace App\Imports;
 use App\Models\Department;
 use App\Models\DepartmentClass;
 use App\Models\OldClass;
+use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\ToModel;
+use Maatwebsite\Excel\Concerns\WithCustomCsvSettings;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
 use Maatwebsite\Excel\Imports\HeadingRowFormatter;
 
 HeadingRowFormatter::default('none');
 
-class ClassImport implements ToModel, WithValidation, WithHeadingRow
+class ClassImport implements ToModel, WithValidation, WithHeadingRow, WithCustomCsvSettings
 {
+    use Importable;
+
+    private string $encode;
+
+    public function __construct(string $encode)
+    {
+        $this->encode = $encode;
+    }
+
     /**
      * @param array $row
      *
@@ -56,6 +67,13 @@ class ClassImport implements ToModel, WithValidation, WithHeadingRow
             '學號' => 'required|numeric',
             '系年班代碼' => 'required',
             '系年班簡稱' => 'required',
+        ];
+    }
+
+    public function getCsvSettings(): array
+    {
+        return [
+            'input_encoding' => $this->encode,
         ];
     }
 }
