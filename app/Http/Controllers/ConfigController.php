@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Config;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ConfigController extends Controller
 {
@@ -16,9 +17,16 @@ class ConfigController extends Controller
             'image' => '不能為非圖檔類型',
         ]);
 
-        $department_stampConfig = Config::where('key', 'department_stamp')->first();
-        $department_stampConfig->value = base64_encode(file_get_contents($request->file('image')));
-        $department_stampConfig->save();
+        $stamp = Config::getDepartmentStamp();
+        $disk = Storage::disk('picture');
+
+        if ($disk->exists($stamp->value)) {
+            $disk->delete($stamp->value);
+        }
+
+        $stamp->forceFill([
+            'value' => $request->file('image')->store('', 'picture'),
+        ])->save();
 
         // return '<img src="data:image/jpeg;base64,' . $base64_image . '" alt="未設定圖檔">';
         return response()->noContent();

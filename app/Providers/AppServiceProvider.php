@@ -52,8 +52,10 @@ class AppServiceProvider extends ServiceProvider
                         'master_price' => Config::getMasterPrice()->value,
                         'bachelor_margin_price' => Config::getBachelorMarginPrice()->value,
                         'master_margin_price' => Config::getMasterMarginPrice()->value,
-                        'department_stamp' => 
-                            Auth::user()->role === User::ADMIN ? Config::getDepartmentStamp() : null,
+                        'department_stamp_url' =>
+                            Auth::user()->isRole(User::ADMIN)
+                                ? Config::getDepartmentStampUrl()
+                                : null,
                     ];
                 }
                 return null;
