@@ -51,6 +51,6 @@ class Order extends Model
 
     public function sets()
     {
-        return $this->hasMany('App\Models\Set');
+        return $this->hasMany('App\Models\Set')->withTrashed();
     }
 }

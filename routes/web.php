@@ -50,6 +50,8 @@ Route::get('find_pdf', [PDFController::class, 'findPdf'])
 Route::group([
     'middleware' => ['auth:sanctum'],
 ], function () {
+    Route::get('/trashed_orders', [OrderController::class, 'showDeleted']);
+
     Route::get('/search_user', [UserController::class, 'searchUser'])
         ->name('search_user');
 
@@ -201,4 +203,3 @@ Route::get('/receipt_pdf', [PDFController::class, 'receiptPdf'])
 
 Route::get('/upload', fn() => Inertia::render('Admin/Setting/UploadFile'))
     ->name('upload');
-

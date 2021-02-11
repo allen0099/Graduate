@@ -326,6 +326,17 @@ class OrderController extends Controller
         return abort(404);
     }
 
+    public function showDeleted(Request $request)
+    {
+        if (Auth::user()->isRole(User::ADMIN)) {
+            return Order::onlyTrashed()->get();
+        }
+
+        return Order::onlyTrashed()->whereHas('sets', function ($q) {
+            $q->where('student_id', Auth::id());
+        })->get();
+    }
+
     public static function showOrders()
     {
         if (Auth::check()) {
