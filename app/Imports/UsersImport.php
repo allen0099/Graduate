@@ -39,7 +39,7 @@ class UsersImport implements ToModel, WithHeadingRow, WithCustomCsvSettings
             'name' => $uname,
             'username' => $uid,
             'email' => $uid . '@gms.tku.edu.tw',
-            'password' => Hash::make(substr($uid, 0, 6)),
+            'password' => Hash::make(substr($uid, -6)),
             'role' => User::STUDENT,
             'class_id' => DepartmentClass::where('class_id', $cid)->first()->id,
         ]);
