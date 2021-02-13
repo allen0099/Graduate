@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\ServiceProvider;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\View;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -31,7 +32,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        View::share([
+            'title' => config('app.name'),
+        ]);
     }
 
     protected function registerInertia()
@@ -61,7 +64,10 @@ class AppServiceProvider extends ServiceProvider
                 return null;
             },
             'inventory' => function () {
-                return Item::all();
+                if (Auth::check()) {
+                    return Item::all();
+                }
+                return null;
             },
             'orders' => function () {
                 if (Auth::check()) {
