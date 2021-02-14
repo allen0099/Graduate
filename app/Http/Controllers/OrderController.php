@@ -304,9 +304,11 @@ class OrderController extends Controller
         $request->validated();
 
         $order = Order::where('document_id', $request->order_id)->first();
+        $order->status_code = Order::code_canceled;
+        $order->save();
         $order->sets()->delete();
         $order->delete();
-
+        error_log($order->status_code);
         return response()->noContent();
     }
 
