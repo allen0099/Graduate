@@ -90,3 +90,5 @@ export const apiCreateOrder = order => Request.post("/order", order);
 // Student myorder
 export const apiPreserveDate = (order_id, preserve_date) =>
     Request.post("/preserve_order", { order_id, preserve_date });
+
+export const apiTrashedOrders = () => Request.get("/trashed_orders");

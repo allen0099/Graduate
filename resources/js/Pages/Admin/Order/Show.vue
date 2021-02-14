@@ -94,6 +94,7 @@
                                     outlined
                                     color="indigo"
                                     @click="edit_order(order)"
+                                    v-if="order.status_code !== Status.canceled"
                                 >
                                     編輯
                                     <v-icon right>
@@ -135,43 +136,17 @@
                                         v-if="order.payment_id && windowSize.x < 430"
                                         cols="12"
                                     >{{order.payment_id }}</v-col>
-                                    <!-- <v-col cols="12">{{ '訂單狀態：' }} {{ order.status_code }}</v-col> -->
-                                    <v-col cols="12">
+                                    <v-col
+                                        cols="12"
+                                        md="4"
+                                    >
                                         <span>{{ '訂單狀態：' }}</span>
                                         <span :class="order.status_code === Status.returned || order.status_code === Status.refunded ? 'green--text text--accent--3' :
-                                            'red--text'">{{ statusMsg[order.status_code] }}</span>
+                                            'red--text'">{{ statusMsg[order.status_code] }}
+                                            {{ !!order.deleted_at ? '(' + new Date(order.deleted_at).Format("yyyy-MM-dd HH:mm") +')' : '' }}</span>
                                     </v-col>
                                 </v-row>
                             </v-card-text>
-                            <!-- <v-card-actions v-if="order.status_code === 5">
-                                <v-spacer></v-spacer>
-                                <v-btn
-                                    depressed
-                                    small
-                                    color="success"
-                                >
-                                    批准
-                                    <v-icon
-                                        right
-                                        dark
-                                    >
-                                        mdi-check
-                                    </v-icon>
-                                </v-btn>
-                                <v-btn
-                                    depressed
-                                    small
-                                    color="error"
-                                >
-                                    取消
-                                    <v-icon
-                                        right
-                                        dark
-                                    >
-                                        mdi-close
-                                    </v-icon>
-                                </v-btn>
-                            </v-card-actions> -->
                         </v-card>
                     </v-col>
                 </v-row>
@@ -200,13 +175,6 @@
                         <v-divider></v-divider>
 
                         <v-card-text>
-                            <!-- <v-row no-gutters>
-                                <v-col
-                                    cols="12"
-                                    v-for="(item, index) in getOrderDetial()"
-                                    :key="`${order.document_id}-detial-${index}`"
-                                >{{ item.name +' '+ item.label +' '+ item.num + '件'}}</v-col>
-                            </v-row> -->
                             <v-simple-table
                                 dense
                                 fixed-header
@@ -331,7 +299,6 @@
                                     required
                                 >
                                 </v-select>
-                                <!-- <span>{{ statusMsg[order.status_code] }}</span> -->
                             </v-col>
                         </v-row>
                     </v-card-text>
@@ -433,7 +400,8 @@
 <script>
     import VuetifyLayout from '@/Layouts/VuetifyLayout'
     import {
-        apiCancelOrder
+        apiCancelOrder,
+        apiTrashedOrders
     } from '@/api/api'
 
     import {
@@ -584,8 +552,10 @@
                     await apiCancelOrder(this.order.document_id).then(res => {
                         if (res.status == 204) {
                             this.msg = '已取消訂單'
-                            this.orderList.splice(this.orderList.findIndex(x => x.document_id == this.order
-                                .document_id), 1)
+                            let target = this.orderList.find(x => x.document_id == this.order.document_id)
+
+                            target.status_code = this.Status.canceled
+                            target.deleted_at = new Date()
                         } else {
                             this.msg = '發生錯誤'
                         }
@@ -613,17 +583,9 @@
                 }
             },
             init_show() {
-                // this.orderList = JSON.parse(JSON.stringify())
-                // this.orderList = this.orderList.map(x => Object.assign({}, x).show = false)
                 this.orderList = this.$page.orders.map(x => Object.assign({
                     show: false
                 }, x))
-
-                // this.orderList = this.$page.orders
-                // console.log(this.orderList)
-                // this.show = [...Array(this.$page.orders.length).keys()].map(() => false)
-                // console.log(this.show)
-
             },
             show_handle(order_index) {
                 this.show[order_index] = true
@@ -662,8 +624,18 @@
             }
         },
         async mounted() {
+            this.pageLoading = true
             await this.onResize()
             await this.init_show()
+            await apiTrashedOrders().then(res => { // 我也不知道為啥要寫在這ㄏㄏ
+                if (res.status == 200) {
+                    let trashed_orders = res.data.map(x => Object.assign({
+                        show: false
+                    }, x))
+                    this.orderList = this.orderList.concat(trashed_orders)
+                }
+            })
+            this.pageLoading = false
         },
         created() {
             this.init()

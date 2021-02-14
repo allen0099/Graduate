@@ -174,22 +174,14 @@
                                         cols="12"
                                     >付款編號：{{ order.payment_id }}
                                     </v-col>
-                                    <!-- <v-col
-                                        v-if="order.payment_id"
-                                        cols="12"
-                                    >付款單據編號：{{ windowSize.x >= 430 ? order.payment_id :'' }}
-                                    </v-col>
-                                    <v-col
-                                        v-if="order.payment_id && windowSize.x < 430"
-                                        cols="12"
-                                    >{{order.payment_id }}</v-col> -->
                                     <v-col
                                         cols="12"
                                         md="4"
                                     >
                                         <span>{{ '訂單狀態：' }}</span>
                                         <span :class="order.status_code === Status.returned || order.status_code === Status.refunded ? 'green--text text--accent--3' :
-                                            'red--text'">{{ statusMsg[order.status_code] }}</span>
+                                            'red--text'">{{ statusMsg[order.status_code] }}
+                                            {{ !!order.deleted_at ? '(' + new Date(order.deleted_at).Format("yyyy-MM-dd HH:mm") +')' : '' }}</span>
                                     </v-col>
                                     <v-col
                                         v-if="order.status_code === Status.paid"
@@ -446,6 +438,26 @@
                 </v-btn>
             </template>
         </v-snackbar>
+
+        <v-dialog
+            v-model="preLoading"
+            persistent
+            width="300"
+        >
+            <v-card
+                color="primary"
+                dark
+            >
+                <v-card-text>
+                    Loading...
+                    <v-progress-linear
+                        indeterminate
+                        color="white"
+                        class="mb-0"
+                    ></v-progress-linear>
+                </v-card-text>
+            </v-card>
+        </v-dialog>
     </VuetifyLayout>
 </template>
 
@@ -466,7 +478,8 @@
 
     import {
         apiPreserveDate,
-        apiCancelOrder
+        apiCancelOrder,
+        apiTrashedOrders
     } from '@/api/api'
 
     export default {
@@ -479,6 +492,7 @@
             cancelDialog: false,
             reservationDialog: false,
             pageLoading: false,
+            preLoading: false,
             reservationCheck: false,
             snackbar: false,
             snackbar_true: false,
@@ -519,7 +533,7 @@
                 }
                 return true
             },
-            init() {
+            async init() {
                 this.username = this.$page.user.username
                 this.orderList = this.$page.orders.own.map(x => Object.assign({
                     show: false
@@ -549,9 +563,10 @@
                     }
                     for (var k in o) {
                         if (new RegExp("(" + k + ")").test(fmt)) {
-                            fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr((
-                                "" +
-                                o[k]).length)));
+                            fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k])
+                                .substr((
+                                    "" +
+                                    o[k]).length)));
                         }
                     }
                     return fmt;
@@ -586,8 +601,9 @@
                 await apiCancelOrder(this.order.document_id).then(res => {
                     if (res.status == 204) {
                         this.msg = '已取消訂單'
-                        this.orderList.splice(this.orderList.findIndex(x => x.document_id == this.order
-                            .document_id), 1)
+                        this.order.status_code = this.Status.canceled
+                        // this.orderList.splice(this.orderList.findIndex(x => x.document_id == this.order
+                        //     .document_id), 1)
                         this.snackbar_true = true
                     } else {
                         this.msg = '發生錯誤'
@@ -652,7 +668,17 @@
             }
         },
         async mounted() {
+            this.preLoading = true
             await this.onResize()
+            await apiTrashedOrders().then(res => { // 我也不知道為啥要寫在這ㄏㄏ
+                if (res.status == 200) {
+                    let trashed_orders = res.data.map(x => Object.assign({
+                        show: false
+                    }, x))
+                    this.orderList = this.orderList.concat(trashed_orders)
+                }
+            })
+            this.preLoading = false
         },
         created() {
             this.init()

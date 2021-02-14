@@ -23,13 +23,14 @@ export const Refond_code = {
 };
 
 export const StatusMsg = [
-    "已結單",
+    "Owo",
     "未付款",
     "已付款，未領取衣服",
     "未歸還衣服",
     "已歸還衣服",
     "還款中",
-    "已還款"
+    "已還款",
+    "已取消"
 ];
 
 export const colorList = [
@@ -60,5 +61,9 @@ export const colorList = [
     {
         bg: "green lighten-5",
         detail: "green darken-2"
+    },
+    {
+        bg: "red lighten-5",
+        detail: "red accent-2"
     }
 ];
