@@ -65,7 +65,8 @@
                                     >{{ choose.accessory }} 剩餘件數</v-col>
                                     <v-col
                                         cols="12"
-                                        md="2"
+                                        lg="2"
+                                        md="3"
                                         sm="4"
                                         class="body-1"
                                         v-for="a in accessories"
