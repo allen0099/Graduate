@@ -31,7 +31,9 @@ class AdminShowOrderController extends Controller
                 $result = $find_owner->first()->orders()->get();
 
                 if ($result->count() === 0) {
-                    $result = $find_owner->first()->set()->first()->order()->get();
+                    $set = $find_owner->first()->set()->first();
+                    if (!is_null($set))
+                        $result = $set->order()->get();
                 }
             }
 
