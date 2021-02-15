@@ -632,7 +632,20 @@
                     let trashed_orders = res.data.map(x => Object.assign({
                         show: false
                     }, x))
-                    this.orderList = this.orderList.concat(trashed_orders)
+                    let temp = []
+                    for (let order of trashed_orders) {
+                        if (!this.$page.search) {
+                            temp = trashed_orders
+                            break
+                        }
+                        if (this.$page.search == order.document_id ||
+                            this.$page.search == order.payment_id ||
+                            order.sets.findIndex(x => this.$page.search == x.student.username) > -1) {
+                            temp.push(order)
+                        }
+                    }
+
+                    this.orderList = this.orderList.concat(temp)
                 }
             })
             this.pageLoading = false
