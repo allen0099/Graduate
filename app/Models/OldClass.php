@@ -17,6 +17,17 @@ class OldClass extends Model
     public $timestamps = false;
 
     /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'class_id',
+        'department_id',
+        'class_name',
+    ];
+
+    /**
      * The table associated with the model.
      *
      * @var string
