@@ -88,9 +88,13 @@ class UserController extends Controller
                 }
 
                 return $user->makeHidden(array_keys($user->toArray()))->makeVisible(['name', 'username', 'school_class', 'set', 'filled_pay_form']);
+            } else if (Auth::user()->isRole(User::ADMIN)){
+                $set = $user->set;
+                unset($user->set);
+                $user['set'] = $set;
+                return $user;
             }
-
-            return $user;
+            return abort(403);
         }
         return abort(404);
     }
