@@ -48,16 +48,6 @@
                     {{ filter }}
                 </v-btn>
             </v-btn-toggle>
-            <!-- {{ statusFilterSelected }} -->
-            <!-- <v-overflow-btn
-                v-model="statusFilterSelected"
-                :items="statusMsg"
-                label="Select size"
-                hide-details
-                class="hidden-md-and-up"
-                disable-lookup
-            ></v-overflow-btn> -->
-            <!-- {{ statusMsgObj }} -->
             <v-select
                 v-model="statusFilterSelected"
                 class="hidden-md-and-up"
@@ -315,6 +305,7 @@
                             color="primary"
                             text
                             @click="edit_save"
+                            :disabled="!order.payment_id"
                         >
                             儲存
                         </v-btn>
