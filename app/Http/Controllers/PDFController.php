@@ -72,7 +72,8 @@ class PDFController extends Controller
                     'location' => $location->value,
                     'paid_time' => $paid_time,
                     'rec_time' => $rec_time,
-                    'department_stamp' => Config::getDepartmentStampFilename()
+                    'department_stamp' => Config::getDepartmentStampFilename(),
+                    'admin_stamp' => Config::getAdminStampFilename()
                 ];
 
                 $pdf = PDF::loadView('pdf/order', $data)->setPaper('a4', 'potrait');
@@ -202,7 +203,6 @@ class PDFController extends Controller
         $pdf = PDF::loadView('pdf/receipt', $data)->setPaper('a4', 'potrait');
 
         return $pdf->stream('歸還證明單-' . $set->student->username . '.pdf');
-        // return $data;
     }
 
     public function refundPdf(Request $request) {
@@ -222,6 +222,65 @@ class PDFController extends Controller
             }
         }
         return abort(404);
+    }
+
+    public function returnPdf(Request $request) {
+        if(Auth::check()) {
+            $document_id = $request->document_id;
+            $stu_id =$request->stu_id;
+            if(!is_null($stu_id) && !is_null($document_id)){
+                if (Auth::user()->role === User::STUDENT && Auth::user()->username !== $stu_id){
+                    return abort(403);
+                } else {
+                    $find_studnet = User::where('username', $stu_id);
+                    
+                    if ($find_studnet->count() === 0) {
+                        return abort(404);
+                    }
+
+                    $find_order = Order::where('document_id', $document_id);
+
+                    if ($find_order->count() === 0) {
+                        return abort(404);
+                    }
+
+                    $order = $find_order->first();
+
+                    $find_set = Set::where('student_id', $find_studnet->first()->id);
+
+                    if ($find_set->count() === 0) {
+                        return abort(404);
+                    }
+
+                    $set = $find_set->first();
+
+                    $pos = -1;
+
+                    foreach ($order->sets as $key => $value){
+                        if ($set->id === $value->id){
+                            $pos = $key + 1;
+                            break;
+                        }
+                    }
+
+                    $data = [
+                        'set' => $set,
+                        'payment_id' => $order->payment_id,
+                        'document_id' => $order->document_id,
+                        'pos' => $pos,
+                        'department_stamp' => Config::getDepartmentStampFilename(),
+                        'admin_stamp' => Config::getAdminStampFilename(),
+                        'return_time' => TimeRange::find(TimeRange::RET)
+                    ];
+
+                    $pdf = PDF::loadView('pdf/return', $data)->setPaper('a4', 'potrait');
+
+                    return $pdf->stream('歸還證明單-' . $set->student->username . '.pdf');
+                }
+            }
+            return abort(404);
+        }
+        return abort(403);
     }
 
     public function test()

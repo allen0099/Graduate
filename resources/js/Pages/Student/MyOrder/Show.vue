@@ -132,7 +132,7 @@
                                             color="indigo"
                                             class="mr-3"
                                             dense
-                                            :href="`${route('order-pdf')}?document_id=${order.document_id}`"
+                                            :href="`${route('return_pdf')}?document_id=${order.document_id}&stu_id=${$page.user.username}`"
                                             download
                                         >
                                             下載歸還單
@@ -334,11 +334,14 @@
                         style="list-style: decimal;"
                     >
                         <li>開放領取{{ $page.user.username[0] < "5" ? '學士服' : '碩士服' }}時段：
-                            <span style="color: #d48344;">{{ time_range.start_time }} ~
-                                {{ time_range.end_time }}
+                            <span style="color: #d48344;">{{ new Date(time_range.start_time).Format("yyyy-MM-dd") }}
+                                ~
+                                {{ new Date(time_range.end_time).Format("yyyy-MM-dd") }}
                             </span>。
                         </li>
-                        <li>最晚預約時間為欲預約之日期前 2 天，如欲預約 03/10 請在 03/08 23:59:59 前預約完畢。
+                        <li>最晚預約時間為欲預約之日期前 2 天，如欲預約 {{ new Date(time_range.start_time).Format("MM/dd") }} 請在
+                            {{ new Date(new Date(time_range.start_time).getTime() - 172800000).Format("MM/dd")}}
+                            23:59:59 前預約完畢。
                         </li>
                         <li>
                             <span>請注意，</span>
@@ -575,8 +578,8 @@
 
                 let today = new Date(new Date().Format("yyyy-MM-dd") + " 00:00:00")
 
-                let start_time = new Date(this.time_range.start_time + " 00:00:00")
-                let end_time = new Date(this.time_range.end_time + " 00:00:00")
+                let start_time = new Date(this.time_range.start_time)
+                let end_time = new Date(this.time_range.end_time)
 
                 let x = new Date(today.getTime() + 2 * 24 * 60 * 60 * 1000)
 
@@ -585,6 +588,7 @@
                 for (let i = start_time; i <= end_time; i = new Date(i.getTime() + 24 * 60 * 60 * 1000)) {
                     if (x <= i) {
                         this.timeList.push(i.Format("yyyy-MM-dd"))
+                        console.log(i)
                     }
                 }
             },
