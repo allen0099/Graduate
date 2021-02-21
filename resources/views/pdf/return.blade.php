@@ -97,6 +97,12 @@
             text-align: right;
         }
 
+        .sign {
+            margin-top: 15px;
+            margin-left: 50px;
+            font-size: 16px;
+        }
+
     </style>
 </head>
 
@@ -121,6 +127,16 @@
             <p style="margin-top: 10px;">借用{{ $set->cloth->name }}一套。</p>
         </div>
         <table style="margin-top: 30px;">
+            <tr>
+                <th>
+                    <p>學號：{{ $set->student->username }}</p>
+                </th>
+                <th>
+                    <p>系級：{{ $set->student->school_class->class_name }}</p>
+                </th>
+                <th>
+                </th>
+            </tr>
             <tr>
                 <th>
                     <p>訂單編號：{{ $document_id }}</p>
@@ -171,6 +187,9 @@
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ today()->day }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;日
         </p>
     </div>
+    <div class="sign">退還人姓名：____________________，連絡電話：____________________</div>
+    <div class="sign">本人____________________因故無法親自辦理退還手續，</div>
+    <div class="sign">茲委託____________________君持本單與所借用服飾代為辦理。</div>
     <hr class="half-bar" />
 </body>
 
