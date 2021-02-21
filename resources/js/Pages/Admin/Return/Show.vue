@@ -199,13 +199,13 @@
                         this.error = false
                         this.show_msg = true
                     } else {
-                        this.msg = '發生不明錯誤'
+                        this.msg = '發生不明錯誤，請確認訂單狀態'
                         this.error = true
                         this.show_msg = true
                     }
                 }).catch((err) => {
                     console.log(err)
-                    this.msg = '發生不明錯誤'
+                    this.msg = '發生不明錯誤，請確認訂單狀態'
                     this.error = true
                     this.show_msg = true
                 })
