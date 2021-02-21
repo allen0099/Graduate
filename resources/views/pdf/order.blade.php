@@ -24,11 +24,6 @@
             z-index: -1;
         }
 
-        .half-bar {
-            margin: 0.5cm 0px;
-            border-bottom: 1px dashed #000000;
-        }
-
         .title {
             font-size: 26px;
             text-align: center;
@@ -78,9 +73,19 @@
 
         .img {
             position: absolute;
-            width: 120px;
-            right: 0px;
-            top: 43%;
+            width: 110px;
+            right: -10px;
+            top: 40%;
+            z-index: 2;
+        }
+
+        .half-bar {
+            width: 100vw;
+            position: absolute;
+            margin: 0.5cm 0px;
+            border-bottom: 1px dashed #000000;
+            top: 48%;
+            z-index: 3;
         }
 
     </style>
@@ -181,7 +186,9 @@
                             <p>{{ count($order->sets) * ($price + $margin) }} 元（新台幣）</p>
                         </th>
                         <th>
-                            <p>經辦人蓋章：</p>
+                            <span style="vertical-align:middle;">經手人：
+                                <img style="width: 50px;" src="{{ public_path('picture/' . $admin_stamp) }}" />
+                            </span>
                         </th>
                     </tr>
                     @for ($i = 0; $i < 10 - count($order->sets); $i++)
