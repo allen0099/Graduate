@@ -107,4 +107,29 @@ class Config extends Model
             ? $filename
             : null;
     }
+
+    public static function getAdminStamp()
+    {
+        return Config::where('key', 'admin_stamp')->first();
+    }
+
+    public static function getAdminStampUrl()
+    {
+        $filename = Config::where('key', 'admin_stamp')->first()->value;
+        $disk = Storage::disk('picture');
+
+        return $disk->exists($filename)
+            ? $disk->url($filename)
+            : null;
+    }
+
+    public static function getAdminStampFilename()
+    {
+        $filename = Config::where('key', 'admin_stamp')->first()->value;
+        $disk = Storage::disk('picture');
+
+        return $disk->exists($filename)
+            ? $filename
+            : null;
+    }
 }

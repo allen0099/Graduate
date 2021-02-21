@@ -173,6 +173,9 @@ Route::group([
 
     Route::post('department_stamp', [ConfigController::class, 'updateDepartmentStamp'])
         ->name('department-stamp');
+
+    Route::post('admin_stamp', [ConfigController::class, 'updateAdminStamp'])
+        ->name('admin-stamp');
 });
 
 // Student routes group
@@ -200,6 +203,9 @@ Route::get('preserve', [PDFController::class, 'preservePdf'])
 
 Route::get('/receipt_pdf', [PDFController::class, 'receiptPdf'])
     ->name('receipt_pdf');
+
+Route::get('/return_pdf', [PDFController::class, 'returnPdf'])
+    ->name('return_pdf');
 
 Route::get('/upload', fn() => Inertia::render('Admin/Setting/UploadFile'))
     ->name('upload');

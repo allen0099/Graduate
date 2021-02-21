@@ -59,6 +59,10 @@ class AppServiceProvider extends ServiceProvider
                             Auth::user()->isRole(User::ADMIN)
                                 ? Config::getDepartmentStampUrl()
                                 : null,
+                        'admin_stamp_url' =>
+                            Auth::user()->isRole(User::ADMIN)
+                                ? Config::getAdminStampUrl()
+                                : null,
                     ];
                 }
                 return null;

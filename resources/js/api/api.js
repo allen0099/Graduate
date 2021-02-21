@@ -70,7 +70,8 @@ export const apiPreservePdf = () => Request.get("/preserve_pdf");
 
 // Admin Upload
 export const apiUploadFile = file => UploadRequest.post("/test_upload", file);
-export const apiUpdateStamp = image => UploadRequest.post("/user/stamp", image);
+export const apiUpdateStamp = image =>
+    UploadRequest.post("/admin_stamp", image);
 export const apiUpdateDepartmentStamp = image =>
     UploadRequest.post("/department_stamp", image);
 export const apiUploadStudent = csv_file =>

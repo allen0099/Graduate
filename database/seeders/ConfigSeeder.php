@@ -38,5 +38,9 @@ class ConfigSeeder extends Seeder
             'key' => 'department_stamp',
             'value' => null,
         ]);
+        DB::table('configs')->insert([
+            'key' => 'admin_stamp',
+            'value' => null,
+        ]);
     }
 }

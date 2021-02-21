@@ -133,7 +133,7 @@
 
         methods: {
             init() {
-                this.stamp = this.$page.user.stamp_url
+                this.stamp = this.$page.configs.admin_stamp_url
             },
             selectNewPhoto() {
                 this.$refs.photo.click();

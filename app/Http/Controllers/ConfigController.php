@@ -28,7 +28,29 @@ class ConfigController extends Controller
             'value' => $request->file('image')->store('', 'picture'),
         ])->save();
 
-        // return '<img src="data:image/jpeg;base64,' . $base64_image . '" alt="未設定圖檔">';
+        return response()->noContent();
+    }
+
+    public function updateAdminStamp(Request $request)
+    {
+        $request->validate([
+            'image' => 'required|image|mimes:jpg,jpeg,png',
+        ], [
+            'required' => '不能沒有圖檔',
+            'image' => '不能為非圖檔類型',
+        ]);
+
+        $stamp = Config::getAdminStamp();
+        $disk = Storage::disk('picture');
+
+        if ($disk->exists($stamp->value)) {
+            $disk->delete($stamp->value);
+        }
+
+        $stamp->forceFill([
+            'value' => $request->file('image')->store('', 'picture'),
+        ])->save();
+
         return response()->noContent();
     }
 
