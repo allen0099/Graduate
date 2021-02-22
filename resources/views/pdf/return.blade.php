@@ -68,9 +68,11 @@
 
         .img {
             position: absolute;
-            width: 120px;
-            left: 15px;
+            top: 24%;
+            width: 100px;
+            left: 50%;
             z-index: 2;
+            opacity: 0.65;
         }
 
         .centent {
@@ -85,22 +87,37 @@
             text-align: center;
         }
 
-        .half-bar {
-            width: 100vw;
-            margin: 0.5cm 0px;
-            border-bottom: 1px dashed #000000;
-        }
-
         .return_id {
             position: absolute;
             z-index: 999;
             text-align: right;
         }
 
-        .sign {
+        .sign1 {
             margin-top: 15px;
-            margin-left: 50px;
+            margin-left: 70px;
             font-size: 16px;
+        }
+
+        .sign2 {
+            margin-top: 15px;
+            margin-left: 60px;
+            font-size: 13px;
+        }
+
+        .half-bar {
+            position: relative;
+            margin: 0.5cm 0px;
+            border-bottom: 1px dashed #000000;
+        }
+
+        .hr-more {
+            position: relative;
+            height: 20px;
+            left: 44%;
+            top: 5px;
+            text-align: center;
+            /* border-radius: 4px; */
         }
 
     </style>
@@ -109,7 +126,7 @@
 <body>
     <img class="img" src="{{ public_path('picture/' . $department_stamp) }}" />
     <div class="return_id">
-        <p>{{ $payment_id . '-' . $pos }}</p>
+        <p>單據編號：{{ $payment_id . '-' . $pos }}</p>
     </div>
     <div id="header">
         <h1 class="title">歸還證明單</h1>
@@ -187,10 +204,23 @@
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ today()->day }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;日
         </p>
     </div>
-    <div class="sign">退還人姓名：____________________，連絡電話：____________________</div>
-    <div class="sign">本人____________________因故無法親自辦理退還手續，</div>
-    <div class="sign">茲委託____________________君持本單與所借用服飾代為辦理。</div>
-    <hr class="half-bar" />
+    <div class="sign1">退還人姓名：____________________，連絡電話：____________________</div>
+    <div class="sign2">
+        <p>本人______________(請簽章)，連絡電話______________，茲委託______________(代理人姓名)協助歸還學位服。</p>
+        <p>(無法親自歸還學位服時填寫，請借用學位服者親自填寫。)</p>
+    </div>
+    {{-- <hr class="half-bar" />
+    <div class="hr-more">更多bai</div> --}}
+    <hr style="position: relative; margin: 0.5cm 0px; border-bottom: 1px dashed #000000;">
+    <div
+        style="position: relative; left: 30%; top: -28px; height: 22px; width: 300px; text-align: center; font-size: 12px; opacity: 0.7;">
+        請&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        沿&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        虛&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        線&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        撕&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        下
+    </div>
 </body>
 
 </html>
