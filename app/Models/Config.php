@@ -37,6 +37,16 @@ class Config extends Model
         return $t;
     }
 
+    public static function editPdfName(string $loc, string $value)
+    {
+        $pdf = Config::where('key', 'pdf_' . $loc)->first();
+
+        $pdf->valud = $value;
+        $pdf->save();
+
+        return $pdf;
+    }
+
     public static function getBachelorSetPriceValue()
     {
         $price = Config::where('key', 'bachelor_price')->first()->value +
@@ -81,6 +91,11 @@ class Config extends Model
     public static function getReturnLocationValue()
     {
         return Config::where('key', '歸還地點')->first()->value;
+    }
+
+    public static function getPdfName(string $name)
+    {
+        return Config::where('key', $name)->first()->value;
     }
 
     public static function getDepartmentStamp()

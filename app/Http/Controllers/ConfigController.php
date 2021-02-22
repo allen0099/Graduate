@@ -78,4 +78,14 @@ class ConfigController extends Controller
 
         return Config::editSetPrice($request->type, $request->price);
     }
+
+    public function updatePdfName(Request $request)
+    {
+        $request->validate([
+            'pdf' => 'required|in:a,b,c',
+            'value' => 'required|string',
+        ]);
+
+        return Config::editPdfName($request->pdf, $request->value);
+    }
 }

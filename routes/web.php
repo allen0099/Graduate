@@ -124,6 +124,9 @@ Route::group([
     Route::post('/edit_price', [ConfigController::class, 'editSetPrice'])
         ->name('edit_price');
 
+    Route::post('/update_pdf_name', [ConfigController::class, 'updatePdfName'])
+        ->name('update_pdf_name');
+
     Route::post('/upload_student', [UserController::class, 'uploadStudentList'])
         ->name('upload_student');
 
