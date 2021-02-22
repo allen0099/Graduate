@@ -2,15 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\NewStudentCheck;
 use App\Imports\ClassImport;
 use App\Imports\ClassImportWithHeadingRow;
 use App\Imports\UsersImportWithHeadingRow;
 use App\Imports\UsersImport;
+use App\Models\Department;
 use App\Models\DepartmentClass;
 use App\Models\OldClass;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
@@ -119,5 +122,25 @@ class UserController extends Controller
             return abort(403);
         }
         return abort(404);
+    }
+
+    public function addNewStudent(NewStudentCheck $request)
+    {
+        $request->validated();
+
+        $d_class = DepartmentClass::all()
+            ->where('class_id', $request->class_id)->first();
+
+        $user = new User();
+        $user->forceFill([
+            'name' => $request->name,
+            'username' => $request->username,
+            'email' => $request->username . '@gms.tku.edu.tw',
+            'password' => Hash::make(substr($request->username, -6)),
+            'role' => User::STUDENT,
+            'class_id' => $d_class->id,
+        ])->save();
+
+        return $user;
     }
 }

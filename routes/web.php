@@ -127,6 +127,9 @@ Route::group([
     Route::post('/update_pdf_name', [ConfigController::class, 'updatePdfName'])
         ->name('update_pdf_name');
 
+    Route::post('/create_new_student', [UserController::class, 'addNewStudent'])
+        ->name('create_new_student');
+
     Route::post('/upload_student', [UserController::class, 'uploadStudentList'])
         ->name('upload_student');
 
