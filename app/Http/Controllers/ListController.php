@@ -47,9 +47,18 @@ class ListController extends Controller
             $end_date = Carbon::parse($request->end_date);
         }
 
-        return [...Set::all()
+        $sets = Set::all()
             ->whereNull('list_id')
-            ->whereBetween('returned', [$start_date, $end_date])];
+            ->whereBetween('returned', [$start_date, $end_date]);
+
+        return [
+            'bachelor' => $sets->filter(function ($set) {
+                return $set->student->isBachelor();
+            })->all(),
+            'master' => $sets->filter(function ($set) {
+                return $set->student->isMaster();
+            })->all(),
+        ];
     }
 
     public function getListByStatus(Request $request)
@@ -73,12 +82,17 @@ class ListController extends Controller
     public function createNewList(Request $request)
     {
         $request->validate([
+            'start_date' => ['date'],
+            'end_date' => ['date', 'after_or_equal:start_date'],
             'id' => "required|array|min:0",
             'id.*' => ['required', 'exists:sets,id'],
         ]);
 
         $list = new CashierList();
-        $list->save();
+        $list->forceFill([
+            'start' => $request->start_date,
+            'end' => $request->end_date,
+        ])->save();
 
         foreach ($request->id as $item) {
             $set = Set::find($item);

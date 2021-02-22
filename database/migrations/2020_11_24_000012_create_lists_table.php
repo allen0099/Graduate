@@ -16,6 +16,8 @@ class CreateListsTable extends Migration
         Schema::create('lists', function (Blueprint $table) {
             $table->id();
             $table->integer('status')->default(1);
+            $table->date('start');
+            $table->date('end');
             $table->timestamps();
         });
     }
