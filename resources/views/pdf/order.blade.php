@@ -77,6 +77,7 @@
             right: -10px;
             top: 40%;
             z-index: 2;
+            opacity: 0.9;
         }
 
         .half-bar {
@@ -229,7 +230,16 @@
             </p>
         </div>
         @if ($part === 0)
-            <hr class="half-bar" />
+            <hr style="position: relative; margin: 0.1cm 0px; border-bottom: 1px dashed #000000;">
+            <div
+                style="position: relative; left: 30%; top: -13px; height: 22px; width: 300px; text-align: center; font-size: 12px; opacity: 0.7;">
+                請&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                沿&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                虛&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                線&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                撕&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                下
+            </div>
             <img class="img" src="{{ public_path('picture/' . $department_stamp) }}" />
         @endif
     @endfor
