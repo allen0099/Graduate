@@ -64,7 +64,7 @@ class StoreOrder extends FormRequest
                     $user = User::where('username', $username)->first();
                     $school_class = $user->school_class;
 
-                    $accessory = Item::find($value)->first();
+                    $accessory = Item::find($value);
 
                     if (!is_null($school_class->default_color) && $accessory->spec !== $school_class->default_color) {
                         $fail(__('validation.color_not_match'));
