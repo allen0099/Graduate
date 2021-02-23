@@ -50,13 +50,44 @@
                             <v-spacer></v-spacer>
                             <v-btn
                                 dark
-                                @click="upload"
+                                @click="alert"
                             >上傳</v-btn>
                         </v-card-actions>
 
                     </v-card>
                 </v-col>
             </v-row>
+            <v-dialog
+                v-model="alert_dialog"
+                persistent
+                width="450"
+            >
+                <v-card>
+                    <v-card-title>上傳學生資料</v-card-title>
+                    <v-card-text class="font-weight-bold">
+                        請注意，進行上傳會將舊有的學生資料進行刪除。
+                        上傳資料請耐心等候，切勿離開網站。
+                        確定要上傳?
+                    </v-card-text>
+                    <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn
+                            color="error"
+                            text
+                            @click="alert_dialog = false"
+                        >
+                            取消
+                        </v-btn>
+                        <v-btn
+                            color="primary"
+                            text
+                            @click="upload"
+                        >
+                            確定
+                        </v-btn>
+                    </v-card-actions>
+                </v-card>
+            </v-dialog>
             <v-dialog
                 v-model="pageLoading"
                 persistent
@@ -168,6 +199,7 @@
         name: "UploadStudentData",
         data() {
             return {
+                alert_dialog: false,
                 pageLoading: false,
                 snackbar: false,
                 snackbar_true: false,
@@ -195,7 +227,7 @@
                 })
             },
 
-            async upload() {
+            alert() {
                 if (!this.file) {
                     this.msg = '請先選擇檔案'
                     this.snackbar = true
@@ -203,6 +235,11 @@
                     this.pageLoading = false
                     return
                 }
+                this.alert_dialog = true
+            },
+
+            async upload() {
+                this.alert_dialog = false
                 this.pageLoading = true
                 let form_data = new FormData()
                 form_data.append('csv_file', this.file)
@@ -220,7 +257,7 @@
                     this.pageLoading = false
                 }).catch((err) => {
                     console.log(err)
-                    this.msg = '連線錯誤'
+                    this.msg = err.response.data.errors
                     this.snackbar = true
                     this.snackbar_true = false
                     this.pageLoading = false
