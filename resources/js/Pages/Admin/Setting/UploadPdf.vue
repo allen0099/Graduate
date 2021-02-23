@@ -24,7 +24,7 @@
                         <v-file-input
                             v-model="file"
                             accept=".pdf"
-                            :label="file ? '' : name"
+                            :label="file ? '' : title"
                             id="pdf_file"
                             type="file"
                             name="pdf_file"
@@ -135,27 +135,32 @@
                     this.name = this.$page.configs['pdf_' + this.pdf]
                 } else {
                     this.name = this.title
-                    this.edit_name = this.name
                 }
+
+                this.edit_name = this.name
 
                 let filepath = '/pdf/' + this.title + ".pdf"
                 await apiCheckExist(filepath).then(res => {
                     if (res.status == 200) {
                         this.file = new File([], this.title + ".pdf")
-                        this.edit_name = this.name
                     }
                 })
             },
             async upload() {
                 this.pageLoading = true
-                if (!this.file && !this.pdf) {
-                    this.msg = '請先選擇檔案'
-                    this.snackbar = true
-                    this.snackbar_true = false
-                    this.pageLoading = false
-                    return
+
+
+                if (!this.pdf) {
+                    if (!this.file || this.file.size === 0) {
+                        this.msg = '請先選擇檔案'
+                        this.snackbar = true
+                        this.snackbar_true = false
+                        this.pageLoading = false
+                        return
+                    }
                 }
-                if (this.file.size !== 0) {
+
+                if (this.file && this.file.size !== 0) {
                     let form_data = new FormData()
                     form_data.append('pdf_file', this.file)
                     form_data.append('name', this.title)

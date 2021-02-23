@@ -189,7 +189,7 @@
                         </th>
                         <th>
                             <span style="vertical-align:middle;">經手人：
-                                <img style="width: 50px;" src="{{ public_path('picture/' . $admin_stamp) }}" />
+                                <img style="width: 50px;" src="{{ $admin_stamp }}">
                             </span>
                         </th>
                     </tr>
@@ -241,7 +241,7 @@
                 撕&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 下
             </div>
-            <img class="img" src="{{ public_path('picture/' . $department_stamp) }}" />
+            <img class="img" src="{{ $department_stamp }}" />
         @endif
     @endfor
 </body>

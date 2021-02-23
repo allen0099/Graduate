@@ -125,7 +125,7 @@
 </head>
 
 <body>
-    <img class="img" src="{{ public_path('picture/' . $department_stamp) }}" />
+    <img class="img" src="{{ $department_stamp }}" />
     <div class="return_id">
         <p>單據編號：{{ $payment_id . '-' . $pos }}</p>
     </div>
@@ -164,7 +164,7 @@
                 </th>
                 <th>
                     <span style="vertical-align:middle;">經手人：
-                        <img style="width: 80px;" src="{{ public_path('picture/' . $admin_stamp) }}" />
+                        <img style="width: 80px;" src="{{ $admin_stamp }}" />
                     </span>
                 </th>
             </tr>

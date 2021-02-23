@@ -64,6 +64,11 @@ class PDFController extends Controller
                 $price = $result->owner->isMaster() ? Config::getMasterPrice() : Config::getBachelorPrice();
                 $margin = $result->owner->isMaster() ? Config::getMasterMarginPrice() : Config::getBachelorMarginPrice();
 
+                $D_data = file_get_contents('picture/' .Config::getDepartmentStampFilename());
+                $A_data = file_get_contents('picture/' .Config::getAdminStampFilename());
+                $D_type = pathinfo('picture/' .Config::getDepartmentStampFilename(), PATHINFO_EXTENSION);
+                $A_type = pathinfo('picture/' .Config::getAdminStampFilename(), PATHINFO_EXTENSION);
+
                 $data = [
                     'order' => $result,
                     'price' => (int)$price->value,
@@ -72,14 +77,14 @@ class PDFController extends Controller
                     'location' => $location->value,
                     'paid_time' => $paid_time,
                     'rec_time' => $rec_time,
-                    'department_stamp' => Config::getDepartmentStampFilename(),
-                    'admin_stamp' => Config::getAdminStampFilename()
+                    'department_stamp' => 'data:image/' . $D_type . ';base64,' . base64_encode($D_data),
+                    'admin_stamp' => 'data:image/' . $A_type . ';base64,' . base64_encode($A_data)
                 ];
 
-                $pdf = PDF::loadView('pdf/order', $data)->setPaper('a4', 'potrait');
-
+                $pdf = PDF::setOptions(['isRemoteEnabled' => true, 'isFontSubsettingEnabled' => true])->setPaper('a4', 'potrait')->loadView('pdf/order', $data);
+                // 'isFontSubsettingEnabled' => true
+                // $pdf = PDF::loadView('pdf/order', $data)->setPaper('a4', 'potrait');
                 return $pdf->stream('訂單-' . $result->owner->username . '.pdf');
-                // return $data;
             }
         }
         return abort(404);
@@ -117,7 +122,7 @@ class PDFController extends Controller
                     return $value->owner->username[0] < "5";
                 });
                 $data = ['date' => $start->format('Y-m-d')];
-                $pdf = PDF::loadView('pdf/preserve', $data)->setPaper('a4', 'potrait');
+                $pdf = PDF::setOptions(['isRemoteEnabled' => true, 'isFontSubsettingEnabled' => true])->setPaper('a4', 'potrait')->loadView('pdf/preserve', $data);
                 $content = $pdf->download()->getOriginalContent();
                 Storage::put('pdf/preseve/學士服預約清單' . $start->format('Y-m-d') . '.pdf', $content);
 
@@ -153,7 +158,7 @@ class PDFController extends Controller
                     return $value->owner->username[0] > "5";
                 });
                 $data = ['date' => $start->format('Y-m-d')];
-                $pdf = PDF::loadView('pdf/preserve', $data)->setPaper('a4', 'potrait');
+                $pdf = PDF::setOptions(['isRemoteEnabled' => true, 'isFontSubsettingEnabled' => true])->setPaper('a4', 'potrait')->loadView('pdf/preserve', $data);
                 $content = $pdf->download()->getOriginalContent();
                 Storage::put('pdf/preseve/碩士服預約清單' . $start->format('Y-m-d') . '.pdf', $content);
 
@@ -263,17 +268,22 @@ class PDFController extends Controller
                         }
                     }
 
+                    $D_data = file_get_contents('picture/' .Config::getDepartmentStampFilename());
+                    $A_data = file_get_contents('picture/' .Config::getAdminStampFilename());
+                    $D_type = pathinfo('picture/' .Config::getDepartmentStampFilename(), PATHINFO_EXTENSION);
+                    $A_type = pathinfo('picture/' .Config::getAdminStampFilename(), PATHINFO_EXTENSION);
+
                     $data = [
                         'set' => $set,
                         'payment_id' => $order->payment_id,
                         'document_id' => $order->document_id,
                         'pos' => $pos,
-                        'department_stamp' => Config::getDepartmentStampFilename(),
-                        'admin_stamp' => Config::getAdminStampFilename(),
+                        'department_stamp' => 'data:image/' . $D_type . ';base64,' . base64_encode($D_data),
+                        'admin_stamp' => 'data:image/' . $A_type . ';base64,' . base64_encode($A_data),
                         'return_time' => TimeRange::find(TimeRange::RET)
                     ];
 
-                    $pdf = PDF::loadView('pdf/return', $data)->setPaper('a4', 'potrait');
+                    $pdf = PDF::setOptions(['isRemoteEnabled' => true, 'isFontSubsettingEnabled' => true])->setPaper('a4', 'potrait')->loadView('pdf/return', $data);
 
                     return $pdf->stream('歸還證明單-' . $set->student->username . '.pdf');
                 }
