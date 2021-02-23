@@ -86,6 +86,8 @@ export const apiUploadPdf = pdf_file =>
     UploadRequest.post("/upload_pdf", pdf_file);
 export const apiCheckExist = filepath => Request.get(`${filepath}`);
 
+export const apiCheckPdfExist = filename =>
+    Request.get(`find_pdf?name=${filename}`);
 /******** Student ********/
 
 // Student order
