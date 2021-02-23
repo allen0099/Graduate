@@ -52,12 +52,16 @@ class ListController extends Controller
             ->whereBetween('returned', [$start_date, $end_date]);
 
         return [
-            'bachelor' => $sets->filter(function ($set) {
+            'bachelor' => [
+                ...$sets->filter(function ($set) {
                 return $set->student->isBachelor();
-            })->all(),
-            'master' => $sets->filter(function ($set) {
+                })->all()
+            ],
+            'master' => [
+                ...$sets->filter(function ($set) {
                 return $set->student->isMaster();
-            })->all(),
+                })->all()
+            ],
         ];
     }
 
