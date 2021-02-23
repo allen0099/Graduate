@@ -54,12 +54,12 @@ class ListController extends Controller
         return [
             'bachelor' => [
                 ...$sets->filter(function ($set) {
-                return $set->student->isBachelor();
+                    return $set->student->isBachelor();
                 })->all()
             ],
             'master' => [
                 ...$sets->filter(function ($set) {
-                return $set->student->isMaster();
+                    return $set->student->isMaster();
                 })->all()
             ],
         ];
@@ -94,13 +94,11 @@ class ListController extends Controller
 
         $list = new CashierList();
         $list->forceFill([
-            'start' => $request->start_date,
-            'end' => $request->end_date,
+            'start' => Carbon::parse($request->start_date),
+            'end' => Carbon::parse($request->end_date),
+            'type' => Set::find($request->id[0])->student->isMaster(),
         ])->save();
 
-        $list->forceFill([
-            'type' => Set::find($request->id[0])->student->isMaster()
-        ])->save();
         foreach ($request->id as $item) {
             $set = Set::find($item);
             $set->forceFill([
