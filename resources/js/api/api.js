@@ -29,6 +29,12 @@ export const apiDepartment = () => Request.get("/department_class");
 export const apiClassSetColor = (class_id, color) =>
     Request.post("/department_class", { class_id, color });
 
+export const apiUpdatePdfName = (pdf, value) =>
+    Request.post("/update_pdf_name", { pdf, value });
+
+export const apiNewStudent = student =>
+    Request.post("/create_new_student", student);
+
 // Admin Order Actions
 export const apiSearchOrder = search =>
     Request.get(`/search_order?search=${search}`);
@@ -78,8 +84,6 @@ export const apiUploadStudent = csv_file =>
     UploadRequest.post("/upload_student", csv_file);
 export const apiUploadPdf = pdf_file =>
     UploadRequest.post("/upload_pdf", pdf_file);
-export const apiUpdatePdfName = (pdf, value) =>
-           Request.post("/update_pdf_name", { pdf, value });
 export const apiCheckExist = filepath => Request.get(`${filepath}`);
 
 /******** Student ********/

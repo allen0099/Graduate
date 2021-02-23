@@ -1,107 +1,168 @@
 <template>
-    <v-card flat>
-        <v-row dense>
-            <v-col
-                cols="12"
-                sm="4"
-            >
-                <v-card flat>
-                    <v-card-title>學生資料上傳</v-card-title>
-                </v-card>
-            </v-col>
-            <v-col
-                cols="12"
-                sm="8"
+    <div>
+        <v-card flat>
+            <v-row dense>
+                <v-col
+                    cols="12"
+                    sm="4"
+                >
+                    <v-card flat>
+                        <v-card-title>學生資料上傳</v-card-title>
+                    </v-card>
+                </v-col>
+                <v-col
+                    cols="12"
+                    sm="8"
+                >
+                    <v-card
+                        elevation="1"
+                        class="pa-3"
+                    >
+                        <v-card-text>
+                            <span>※ 只能上傳 csv 檔</span>
+                            <v-tooltip bottom>
+                                <template v-slot:activator="{ on, attrs }">
+                                    <v-icon
+                                        v-bind="attrs"
+                                        v-on="on"
+                                        small
+                                    >
+                                        mdi-information-outline
+                                    </v-icon>
+                                </template>
+                                <span>csv 檔案欄位名必須是 (名稱, 學號, 系年班代碼, 系年班簡稱)</span>
+                            </v-tooltip>
+                            <v-file-input
+                                v-model="file"
+                                accept=".csv"
+                                label="學生資料"
+                                id="csv_file"
+                                type="file"
+                                name="csv_file"
+                            ></v-file-input>
+                        </v-card-text>
+
+                        <v-card-actions>
+                            <v-btn
+                                dark
+                                @click="add_student"
+                            >單筆新增</v-btn>
+                            <v-spacer></v-spacer>
+                            <v-btn
+                                dark
+                                @click="upload"
+                            >上傳</v-btn>
+                        </v-card-actions>
+
+                    </v-card>
+                </v-col>
+            </v-row>
+            <v-dialog
+                v-model="pageLoading"
+                persistent
+                width="300"
             >
                 <v-card
-                    elevation="1"
-                    class="pa-3"
+                    color="primary"
+                    dark
                 >
                     <v-card-text>
-                        <span>※ 只能上傳 csv 檔</span>
-                        <v-tooltip bottom>
-                            <template v-slot:activator="{ on, attrs }">
-                                <v-icon
-                                    v-bind="attrs"
-                                    v-on="on"
-                                    small
-                                >
-                                    mdi-information-outline
-                                </v-icon>
-                            </template>
-                            <span>csv 檔案欄位名必須是 (名稱, 學號, 系年班代碼, 系年班簡稱)</span>
-                        </v-tooltip>
-                        <v-file-input
-                            v-model="file"
-                            accept=".csv"
-                            label="學生資料"
-                            id="csv_file"
-                            type="file"
-                            name="csv_file"
-                        ></v-file-input>
+                        Loading...
+                        <v-progress-linear
+                            indeterminate
+                            color="white"
+                            class="mb-0"
+                        ></v-progress-linear>
                     </v-card-text>
-
-                    <v-card-actions>
-                        <v-spacer></v-spacer>
-                        <v-btn
-                            dark
-                            @click="upload"
-                        >上傳</v-btn>
-                    </v-card-actions>
-
                 </v-card>
-            </v-col>
-        </v-row>
-        <v-dialog
-            v-model="pageLoading"
-            persistent
-            width="300"
-        >
-            <v-card
-                color="primary"
-                dark
+            </v-dialog>
+            <v-snackbar
+                v-model="snackbar"
+                :timeout="2000"
             >
-                <v-card-text>
-                    Loading...
-                    <v-progress-linear
-                        indeterminate
-                        color="white"
-                        class="mb-0"
-                    ></v-progress-linear>
+                <v-icon
+                    dark
+                    right
+                    class="mr-2"
+                    :color="snackbar_true ? 'success' : 'error'"
+                >
+                    {{ snackbar_true ? 'mdi-checkbox-marked-circle' : 'mdi-alert ' }}
+                </v-icon>
+                {{ msg }}
+
+                <template v-slot:action="{ attrs }">
+                    <v-btn
+                        :color="snackbar_true ? 'success' : 'error'"
+                        text
+                        v-bind="attrs"
+                        @click="snackbar = false"
+                    >
+                        關閉
+                    </v-btn>
+                </template>
+            </v-snackbar>
+        </v-card>
+        <v-dialog
+            v-model="edit_dialog"
+            max-width="600px"
+            persistent
+        >
+            <v-card>
+                <v-card-title>單筆新增學生</v-card-title>
+                <v-card-text class="font-weight-bold">
+
+                    <v-row>
+                        <v-col cols="4">
+                            <v-text-field
+                                v-model="edit_student.username"
+                                label="學號"
+                            ></v-text-field>
+                        </v-col>
+                        <v-col cols="4">
+                            <v-autocomplete
+                                v-model="edit_student.class_id"
+                                :items="departments"
+                                label="系級"
+                                item-value="class_id"
+                                item-text="class_name"
+                            ></v-autocomplete>
+                        </v-col>
+                        <v-col cols="4">
+                            <v-text-field
+                                v-model="edit_student.name"
+                                label="姓名"
+                            ></v-text-field>
+                        </v-col>
+                    </v-row>
                 </v-card-text>
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn
+                        color="error"
+                        text
+                        @click="cancel"
+                    >
+                        取消
+                    </v-btn>
+                    <v-btn
+                        color="primary"
+                        text
+                        @click="save"
+                        :disabled="!edit_student.username || !edit_student.name || !edit_student.class_id"
+                    >
+                        新增
+                    </v-btn>
+                </v-card-actions>
             </v-card>
         </v-dialog>
-        <v-snackbar
-            v-model="snackbar"
-            :timeout="2000"
-        >
-            <v-icon
-                dark
-                right
-                class="mr-2"
-                :color="snackbar_true ? 'success' : 'error'"
-            >
-                {{ snackbar_true ? 'mdi-checkbox-marked-circle' : 'mdi-alert ' }}
-            </v-icon>
-            {{ msg }}
-
-            <template v-slot:action="{ attrs }">
-                <v-btn
-                    :color="snackbar_true ? 'success' : 'error'"
-                    text
-                    v-bind="attrs"
-                    @click="snackbar = false"
-                >
-                    關閉
-                </v-btn>
-            </template>
-        </v-snackbar>
-    </v-card>
+    </div>
 </template>
 
 <script>
     import {
-        apiUploadStudent
+        apiUploadStudent,
+        apiNewStudent,
+        apiDepartment
     } from '@/api/api'
     export default {
         name: "UploadStudentData",
@@ -112,10 +173,28 @@
                 snackbar_true: false,
                 msg: '',
                 file: null,
+                edit_dialog: false,
+                student: {
+                    name: null,
+                    class_id: null,
+                    username: null,
+                },
+                edit_student: {
+                    name: null,
+                    class_id: null,
+                    username: null,
+                },
+                departments: [],
             }
         },
 
         methods: {
+            async init() {
+                await apiDepartment().then(res => {
+                    this.departments = res.data
+                })
+            },
+
             async upload() {
                 if (!this.file) {
                     this.msg = '請先選擇檔案'
@@ -146,7 +225,47 @@
                     this.snackbar_true = false
                     this.pageLoading = false
                 })
+            },
+            add_student() {
+                this.edit_dialog = true
+                this.edit_student = Object.assign({}, this.student)
+            },
+            cancel() {
+                this.edit_student = Object.assign({}, this.student)
+                this.edit_dialog = false
+                this.pageLoading = false
+            },
+            async save() {
+                if (!/^[0-9]{9}$/.test(this.edit_student.username)) {
+                    this.msg = '學號錯誤'
+                    this.snackbar = true
+                    this.snackbar_true = false
+                    this.cancel()
+                    return
+                }
+                await apiNewStudent(this.edit_student).then(res => {
+                    if (res.status === 201) {
+                        this.msg = '新增成功'
+                        this.snackbar = true
+                        this.snackbar_true = true
+                    } else {
+                        this.msg = '新增失敗'
+                        this.snackbar = true
+                        this.snackbar_true = false
+                    }
+                    this.pageLoading = false
+                    console.log(res)
+                }).catch((err) => {
+                    this.msg = err.response.data.errors
+                    this.snackbar = true
+                    this.snackbar_true = false
+                    this.pageLoading = false
+                })
+                await this.cancel()
             }
+        },
+        created() {
+            this.init()
         },
     }
 
