@@ -60,8 +60,8 @@ export const apiNoneListedSets = (start_date, end_date) =>
         `/not_listed_sets?start_date=${start_date}&end_date=${end_date}`
     );
 
-export const apiNewCashierList = id =>
-    Request.post("/new_cashier_list", { id });
+export const apiNewCashierList = (id, start_date, end_date) =>
+    Request.post("/new_cashier_list", { id, start_date, end_date });
 
 export const apiUpdateListStatus = (id, status) =>
     Request.post("/update_cashier_list", { id, status });

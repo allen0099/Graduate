@@ -98,6 +98,9 @@ class ListController extends Controller
             'end' => $request->end_date,
         ])->save();
 
+        $list->forceFill([
+            'type' => Set::find($request->id[0])->student->isMaster()
+        ])->save();
         foreach ($request->id as $item) {
             $set = Set::find($item);
             $set->forceFill([

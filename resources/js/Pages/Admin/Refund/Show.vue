@@ -8,6 +8,67 @@
             flat
         >
             <v-card-title>
+                <v-btn-toggle
+                    v-model="set_type"
+                    color="deep-purple accent-3"
+                    group
+                    mandatory
+                    dense
+                    class="hidden-sm-and-down"
+                >
+                    <v-btn>
+                        未處理
+                    </v-btn>
+                    <v-btn>
+                        已建立批次
+                    </v-btn>
+                    <v-btn>
+                        已送出
+                    </v-btn>
+                    <v-btn>
+                        已完成
+                    </v-btn>
+                </v-btn-toggle>
+            </v-card-title>
+            <v-card-text class="font-weight-bold">
+                <v-data-table
+                    :headers="headers_sets"
+                    :items="select_sets_list"
+                    :search="set_search"
+                    class="elevation-1"
+                    multi-sort
+                >
+                    <template v-slot:top>
+                        <v-row
+                            dense
+                            align="center"
+                        >
+                            <v-col cols=9>
+                                <v-text-field
+                                    v-model="set_search"
+                                    label="搜尋"
+                                    class="mx-4"
+                                ></v-text-field>
+                            </v-col>
+                            <!-- <v-col cols=3>
+                                <v-btn>名單下載</v-btn>
+                            </v-col> -->
+                        </v-row>
+                    </template>
+                    <template v-slot:item.set="{ item }">
+                        {{ item.cloth.spec }}, {{ item.accessory.spec }}
+                    </template>
+                    <template v-slot:item.returned="{ item }">
+                        {{ new Date(item.returned).Format("MM-dd HH:mm") }}
+                    </template>
+                </v-data-table>
+            </v-card-text>
+        </v-card>
+        <v-card
+            class="mt-3"
+            flat
+        >
+            <v-card-title>
                 待還款名單
                 <v-spacer></v-spacer>
             </v-card-title>
@@ -52,6 +113,7 @@
                     :items="init_list"
                     :search="search"
                     class="elevation-1"
+                    multi-sort
                 >
                     <template v-slot:top>
                         <v-text-field
@@ -60,12 +122,14 @@
                             class="mx-4"
                         ></v-text-field>
                     </template>
-
-                    <template v-slot:item.date="{ item }">
-                        {{ new Date(item.created_at).Format("MM-dd HH:mm") }}
+                    <template v-slot:item.type="{ item }">
+                        {{ item.type === 0 ? '學士' : '碩士' }}
                     </template>
-                    <template v-slot:item.count="{ item }">
-                        {{ item.sets.length }}
+                    <template v-slot:item.created_at="{ item }">
+                        {{ new Date(item.created_at).Format("MM/dd HH:mm") }}
+                    </template>
+                    <template v-slot:item.start="{ item }">
+                        {{ item.start.slice(5).replace('-', '/') }}~{{ item.end.slice(5).replace('-', '/') }}
                     </template>
                     <template v-slot:item.download="{ item }">
                         <v-btn
@@ -96,6 +160,7 @@
                     :items="progress_list"
                     :search="search"
                     class="elevation-1"
+                    multi-sort
                 >
                     <template v-slot:top>
                         <v-text-field
@@ -104,12 +169,14 @@
                             class="mx-4"
                         ></v-text-field>
                     </template>
-
-                    <template v-slot:item.date="{ item }">
-                        {{ new Date(item.updated_at).Format("MM-dd HH:mm") }}
+                    <template v-slot:item.type="{ item }">
+                        {{ item.type === 0 ? '學士' : '碩士' }}
                     </template>
-                    <template v-slot:item.count="{ item }">
-                        {{ item.sets.length }}
+                    <template v-slot:item.updated_at="{ item }">
+                        {{ new Date(item.updated_at).Format("MM/dd HH:mm") }}
+                    </template>
+                    <template v-slot:item.start="{ item }">
+                        {{ item.start.slice(5).replace('-', '/') }}~{{ item.end.slice(5).replace('-', '/') }}
                     </template>
                     <template v-slot:item.download="{ item }">
                         <v-btn
@@ -140,6 +207,7 @@
                     :items="finished_list"
                     :search="search"
                     class="elevation-1"
+                    multi-sort
                 >
                     <template v-slot:top>
                         <v-text-field
@@ -148,12 +216,14 @@
                             class="mx-4"
                         ></v-text-field>
                     </template>
-
-                    <template v-slot:item.date="{ item }">
-                        {{ new Date(item.updated_at).Format("MM-dd HH:mm") }}
+                    <template v-slot:item.type="{ item }">
+                        {{ item.type === 0 ? '學士' : '碩士' }}
                     </template>
-                    <template v-slot:item.count="{ item }">
-                        {{ item.sets.length }}
+                    <template v-slot:item.updated_at="{ item }">
+                        {{ new Date(item.updated_at).Format("MM/dd HH:mm") }}
+                    </template>
+                    <template v-slot:item.start="{ item }">
+                        {{ item.start.slice(5).replace('-', '/') }}~{{ item.end.slice(5).replace('-', '/') }}
                     </template>
                     <template v-slot:item.download="{ item }">
                         <v-btn
@@ -194,7 +264,22 @@
             max-width="1200px"
         >
             <v-card>
-                <v-card-title>建立還款批次名單 {{start_date}} ～ {{end_date}}</v-card-title>
+                <v-card-title>建立還款批次名單 {{start_date}} ～ {{end_date}}
+                    <v-spacer></v-spacer>
+                    <v-btn-toggle
+                        v-model="search_toggle_btn"
+                        rounded
+                        mandatory
+                        color="primary"
+                    >
+                        <v-btn>
+                            學士
+                        </v-btn>
+                        <v-btn>
+                            碩士
+                        </v-btn>
+                    </v-btn-toggle>
+                </v-card-title>
                 <v-card-text class="font-weight-bold">
                     <v-text-field
                         v-model="search_sets_search"
@@ -216,7 +301,7 @@
                         <template v-slot:item.set="{ item }">
                             {{ item.cloth.spec }}, {{ item.accessory.spec }}
                         </template>
-                        <template v-slot:item.date="{ item }">
+                        <template v-slot:item.returned="{ item }">
                             {{ new Date(item.returned).Format("MM-dd HH:mm") }}
                         </template>
                     </v-data-table>
@@ -389,6 +474,7 @@
         data: () => ({
             set_type: 0,
             btn_name: '',
+            search_toggle_btn: '學士',
             dialog_search_set: false,
             dialog_alert: false,
             pageLoading: false,
@@ -403,8 +489,50 @@
             progress_list_search: '',
             finished_list_search: '',
             search_sets_search: '',
-            search_sets: [],
+            search_sets_B: [],
+            search_sets_M: [],
             selected_set: [],
+            sets_list_0: [],
+            sets_list_1: [],
+            sets_list_2: [],
+            sets_list_3: [],
+            set_search: '',
+            headers_sets: [{
+                text: '批次',
+                align: 'start',
+                sortable: true,
+                value: 'list_id',
+            }, {
+                text: '學號',
+                align: 'start',
+                sortable: false,
+                value: 'student.username',
+            }, {
+                text: '姓名',
+                align: 'start',
+                sortable: false,
+                value: 'student.name',
+            }, {
+                text: '系級',
+                align: 'start',
+                sortable: true,
+                value: 'student.school_class.class_name',
+            }, {
+                text: '衣服',
+                align: 'start',
+                sortable: false,
+                value: 'cloth.name',
+            }, {
+                text: '規格',
+                align: 'start',
+                sortable: false,
+                value: 'set',
+            }, {
+                text: '歸還日期',
+                align: 'start',
+                sortable: true,
+                value: 'returned',
+            }, ],
             headers_search_sets: [{
                 text: '學號',
                 align: 'start',
@@ -429,8 +557,9 @@
             }, {
                 text: '歸還日期',
                 align: 'start',
-                value: 'date',
+                value: 'returned',
             }, ],
+            none_list: [],
             init_list: [],
             progress_list: [],
             finished_list: [],
@@ -442,32 +571,40 @@
                     sortable: true,
                     value: 'id',
                     code: 0
-                }, {
+                },
+                {
+                    text: '學位',
+                    align: 'center',
+                    sortable: true,
+                    value: 'type',
+                    code: 0
+                },
+                {
                     text: '建立時間',
                     align: 'center',
-                    sortable: false,
-                    value: 'date',
+                    sortable: true,
+                    value: 'created_at',
                     code: 1
                 },
                 {
                     text: '送出時間',
                     align: 'center',
-                    sortable: false,
-                    value: 'date',
+                    sortable: true,
+                    value: 'updated_at',
                     code: 2
                 },
                 {
                     text: '完成時間',
                     align: 'center',
-                    sortable: false,
-                    value: 'date',
+                    sortable: true,
+                    value: 'updated_at',
                     code: 3
                 },
                 {
-                    text: '數量',
+                    text: '範圍',
                     align: 'center',
-                    sortable: false,
-                    value: 'count',
+                    sortable: true,
+                    value: 'start',
                     code: 0
                 },
                 {
@@ -514,6 +651,24 @@
                 }
             ],
         }),
+        computed: {
+            search_sets: function () {
+                return this.search_toggle_btn === 0 ? this.search_sets_B : this.search_sets_M
+            },
+            select_sets_list: function () {
+                if (this.set_type === 0) {
+                    return this.none_list
+                } else if (this.set_type === 1) {
+                    return [].concat(...this.init_list.map(x => x.sets))
+                } else if (this.set_type === 2) {
+                    return [].concat(...this.progress_list.map(x => x.sets))
+                } else if (this.set_type === 3) {
+                    return [].concat(...this.finished_list.map(x => x.sets))
+                } else {
+                    return []
+                }
+            }
+        },
         methods: {
             async init() {
                 this.pageLoading = true
@@ -573,6 +728,14 @@
                         this.finished_list = res.data
                     }
                 })
+
+                await apiNoneListedSets(this.dateList[0], this.dateList[this.dateList.length - 1]).then(res => {
+                    if (res.status === 200) {
+                        let sets_M = res.data.master
+                        let sets_B = res.data.bachelor
+                        this.none_list = sets_B.concat(sets_M)
+                    }
+                })
                 this.pageLoading = false
             },
             list_cancel() {
@@ -582,35 +745,46 @@
                 this.end_date = null
                 this.search_sets_search = ''
                 this.selected_set = []
-                this.search_sets = []
+                this.search_sets_B = []
+                this.search_sets_M = []
             },
             async list_build() {
                 this.pageLoading = true
                 let id_list = this.selected_set.map(x => x.id)
-                await apiNewCashierList(id_list).then(res => {
+                await apiNewCashierList(id_list, this.start_date, this.end_date).then(res => {
                     if (res.status === 200) {
                         this.init_list.push(res.data)
                         this.msg = '新增成功'
-                        this.snackbar = true
                         this.snackbar_true = true
                     } else {
                         this.msg = '連線錯誤'
-                        this.snackbar = true
                         this.snackbar_true = false
                     }
                 }).catch((err) => {
                     console.log(err)
                     this.msg = '不明錯誤'
-                    this.snackbar = true
                     this.snackbar_true = false
                 })
+
+                await apiNoneListedSets(this.dateList[0], this.dateList[this.dateList.length -
+                    1]).then(res => {
+                    if (res.status === 200) {
+                        let sets_M = res.data.master
+                        let sets_B = res.data.bachelor
+                        this.none_list = sets_B.concat(sets_M)
+                    }
+                })
+
+                this.snackbar = true
+
                 await this.list_cancel()
             },
             async search_set() {
                 this.pageLoading = true
                 this.search_sets_search = ''
                 this.selected_set = []
-                this.search_sets = []
+                this.search_sets_B = []
+                this.search_sets_M = []
                 if (this.start_date > this.end_date) {
                     this.msg = '起始時間不可晚於結束時間'
                     this.snackbar = true
@@ -620,7 +794,8 @@
                 }
                 await apiNoneListedSets(this.start_date, this.end_date).then(res => {
                     if (res.status === 200) {
-                        this.search_sets = res.data
+                        this.search_sets_M = res.data.master
+                        this.search_sets_B = res.data.bachelor
                     } else {
                         this.msg = '查詢失敗'
                         this.snackbar = true
@@ -673,20 +848,29 @@
                         }
 
                         this.msg = this.btn_name + '成功'
-                        this.snackbar = true
                         this.snackbar_true = true
 
                     } else {
                         this.msg = '連線失敗'
-                        this.snackbar = true
                         this.snackbar_true = false
                     }
                 }).catch((err) => {
                     console.log(err)
                     this.msg = '連線失敗'
-                    this.snackbar = true
                     this.snackbar_true = false
                 })
+
+                if (this.edit_status_code === 0) {
+                    await apiNoneListedSets(this.dateList[0], this.dateList[this.dateList.length -
+                        1]).then(res => {
+                        if (res.status === 200) {
+                            let sets_M = res.data.master
+                            let sets_B = res.data.bachelor
+                            this.none_list = sets_B.concat(sets_M)
+                        }
+                    })
+                }
+                this.snackbar = true
                 await this.alert_cancel()
             }
         },
