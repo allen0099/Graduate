@@ -36,15 +36,15 @@ class ConfigSeeder extends Seeder
         ]);
         DB::table('configs')->insert([
             'key' => 'pdf_a',
-            'value' => '@108學年度學士學位服借用公告',
+            'value' => '108學年度學士學位服借用公告',
         ]);
         DB::table('configs')->insert([
             'key' => 'pdf_b',
-            'value' => '@使用說明',
+            'value' => '使用說明',
         ]);
         DB::table('configs')->insert([
             'key' => 'pdf_c',
-            'value' => '@淡江大學學位服借用要點',
+            'value' => '淡江大學學位服借用要點',
         ]);
         DB::table('configs')->insert([
             'key' => 'department_stamp',

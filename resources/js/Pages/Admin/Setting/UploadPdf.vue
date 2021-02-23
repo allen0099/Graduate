@@ -24,11 +24,17 @@
                         <v-file-input
                             v-model="file"
                             accept=".pdf"
-                            :label="file ? '' : title"
+                            :label="file ? '' : name"
                             id="pdf_file"
                             type="file"
                             name="pdf_file"
                         ></v-file-input>
+                        <v-text-field
+                            v-if="pdf"
+                            v-model="edit_name"
+                            label="顯示名稱"
+                            prepend-icon="mdi-file"
+                        ></v-text-field>
                     </v-card-text>
 
                     <v-card-actions>
@@ -38,10 +44,11 @@
                             :href="`/pdf/${title}.pdf`"
                             target="_blank"
                             v-if="file"
-                        >預覽</v-btn>
+                        >閱覽</v-btn>
                         <v-btn
-                            dark
+                            :dark="!!edit_name"
                             @click="upload"
+                            :disabled="!edit_name"
                         >上傳</v-btn>
                     </v-card-actions>
 
@@ -98,11 +105,18 @@
 <script>
     import {
         apiUploadPdf,
-        apiCheckExist
+        apiCheckExist,
+        apiUpdatePdfName
     } from '@/api/api'
     export default {
         name: "UploadPdf",
-        props: ['title'],
+        props: {
+            title: String,
+            pdf: {
+                type: String,
+                default: null
+            },
+        },
         data() {
             return {
                 pageLoading: false,
@@ -110,46 +124,80 @@
                 snackbar_true: false,
                 msg: '',
                 file: null,
+                name: null,
+                edit_name: null,
             }
         },
 
         methods: {
             async init() {
+                if (this.pdf) {
+                    this.name = this.$page.configs['pdf_' + this.pdf]
+                } else {
+                    this.name = this.title
+                    this.edit_name = this.name
+                }
+
                 let filepath = '/pdf/' + this.title + ".pdf"
                 await apiCheckExist(filepath).then(res => {
-                    this.file = new File([], this.title + ".pdf")
+                    if (res.status == 200) {
+                        this.file = new File([], this.title + ".pdf")
+                        this.edit_name = this.name
+                    }
                 })
             },
             async upload() {
                 this.pageLoading = true
-                if (this.file.size === 0) {
+                if (!this.file && !this.pdf) {
                     this.msg = '請先選擇檔案'
                     this.snackbar = true
                     this.snackbar_true = false
                     this.pageLoading = false
                     return
                 }
-                let form_data = new FormData()
-                form_data.append('pdf_file', this.file)
-                form_data.append('name', this.title)
-                await apiUploadPdf(form_data).then(res => {
-                    if (res.status === 204) {
-                        this.msg = '上傳成功'
-                        this.snackbar = true
-                        this.snackbar_true = true
-                    } else {
-                        this.msg = '上傳失敗'
+                if (this.file.size !== 0) {
+                    let form_data = new FormData()
+                    form_data.append('pdf_file', this.file)
+                    form_data.append('name', this.title)
+                    await apiUploadPdf(form_data).then(res => {
+                        if (res.status === 204) {
+                            this.msg = '上傳成功'
+                            this.snackbar = true
+                            this.snackbar_true = true
+                        } else {
+                            this.msg = '上傳失敗'
+                            this.snackbar = true
+                            this.snackbar_true = false
+                        }
+                        this.pageLoading = false
+                    }).catch((err) => {
+                        console.log(err)
+                        this.msg = '連線錯誤'
                         this.snackbar = true
                         this.snackbar_true = false
-                    }
-                    this.pageLoading = false
-                }).catch((err) => {
-                    console.log(err)
-                    this.msg = '連線錯誤'
-                    this.snackbar = true
-                    this.snackbar_true = false
-                    this.pageLoading = false
-                })
+                        this.pageLoading = false
+                    })
+                }
+                if (this.pdf) {
+                    await apiUpdatePdfName(this.pdf, this.edit_name).then(res => {
+                        if (res.status === 204) {
+                            this.msg = '修改成功'
+                            this.snackbar = true
+                            this.snackbar_true = true
+                        } else {
+                            this.msg = '修改失敗'
+                            this.snackbar = true
+                            this.snackbar_true = false
+                        }
+                        this.pageLoading = false
+                    }).catch((err) => {
+                        console.log(err)
+                        this.msg = '連線錯誤'
+                        this.snackbar = true
+                        this.snackbar_true = false
+                        this.pageLoading = false
+                    })
+                }
             }
         },
         mounted() {

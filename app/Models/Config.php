@@ -41,10 +41,10 @@ class Config extends Model
     {
         $pdf = Config::where('key', 'pdf_' . $loc)->first();
 
-        $pdf->valud = $value;
+        $pdf->value = $value;
         $pdf->save();
-
-        return $pdf;
+        
+        return response()->noContent();
     }
 
     public static function getBachelorSetPriceValue()

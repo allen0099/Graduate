@@ -63,6 +63,9 @@ class AppServiceProvider extends ServiceProvider
                             Auth::user()->isRole(User::ADMIN)
                                 ? Config::getAdminStampUrl()
                                 : null,
+                        'pdf_a' => Config::getPdfName('pdf_a'),
+                        'pdf_b' => Config::getPdfName('pdf_b'),
+                        'pdf_c' => Config::getPdfName('pdf_c'),
                     ];
                 }
                 return null;
