@@ -43,16 +43,19 @@
                             <UploadPdf
                                 class="mt-3"
                                 title="公告1"
+                                pdf="a"
                             ></UploadPdf>
                             <jet-section-border />
                             <UploadPdf
                                 class="mt-3"
                                 title="公告2"
+                                pdf="b"
                             ></UploadPdf>
                             <jet-section-border />
                             <UploadPdf
                                 class="mt-3"
                                 title="公告3"
+                                pdf="c"
                             >
                             </UploadPdf>
                         </v-card-text>

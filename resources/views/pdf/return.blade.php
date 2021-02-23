@@ -69,10 +69,11 @@
         .img {
             position: absolute;
             top: 24%;
-            width: 100px;
-            left: 50%;
+            width: 120px;
+            height: 120px;
+            left: 53%;
             z-index: 2;
-            opacity: 0.65;
+            /* opacity: 0.65; */
         }
 
         .centent {
@@ -133,12 +134,12 @@
     </div>
     <div id="main">
         <div class="centent">
-            <p>茲退還
-                @for ($i = 0; $i < 28 - strlen($set->student->name); $i++)
+            <p>茲退還&nbsp;&nbsp;
+                @for ($i = 0; $i < 20 - strlen($set->student->name); $i++)
                     &nbsp;
                 @endfor
                 {{ $set->student->name }}
-                &nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 同學
             </p>
             <p style="margin-top: 10px;">借用{{ $set->cloth->name }}一套。</p>

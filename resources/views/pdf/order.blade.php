@@ -73,11 +73,12 @@
 
         .img {
             position: absolute;
-            width: 110px;
+            width: 130px;
+            height: 130px;
             right: -10px;
-            top: 40%;
+            top: 41%;
             z-index: 2;
-            opacity: 0.9;
+            /* opacity: 0.9; */
         }
 
         .half-bar {
