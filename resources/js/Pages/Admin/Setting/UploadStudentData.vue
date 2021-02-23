@@ -109,7 +109,7 @@
             </v-dialog>
             <v-snackbar
                 v-model="snackbar"
-                :timeout="2000"
+                :timeout="5000"
             >
                 <v-icon
                     dark
