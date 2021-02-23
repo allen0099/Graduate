@@ -35,6 +35,8 @@
                                         small
                                         color="blue-grey"
                                         class="ma-2 white--text"
+                                        :href="`${route('find_pdf')}?name=學位服樣式`"
+                                        download
                                     >
                                         <v-icon small>mdi-information-variant</v-icon>
                                         <span class="ml-2">查看樣式</span>
