@@ -43,15 +43,16 @@
             justify-content: center;
         }
 
-        th {
-            text-align: left;
-            padding: 0px 10px;
+        td {
+            padding-left: 5px;
         }
 
         table {
+            width: 100%;
             margin-top: 3px;
             margin-bottom: 5px;
-            font-size: 18px;
+            font-size: 14px;
+            border-collapse: collapse;
         }
 
         #footer {
@@ -81,17 +82,41 @@
         <h1 class="title">還款名單</h1>
     </div>
     <div id="main">
-        <p>編號：{{ $list->id }}, 狀態：{{ $state }}</p>
-        <br><br>
-        @foreach ($list->sets as $index => $set)
-            <table>
+        <p>編號：{{ $list->id }} 學位：碩士 狀態：{{ $state }} 成立日期：2020-10-02 11:33</p>
+        <table border="1">
+            <thead>
                 <tr>
-                    <th>學號：{{ $set->student->username }}</th>
-                    <th>系級：{{ $set->student->school_class->class_name }}</th>
-                    <th>姓名：{{ $set->student->name }}</th>
+                    <th></th>
+                    <th>學號</th>
+                    <th>系級</th>
+                    <th>姓名</th>
+                    <th>所屬訂單</th>
+                    <th>歸還編號</th>
                 </tr>
-            </table>
-        @endforeach
+            </thead>
+            <tbody>
+                @foreach ($list->sets as $index => $set)
+                    <tr>
+                        <td>{{ $index + 1 }}</td>
+                        <td>{{ $set->student->username }}</td>
+                        <td>{{ $set->student->school_class->class_name }}</td>
+                        <td>{{ $set->student->name }}</td>
+                        <td>{{ $set->document_id }}</td>
+                        <td>{{ $set->return_id }}</td>
+                    </tr>
+                @endforeach
+            </tbody>
+            <tfoot>
+                <tr>
+                    {{-- <td span="2"></td> --}}
+                    <th colspan="2">總計</th>
+                    <td>100筆</td>
+                    <th>總金額</th>
+                    <td>NT$ 270000</td>
+                    <td></td>
+                </tr>
+            </tfoot>
+        </table>
     </div>
 </body>
 

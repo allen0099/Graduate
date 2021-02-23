@@ -217,6 +217,22 @@ class PDFController extends Controller
             
             $state =  ['meow', '尚未還款', '還款中', '已還款'];
             if(!is_null($list)){
+
+                foreach ($list->sets as $item => $set) {
+                    $order = Order::find($set->order_id);
+                    $set['document_id'] = $order->document_id;
+                    $pos = -1;
+
+                    foreach ($order->sets as $key => $value){
+                        if ($set->id === $value->id){
+                            $pos = $key + 1;
+                            break;
+                        }
+                    }
+
+                    $set['return_id'] = $order->payment_id.'-'.$pos;
+                }
+                // return $list;
                 $data = [
                     'list' => $list,
                     'state' => $state[$list->status],
@@ -283,7 +299,7 @@ class PDFController extends Controller
                         'return_time' => TimeRange::find(TimeRange::RET)
                     ];
 
-                    $pdf = PDF::setOptions(['isRemoteEnabled' => true, 'isFontSubsettingEnabled' => true])->setPaper('a4', 'potrait')->loadView('pdf/return', $data);
+                    $pdf = PDF::setOptions(['isRemoteEnabled' => true, 'isFontSubsettingEnabled' => true, 'isHtml5ParserEnabled' => true])->setPaper('a4', 'potrait')->loadView('pdf/return', $data);
 
                     return $pdf->stream('歸還證明單-' . $set->student->username . '.pdf');
                 }
