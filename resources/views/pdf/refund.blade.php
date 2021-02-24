@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>歸還證明單</title>
+    <title>{{ $year }} 學年度{{ $type }}學位服退款清單</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <style>
         html {
@@ -14,12 +14,6 @@
             font-family: "TaipeiSansTCRegular";
             margin-top: 0px;
             margin-bottom: 0px;
-        }
-
-        body {
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
         }
 
         .half-bar {
@@ -36,6 +30,10 @@
 
         .page-break {
             page-break-after: always;
+        }
+
+        .page-break:last-child {
+            page-break-after: auto;
         }
 
         .flex-container {
@@ -56,8 +54,14 @@
         }
 
         #footer {
-            text-align: right;
-            font-size: 16px;
+            text-align: center;
+            position: absolute;
+            bottom: 3;
+        }
+
+        .page-number:before {
+            font-size: 14px;
+            content: counter(page);
         }
 
         .remark {
@@ -74,50 +78,86 @@
             justify-content: flex-start;
         }
 
+        .space-between {
+            font-size: 16;
+        }
+
+        .r-child {
+            display: inline-block;
+            font-size: 16px;
+            text-align: right;
+        }
+
+        .l-child {
+            display: inline-block;
+            font-size: 16px;
+        }
+
+        tr:nth-child(even) {
+            background: #CCC
+        }
+
+        tr:nth-child(odd) {
+            background: #FFF
+        }
+
     </style>
 </head>
 
 <body>
-    <div id="header">
-        <h1 class="title">還款名單</h1>
-    </div>
-    <div id="main">
-        <p>編號：{{ $list->id }} 學位：碩士 狀態：{{ $state }} 成立日期：2020-10-02 11:33</p>
-        <table border="1">
-            <thead>
-                <tr>
-                    <th></th>
-                    <th>學號</th>
-                    <th>系級</th>
-                    <th>姓名</th>
-                    <th>所屬訂單</th>
-                    <th>歸還編號</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($list->sets as $index => $set)
+
+    @foreach ($sets_chunk as $key => $chunk)
+        <div id="header">
+            <h1 class="title">{{ $year }} 學年度{{ $type }}學位服退款清單</h1>
+        </div>
+        <div id="main">
+            <div class="space-between">
+                <div class="l-child" style="width: 17%;">
+                    編號：{{ $year }}-{{ $list->id }}
+                </div>
+                <div class="l-child" style="width: 51%;">
+                    成立日期：2020-10-02 11:33
+                </div>
+                <div class="r-child" style="width: 30%;">狀態：{{ $state }}</div>
+            </div>
+            <table border="1">
+                <thead>
                     <tr>
-                        <td>{{ $index + 1 }}</td>
-                        <td>{{ $set->student->username }}</td>
-                        <td>{{ $set->student->school_class->class_name }}</td>
-                        <td>{{ $set->student->name }}</td>
-                        <td>{{ $set->document_id }}</td>
-                        <td>{{ $set->return_id }}</td>
+                        <th></th>
+                        <th>學號</th>
+                        <th>系級</th>
+                        <th>姓名</th>
+                        <th>所屬訂單</th>
+                        <th>歸還編號</th>
                     </tr>
-                @endforeach
-            </tbody>
-            <tfoot>
-                <tr>
-                    {{-- <td span="2"></td> --}}
-                    <th colspan="2">總計</th>
-                    <td>100筆</td>
-                    <th>總金額</th>
-                    <td>NT$ 270000</td>
-                    <td></td>
-                </tr>
-            </tfoot>
-        </table>
-    </div>
+                </thead>
+                <tbody>
+                    @foreach ($chunk as $index => $set)
+                        <tr>
+                            <td>{{ $index + 1 }}</td>
+                            <td>{{ $set->student->username }}</td>
+                            <td>{{ $set->student->school_class->class_name }}</td>
+                            <td>{{ $set->student->name }}</td>
+                            <td>{{ $set->document_id }}</td>
+                            <td>{{ $set->return_id }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+            @if ($key === count($sets_chunk) - 1)
+                <div class="space-between">
+                    <div class="l-child" style="width: 49%;">
+                        總筆數：{{ count($list->sets) }} 筆
+                    </div>
+                    <div class="r-child" style="width: 50%;">總金額：NT$ {{ count($list->sets) * 500 }}</div>
+                </div>
+            @endif()
+            <div id="footer">
+                <div class="page-number"></div>
+            </div>
+        </div>
+        <div class="page-break"></div>
+    @endforeach
 </body>
 
 </html>

@@ -205,7 +205,11 @@ class PDFController extends Controller
             'cloth' => $set->cloth
         ];
 
-        $pdf = PDF::loadView('pdf/receipt', $data)->setPaper('a4', 'potrait');
+        $pdf = PDF::setOptions([
+            'isRemoteEnabled' => true, 
+            'isFontSubsettingEnabled' => true,
+            'isPhpEnabled' => true
+            ])->setPaper('a4', 'potrait')->loadView('pdf/receipt', $data);
 
         return $pdf->stream('歸還證明單-' . $set->student->username . '.pdf');
     }
@@ -215,7 +219,7 @@ class PDFController extends Controller
         if(!is_null($id)){
             $list = CashierList::find($id);
             
-            $state =  ['meow', '尚未還款', '還款中', '已還款'];
+            $state =  ['meow', '尚未送出', '還款中', '已還款'];
             if(!is_null($list)){
 
                 foreach ($list->sets as $item => $set) {
@@ -232,14 +236,28 @@ class PDFController extends Controller
 
                     $set['return_id'] = $order->payment_id.'-'.$pos;
                 }
-                // return $list;
+                
+
+                $year = today()->year - 1911;
+                if(today()->month <= 7){
+                    $year -= 1;
+                }
+
+                $sets = collect([...$list->sets, ...$list->sets, ...$list->sets, ...$list->sets, ...$list->sets, ...$list->sets, ...$list->sets, ...$list->sets]);
+
+                $type = $list->type === 0 ? '學士' : '碩士';
+
                 $data = [
                     'list' => $list,
+                    // 'sets_chunk' => $list->sets->chunk(30),
+                    'sets_chunk' => $sets->chunk(35),
                     'state' => $state[$list->status],
+                    'year' => $year,
+                    'type' => $type
                 ];
-
                 $pdf = PDF::loadView('pdf/refund', $data)->setPaper('a4', 'potrait');
-                return $pdf->stream('還款名單-' . $list->id . '-' . $state[$list->status] .'.pdf');
+
+                return $pdf->stream($year.'學年度'.$type.'學位服還款清單-'.$list->id.'-'.$state[$list->status] .'.pdf');
             }
         }
         return abort(404);
