@@ -215,3 +215,7 @@ Route::get('/return_pdf', [PDFController::class, 'returnPdf'])
 
 Route::get('/upload', fn() => Inertia::render('Admin/Setting/UploadFile'))
     ->name('upload');
+
+
+Route::get('p', [PDFController::class, 'preserveCount'])
+        ->name('preserve-test');

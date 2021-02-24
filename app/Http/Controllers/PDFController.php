@@ -90,11 +90,58 @@ class PDFController extends Controller
         return abort(404);
     }
 
+    public function preserveCount($orders){
+        // $Bachelor_start = TimeRange::getBachelorReceiveStartTime();
+        // $Bachelor_end = TimeRange::getBachelorReceiveEndTime();
+        // $start = today()->addDays(1) > $Bachelor_start ? $Bachelor_start : today()->addDays(1);
+        // $end = today()->addDays(1) > $Bachelor_end ? $Bachelor_end : today()->addDays(1);
+        // $orders = Order::whereDate('preserve', '=', $start)->get();
+        //     $orders = $orders->filter(function ($value, $key) {
+        //     return $value->owner->username[0] < "5";
+        // });
+
+        foreach ($orders as $index => $order) {
+            $sizeList = ['S' => 0, 'M' => 0, 'L' => 0, 'XL' => 0];
+            $colorList = ['白' => 0, '黃' => 0, '橘' => 0, '灰' => 0, '藍' => 0, '紫' => 0];
+
+            foreach ($order->sets as $i => $i_value) {
+                if($i === 0){
+                    $order['rep_color'] = $i_value->accessory->spec;
+                }
+                $colorList[$i_value->accessory->spec] += 1;
+                $sizeList[$i_value->cloth->spec] += 1;
+            }
+            $order['sizeList'] = $sizeList;
+            $order['colorList'] = $colorList;
+        }
+
+        $sorted_orders = [];
+        $colorList = ['白' => 0, '黃' => 0, '橘' => 0, '灰' => 0, '藍' => 0, '紫' => 0];
+        while (count($orders) !== 0) {
+            foreach ($colorList as $color => $value){
+                foreach ($orders as $index => $order) {
+                    if ($order->colorList[$color] > 0) {
+                        array_push($sorted_orders, $order);
+                        unset($orders[$index]);
+                    }
+                }
+            }
+        }
+        
+        return $sorted_orders;
+
+        // $data = [
+        //     'date' => $start->format('Y-m-d'),
+        //     'orders'=> $sorted_orders,
+        // ];
+
+        // $pdf = PDF::setOptions(['isRemoteEnabled' => true, 'isFontSubsettingEnabled' => true])->setPaper('a4', 'potrait')->loadView('pdf/preserve', $data);
+
+        // return $pdf->stream('測試.pdf');
+    }
+
     public function preservePdf()
     {
-        // $Bachelor_start = Carbon::createFromFormat('Y-m-d', TimeRange::getBachelorReceiveStartTime());
-        // $Bachelor_end = Carbon::createFromFormat('Y-m-d', TimeRange::getBachelorReceiveEndTime());
-
         $disk = Storage::disk('pdf');
         $Bachelor_start = TimeRange::getBachelorReceiveStartTime();
         $Bachelor_end = TimeRange::getBachelorReceiveEndTime();
@@ -117,11 +164,13 @@ class PDFController extends Controller
                     continue;
                 }
 
-                $order = Order::whereDate('preserve', '=', $start)->get();
-                $order = $order->filter(function ($value, $key) {
+                $orders = Order::whereDate('preserve', '=', $start)->get();
+                $orders = $orders->filter(function ($value, $key) {
                     return $value->owner->username[0] < "5";
                 });
-                $data = ['date' => $start->format('Y-m-d')];
+
+                $data = ['date' => $start->format('Y-m-d'), 'orders'=> $this->preserveCount($orders)];
+
                 $pdf = PDF::setOptions(['isRemoteEnabled' => true, 'isFontSubsettingEnabled' => true])->setPaper('a4', 'potrait')->loadView('pdf/preserve', $data);
                 $content = $pdf->download()->getOriginalContent();
                 Storage::put('pdf/preseve/學士服預約清單' . $start->format('Y-m-d') . '.pdf', $content);
@@ -153,11 +202,13 @@ class PDFController extends Controller
                     $start->addDays(1);
                     continue;
                 }
-                $order = Order::whereDate('preserve', '=', $start)->get();
-                $order = $order->filter(function ($value, $key) {
+                $orders = Order::whereDate('preserve', '=', $start)->get();
+                $orders = $orders->filter(function ($value, $key) {
                     return $value->owner->username[0] > "5";
                 });
-                $data = ['date' => $start->format('Y-m-d')];
+
+                $data = ['date' => $start->format('Y-m-d'), 'orders'=> $this->preserveCount($orders)];
+
                 $pdf = PDF::setOptions(['isRemoteEnabled' => true, 'isFontSubsettingEnabled' => true])->setPaper('a4', 'potrait')->loadView('pdf/preserve', $data);
                 $content = $pdf->download()->getOriginalContent();
                 Storage::put('pdf/preseve/碩士服預約清單' . $start->format('Y-m-d') . '.pdf', $content);
