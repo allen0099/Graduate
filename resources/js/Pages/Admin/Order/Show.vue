@@ -135,6 +135,15 @@
                                             'red--text'">{{ statusMsg[order.status_code] }}
                                             {{ !!order.deleted_at ? '(' + new Date(order.deleted_at).Format("yyyy-MM-dd HH:mm") +')' : '' }}</span>
                                     </v-col>
+                                    <v-col
+                                        v-if="order.status_code === Status.paid"
+                                        cols="12"
+                                        md="4"
+                                    >
+                                        <span>{{ '預約領衣日期：' }}</span>
+                                        <span :class=" order.preserve ? 'green--text text--accent--3' :
+                                            'red--text'">{{ order.preserve ? order.preserve : '未預約' }}</span>
+                                    </v-col>
                                 </v-row>
                             </v-card-text>
                         </v-card>

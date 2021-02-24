@@ -62,6 +62,10 @@
                         <v-col
                             cols="12"
                             md="4"
+                        >訂單編號：{{ order.document_id }}</v-col>
+                        <v-col
+                            cols="12"
+                            md="4"
                         >系級：{{ order.owner.school_class.class_name }}</v-col>
                         <v-col
                             cols="12"
