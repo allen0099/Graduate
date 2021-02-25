@@ -72,7 +72,18 @@
                                 <TimeSetting :time="time"></TimeSetting>
                                 <jet-section-border />
                             </div>
-                            <LocationSetting></LocationSetting>
+                            <LocationSetting
+                                title="付款作業"
+                                type="payment"
+                            ></LocationSetting>
+                            <LocationSetting
+                                title="領取作業"
+                                type="receive"
+                            ></LocationSetting>
+                            <LocationSetting
+                                title="歸還作業"
+                                type="return"
+                            ></LocationSetting>
                         </v-card-text>
                     </v-card>
                 </v-tab-item>
