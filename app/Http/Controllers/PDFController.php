@@ -60,7 +60,11 @@ class PDFController extends Controller
 
                 $paid_time = TimeRange::find(TimeRange::PAID_TIME);
                 $rec_time = TimeRange::find($result->owner->isMaster() ? TimeRange::M : TimeRange::B);
+
                 $return_location = Config::getReturnLocationValue();
+                $payment_location = Config::getPaymentLocationValue();
+                $receive_location = Config::getReceiveLocationValue();
+
                 $price = $result->owner->isMaster() ? Config::getMasterPrice() : Config::getBachelorPrice();
                 $margin = $result->owner->isMaster() ? Config::getMasterMarginPrice() : Config::getBachelorMarginPrice();
 
@@ -75,6 +79,8 @@ class PDFController extends Controller
                     'margin' => (int)$margin->value,
                     'cloth_type' => $cloth_type,
                     'return_location' => $return_location,
+                    'payment_location' => $payment_location,
+                    'receive_location' => $receive_location,
                     'paid_time' => $paid_time,
                     'rec_time' => $rec_time,
                     'department_stamp' => 'data:image/' . $D_type . ';base64,' . base64_encode($D_data),
@@ -82,8 +88,6 @@ class PDFController extends Controller
                 ];
 
                 $pdf = PDF::setOptions(['isRemoteEnabled' => true, 'isFontSubsettingEnabled' => true])->setPaper('a4', 'potrait')->loadView('pdf/order', $data);
-                // 'isFontSubsettingEnabled' => true
-                // $pdf = PDF::loadView('pdf/order', $data)->setPaper('a4', 'potrait');
                 return $pdf->stream('訂單-' . $result->owner->username . '.pdf');
             }
         }
@@ -386,6 +390,8 @@ class PDFController extends Controller
                     $D_type = pathinfo('picture/' .Config::getDepartmentStampFilename(), PATHINFO_EXTENSION);
                     $A_type = pathinfo('picture/' .Config::getAdminStampFilename(), PATHINFO_EXTENSION);
 
+                    $return_location = Config::getReturnLocationValue();
+
                     $data = [
                         'set' => $set,
                         'payment_id' => $order->payment_id,
@@ -393,10 +399,11 @@ class PDFController extends Controller
                         'pos' => $pos,
                         'department_stamp' => 'data:image/' . $D_type . ';base64,' . base64_encode($D_data),
                         'admin_stamp' => 'data:image/' . $A_type . ';base64,' . base64_encode($A_data),
-                        'return_time' => TimeRange::find(TimeRange::RET)
+                        'return_time' => TimeRange::find(TimeRange::RET),
+                        'return_location' => $return_location,
                     ];
 
-                    $pdf = PDF::setOptions(['isRemoteEnabled' => true, 'isFontSubsettingEnabled' => true, 'isHtml5ParserEnabled' => true])->setPaper('a4', 'potrait')->loadView('pdf/return', $data);
+                    $pdf = PDF::setOptions(['isRemoteEnabled' => true, 'isFontSubsettingEnabled' => true])->setPaper('a4', 'potrait')->loadView('pdf/return', $data);
 
                     return $pdf->stream('歸還證明單-' . $set->student->username . '.pdf');
                 }
