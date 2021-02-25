@@ -90,19 +90,11 @@ class PDFController extends Controller
         return abort(404);
     }
 
-    public function preserveCount($orders){
-        // $Bachelor_start = TimeRange::getBachelorReceiveStartTime();
-        // $Bachelor_end = TimeRange::getBachelorReceiveEndTime();
-        // $start = today()->addDays(1) > $Bachelor_start ? $Bachelor_start : today()->addDays(1);
-        // $end = today()->addDays(1) > $Bachelor_end ? $Bachelor_end : today()->addDays(1);
-        // $orders = Order::whereDate('preserve', '=', $start)->get();
-        //     $orders = $orders->filter(function ($value, $key) {
-        //     return $value->owner->username[0] < "5";
-        // });
+    public function preserveCount($orders, $type){
 
         foreach ($orders as $index => $order) {
-            $sizeList = ['S' => 0, 'M' => 0, 'L' => 0, 'XL' => 0];
-            $colorList = ['白' => 0, '黃' => 0, '橘' => 0, '灰' => 0, '藍' => 0, '紫' => 0];
+            $sizeList = $type === 0 ? ['S' => 0, 'M' => 0, 'L' => 0, 'XL' => 0] : ['M' => 0, 'L' => 0, 'XL' => 0];
+            $colorList = $type === 0 ? ['白' => 0, '藍' => 0] : ['白' => 0, '黃' => 0, '橘' => 0, '灰' => 0, '藍' => 0, '紫' => 0];
 
             foreach ($order->sets as $i => $i_value) {
                 if($i === 0){
@@ -116,7 +108,9 @@ class PDFController extends Controller
         }
 
         $sorted_orders = [];
-        $colorList = ['白' => 0, '黃' => 0, '橘' => 0, '灰' => 0, '藍' => 0, '紫' => 0];
+
+        $colorList = $type === 0 ? ['白' => 0, '藍' => 0] : ['白' => 0, '黃' => 0, '橘' => 0, '灰' => 0, '藍' => 0, '紫' => 0];
+
         while (count($orders) !== 0) {
             foreach ($colorList as $color => $value){
                 foreach ($orders as $index => $order) {
@@ -128,16 +122,7 @@ class PDFController extends Controller
             }
         }
         
-        return $sorted_orders;
-
-        // $data = [
-        //     'date' => $start->format('Y-m-d'),
-        //     'orders'=> $sorted_orders,
-        // ];
-
-        // $pdf = PDF::setOptions(['isRemoteEnabled' => true, 'isFontSubsettingEnabled' => true])->setPaper('a4', 'potrait')->loadView('pdf/preserve', $data);
-
-        // return $pdf->stream('測試.pdf');
+        return collect($sorted_orders);
     }
 
     public function preservePdf()
@@ -169,7 +154,28 @@ class PDFController extends Controller
                     return $value->owner->username[0] < "5";
                 });
 
-                $data = ['date' => $start->format('Y-m-d'), 'orders'=> $this->preserveCount($orders)];
+                $computed_orders = $this->preserveCount($orders, 0);
+
+                $sizeList = ['S' => 0, 'M' => 0, 'L' => 0, 'XL' => 0];
+                $colorList = ['白' => 0, '藍' => 0];
+
+                foreach ($computed_orders as $index => $order) {
+                    foreach ($sizeList as $spec => $value) {
+                        $sizeList[$spec] += $order->sizeList[$spec];
+                    }
+                    foreach ($colorList as $spec => $value) {
+                        $colorList[$spec] += $order->colorList[$spec];
+                    }
+                }
+
+
+                $data = [
+                    'type' => '學士',
+                    'date' => $start->format('Y-m-d'), 
+                    'orders_chunk' => $computed_orders->chunk(40),
+                    'sizeList' => $sizeList,
+                    'colorList' => $colorList,
+                ];
 
                 $pdf = PDF::setOptions(['isRemoteEnabled' => true, 'isFontSubsettingEnabled' => true])->setPaper('a4', 'potrait')->loadView('pdf/preserve', $data);
                 $content = $pdf->download()->getOriginalContent();
@@ -207,7 +213,27 @@ class PDFController extends Controller
                     return $value->owner->username[0] > "5";
                 });
 
-                $data = ['date' => $start->format('Y-m-d'), 'orders'=> $this->preserveCount($orders)];
+                $computed_orders = $this->preserveCount($orders, 1);
+
+                $sizeList = ['M' => 0, 'L' => 0, 'XL' => 0];
+                $colorList = ['白' => 0, '黃' => 0, '橘' => 0, '灰' => 0, '藍' => 0, '紫' => 0];
+
+                foreach ($computed_orders as $index => $order) {
+                    foreach ($sizeList as $spec => $value) {
+                        $sizeList[$spec] += $order->sizeList[$spec];
+                    }
+                    foreach ($colorList as $spec => $value) {
+                        $colorList[$spec] += $order->colorList[$spec];
+                    }
+                }
+
+                $data = [
+                    'type' => '碩士',
+                    'date' => $start->format('Y-m-d'), 
+                    'orders_chunk' => $computed_orders->chunk(40),
+                    'sizeList' => $sizeList,
+                    'colorList' => $colorList,
+                ];
 
                 $pdf = PDF::setOptions(['isRemoteEnabled' => true, 'isFontSubsettingEnabled' => true])->setPaper('a4', 'potrait')->loadView('pdf/preserve', $data);
                 $content = $pdf->download()->getOriginalContent();
@@ -298,9 +324,13 @@ class PDFController extends Controller
 
                 $type = $list->type === 0 ? '學士' : '碩士';
 
+                $margin = $list->type === 0 
+                        ? Config::getBachelorMarginPrice()
+                        : Config::getMasterMarginPrice();
+
                 $data = [
                     'list' => $list,
-                    // 'sets_chunk' => $list->sets->chunk(30),
+                    'margin' => $margin->value,
                     'sets_chunk' => $sets->chunk(35),
                     'state' => $state[$list->status],
                     'year' => $year,

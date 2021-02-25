@@ -145,13 +145,18 @@
                 </tbody>
             </table>
             @if ($key === count($sets_chunk) - 1)
-                <div class="space-between">
+                {{-- <div class="space-between">
                     <div class="l-child" style="width: 49%;">
                         總筆數：{{ count($list->sets) }} 筆
                     </div>
                     <div class="r-child" style="width: 50%;">總金額：NT$ {{ count($list->sets) * 500 }}</div>
-                </div>
-            @endif()
+                </div> --}}
+                <p>
+                    <span>總筆數：{{ count($list->sets) }} 筆&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                    <span>保證金({{ $type }})：新台幣 {{ $margin }} 元&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                    <span>總金額：新台幣 {{ count($list->sets) * $margin }} 元</span>
+                </p>
+            @endif
             <div id="footer">
                 <div class="page-number"></div>
             </div>

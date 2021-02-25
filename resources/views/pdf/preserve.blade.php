@@ -105,51 +105,76 @@
 </head>
 
 <body>
-    <div id="header">
-        <h1 class="title">109學年度學士服預約清單 {{ $date }}</h1>
-    </div>
-    <div id="main">
-        <table border="1">
-            <thead>
-                <tr>
-                    <th>訂單編號</th>
-                    <th>姓名</th>
-                    <th>學號</th>
-                    <th>代表色</th>
-                    <th> S </th>
-                    <th> M </th>
-                    <th> L </th>
-                    <th> XL</th>
-                    <th> 白 </th>
-                    <th> 黃 </th>
-                    <th> 橘 </th>
-                    <th> 灰 </th>
-                    <th> 藍 </th>
-                    <th> 紫 </th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($orders as $key => $order)
+    @foreach ($orders_chunk as $chunk_index => $orders)
+        <div id="header">
+            <h1 class="title">109學年度{{ $type }}服預約清單 {{ $date }}</h1>
+        </div>
+        <div id="main">
+            <table border="1">
+                <thead>
                     <tr>
-                        <td>{{ $order->document_id }}</td>
-                        <td>{{ $order->owner->name }}</td>
-                        <td style="text-align: center;">{{ $order->owner->username }}</td>
-                        <td style="text-align: center;">{{ $order->rep_color }}</td>
-                        <td style="text-align: center;">{{ $order->sizeList['S'] }}</td>
-                        <td style="text-align: center;">{{ $order->sizeList['M'] }}</td>
-                        <td style="text-align: center;">{{ $order->sizeList['L'] }}</td>
-                        <td style="text-align: center;">{{ $order->sizeList['XL'] }}</td>
-                        <td style="text-align: center;">{{ $order->colorList['白'] }}</td>
-                        <td style="text-align: center;">{{ $order->colorList['黃'] }}</td>
-                        <td style="text-align: center;">{{ $order->colorList['橘'] }}</td>
-                        <td style="text-align: center;">{{ $order->colorList['灰'] }}</td>
-                        <td style="text-align: center;">{{ $order->colorList['藍'] }}</td>
-                        <td style="text-align: center;">{{ $order->colorList['紫'] }}</td>
+                        <th></th>
+                        <th>訂單編號</th>
+                        <th>姓名</th>
+                        <th>學號</th>
+                        <th>代表色</th>
+                        @foreach (array_keys($sizeList) as $s_i => $size)
+                            <th> {{ $size }} </th>
+                        @endforeach
+                        @foreach (array_keys($colorList) as $c_i => $color)
+                            <th> {{ $color }} </th>
+                        @endforeach
                     </tr>
-                @endforeach
-            </tbody>
-        </table>
-    </div>
+                </thead>
+                <tbody>
+                    @foreach ($orders as $order_index => $order)
+                        <tr>
+                            <td> {{ $order_index + 1 }}</td>
+                            <td>{{ $order->document_id }}</td>
+                            <td>{{ $order->owner->name }}</td>
+                            <td style="text-align: center;">{{ $order->owner->username }}</td>
+                            <td style="text-align: center;">{{ $order->rep_color }}</td>
+                            @foreach (array_keys($sizeList) as $s_i => $size)
+                                <td style="text-align: center;">{{ $order->sizeList[$size] }}</td>
+                            @endforeach
+                            @foreach (array_keys($colorList) as $c_i => $color)
+                                <td style="text-align: center;">{{ $order->colorList[$color] }}</td>
+                            @endforeach
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+            @if ($chunk_index === count($orders_chunk) - 1)
+                <p>{{ $type }}服總計(件)</p>
+                <table border="1">
+                    <thead>
+                        <tr>
+                            @foreach (array_keys($sizeList) as $s_i => $size)
+                                <th> {{ $size }} </th>
+                            @endforeach
+                            @foreach (array_keys($colorList) as $c_i => $color)
+                                <th> {{ $color }} </th>
+                            @endforeach
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            @foreach ($sizeList as $key => $value)
+                                <td style="text-align: center;"> {{ $value }} </td>
+                            @endforeach
+                            @foreach ($colorList as $key => $value)
+                                <td style="text-align: center;"> {{ $value }} </td>
+                            @endforeach
+                        </tr>
+                    </tbody>
+                </table>
+            @endif
+            <div id="footer">
+                <div class="page-number"></div>
+            </div>
+        </div>
+        <div class="page-break"></div>
+    @endforeach
 </body>
 
 </html>
