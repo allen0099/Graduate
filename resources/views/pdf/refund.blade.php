@@ -113,7 +113,7 @@
         <div id="main">
             <div class="space-between">
                 <div class="l-child" style="width: 17%;">
-                    編號：{{ $year }}-{{ $list->id }}
+                    編號：{{ $list->id }}
                 </div>
                 <div class="l-child" style="width: 51%;">
                     成立日期：2020-10-02 11:33

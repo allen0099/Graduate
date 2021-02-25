@@ -320,8 +320,6 @@ class PDFController extends Controller
                     $year -= 1;
                 }
 
-                $sets = collect([...$list->sets, ...$list->sets, ...$list->sets, ...$list->sets, ...$list->sets, ...$list->sets, ...$list->sets, ...$list->sets]);
-
                 $type = $list->type === 0 ? '學士' : '碩士';
 
                 $margin = $list->type === 0 
@@ -331,7 +329,7 @@ class PDFController extends Controller
                 $data = [
                     'list' => $list,
                     'margin' => $margin->value,
-                    'sets_chunk' => $sets->chunk(35),
+                    'sets_chunk' => $list->sets->chunk(35),
                     'state' => $state[$list->status],
                     'year' => $year,
                     'type' => $type
