@@ -206,19 +206,20 @@
                     </th>
                     <ol class="remark">
                         <li>
-                            <p>請在繳費期限{{ $paid_time->start_time->format('Y/m/d') }}至{{ $paid_time->end_time->format('Y/m/d') }}止，至校園繳費機進行繳費，繳費完成後請持繳費單據與本單至{{ $location }}完成繳費登記。
+                            <p>請在繳費期限{{ $paid_time->start_time->format('Y/m/d') }}至{{ $paid_time->end_time->format('Y/m/d') }}止，至校園繳費機進行繳費，繳費完成後請持繳費單據與本單至{{ $payment_location }}完成繳費登記。
                             </p>
                         </li>
                         <li>
-                            <p>請於{{ $rec_time->start_time->format('Y/m/d') }}至{{ $rec_time->end_time->format('Y/m/d') }}下午2時至4時，持本單學生存根聯至{{ $location }}領取{{ $cloth_type }}。
+                            <p>請於{{ $rec_time->start_time->format('Y/m/d') }}至{{ $rec_time->end_time->format('Y/m/d') }}，持本單學生存根聯至{{ $receive_location }}領取{{ $cloth_type }}。
                             </p>
                         </li>
                         <li>
                             <p>於領取期限前兩日至學位服租借網站可以預約領取衣服的日期，詳細請看網站說明。</p>
                         </li>
-                        <li>
+                        {{-- <li>
                             <p>於領取期限前兩日至學位服租借網站可以預約領取衣服的日期，詳細請看網站說明。</p>
-                        </li>
+                        </li> --}}
+                        <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
                     </ol>
                 </table>
             </div>

@@ -178,7 +178,7 @@
             </th>
             <ol class="remark">
                 <li>
-                    <p>請於{{ $return_time->end_time->format('Y/m/d') }}前，持本單與所借用服飾至守謙會議中心HC308辦理歸還手續。
+                    <p>請於{{ $return_time->end_time->format('Y/m/d') }}前，持本單與所借用服飾至{{ $return_location }}辦理歸還手續。
                     </p>
                 </li>
                 <li>
