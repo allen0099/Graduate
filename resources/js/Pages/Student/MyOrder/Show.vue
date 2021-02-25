@@ -192,6 +192,31 @@
                                         <span :class=" order.preserve ? 'green--text text--accent--3' :
                                             'red--text'">{{ order.preserve ? order.preserve : '未預約' }}</span>
                                     </v-col>
+                                    <v-col
+                                        cols="12"
+                                        v-if="order.status_code <= Status.received"
+                                    >
+                                        <span>備註：</span>
+                                        <span v-if="order.status_code===Status.created">
+                                            請在繳費期限 {{ payment_time_range.start_time }} 至
+                                            {{ payment_time_range.end_time }}
+                                            止，至校園繳費機進行繳費，繳費完成後請持繳費單據與本單至{{ $page.configs.payment_location }}完成繳費登記。</span>
+                                        <span
+                                            v-if="order.status_code === Status.paid && order.owner.username[0] <= '5'">
+                                            請在領取期限 {{ B_receive_time_range.start_time }} 至
+                                            {{ B_receive_time_range.end_time }}
+                                            止，持借用單之學生存根聯至{{ $page.configs.receive_location }}領取學士服。
+                                        </span>
+                                        <span v-if="order.status_code === Status.paid && order.owner.username[0] > '5'">
+                                            請在領取期限 {{ M_receive_time_range.start_time }} 至
+                                            {{ M_receive_time_range.end_time }}
+                                            止，持借用單之學生存根聯至{{ $page.configs.receive_location }}領取碩士服。
+                                        </span>
+                                        <span v-if="order.status_code===Status.received">
+                                            請在歸還期限 {{ return_time_range.start_time }} 至 {{ return_time_range.end_time }}
+                                            止，下載並填寫歸還證明單，並持單至{{ $page.configs.return_location }}辦理歸還手續。
+                                        </span>
+                                    </v-col>
                                 </v-row>
                             </v-card-text>
                         </v-card>
@@ -348,7 +373,7 @@
                             <span class="red--text">預約後即不允許修改。
                             </span>
                         </li>
-                        <li>領取當天請攜帶領據，並且確認領據上的每一位同學都有簽名。
+                        <li>領取當天請攜帶「借用訂單之學生存根聯」。
                         </li>
                     </ol>
                 </v-card-text>
@@ -491,6 +516,22 @@
         },
         name: "StudentMyorder",
         data: () => ({
+            payment_time_range: {
+                start_time: '',
+                end_time: ''
+            },
+            B_receive_time_range: {
+                start_time: '',
+                end_time: ''
+            },
+            M_receive_time_range: {
+                start_time: '',
+                end_time: ''
+            },
+            return_time_range: {
+                start_time: '',
+                end_time: ''
+            },
             username: '',
             cancelDialog: false,
             reservationDialog: false,
@@ -575,6 +616,19 @@
                     return fmt;
                 }
 
+                let pay = this.$page.configs.time_range[1]
+                let B_rev = this.$page.configs.time_range[2]
+                let M_rev = this.$page.configs.time_range[3]
+                let ret = this.$page.configs.time_range[4]
+
+                this.payment_time_range.start_time = new Date(pay.start_time).Format('yyyy/MM/dd')
+                this.payment_time_range.end_time = new Date(pay.end_time).Format('yyyy/MM/dd')
+                this.B_receive_time_range.start_time = new Date(B_rev.start_time).Format('yyyy/MM/dd')
+                this.B_receive_time_range.end_time = new Date(B_rev.end_time).Format('yyyy/MM/dd')
+                this.M_receive_time_range.start_time = new Date(M_rev.start_time).Format('yyyy/MM/dd')
+                this.M_receive_time_range.end_time = new Date(M_rev.end_time).Format('yyyy/MM/dd')
+                this.return_time_range.start_time = new Date(ret.start_time).Format('yyyy/MM/dd')
+                this.return_time_range.end_time = new Date(ret.end_time).Format('yyyy/MM/dd')
 
                 let today = new Date(new Date().Format("yyyy-MM-dd") + " 00:00:00")
 
