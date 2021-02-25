@@ -19,8 +19,8 @@
                 <div class="text-sm text-gray-600 mb-3">※ 登入帳號為學號，密碼預設學號後六碼。</div>
                 <div>
                     <x-jet-label for="username" value="{{ '帳號' }}" />
-                    <x-jet-input id="username" class="block mt-1 w-full" type="string" name="username"
-                        :value="old('username')" required autofocus />
+                    <x-jet-input id="username" class="block mt-1 w-full" type="text" name="username"
+                        :value="old('username')" required autofocus autocomplete="username" />
                 </div>
 
                 <div class="mt-4">
