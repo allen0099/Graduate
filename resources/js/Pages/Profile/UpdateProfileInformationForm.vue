@@ -193,14 +193,24 @@
             </div>
             <v-dialog
                 v-model="help"
-                max-width="850"
+                max-width="820"
             >
                 <v-card>
                     <v-card-title>
                         <v-icon large>mdi-help-circle-outline</v-icon><span class="ml-3">幫助</span>
                     </v-card-title>
-                    <v-card-text>
-                        文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字
+                    <v-card-text class="font-weight-bold">
+                        <ol
+                            class="mt-2 body-1 font-weight-bold"
+                            style="list-style: decimal;"
+                        >
+                            <li>
+                                請確實填寫「出納組付款查詢平台」之基本資料與金融帳戶，以利於本服務日後進行保證金還款作業。
+                            </li>
+                            <li>
+                                金融帳號資料建議填寫個人之郵局金融帳戶。
+                            </li>
+                        </ol>
                     </v-card-text>
                     <v-card-actions>
                         <v-spacer></v-spacer>
