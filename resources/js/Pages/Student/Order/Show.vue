@@ -120,13 +120,13 @@
                                 <template v-slot:top>
                                     <v-toolbar flat>
                                         <v-row
-                                            class="mt-3"
+                                            class="mt-3 mr-xs-2"
                                             justify="end"
                                             no-gutters
                                         >
                                             <v-col
-                                                cols="7"
-                                                sm="6"
+                                                cols="10"
+                                                sm="7"
                                                 md="5"
                                             >
                                                 <v-text-field
@@ -156,24 +156,34 @@
                                     </v-toolbar>
                                 </template>
                                 <template v-slot:item.color="{ item }">
-                                    <v-select
-                                        v-model="item.color"
-                                        :items="accessories.filter(x=> x.remain_quantity > 0)"
-                                        item-text="spec"
-                                        item-value="spec"
-                                        :rules="[v => !!v || '不能為空']"
-                                        required
-                                    ></v-select>
+                                    <v-row dense>
+                                        <v-col cols="auto">
+                                            <v-select
+                                                v-if="!item.read_only"
+                                                v-model="item.color"
+                                                :items="accessories.filter(x=> x.remain_quantity > 0)"
+                                                item-text="spec"
+                                                item-value="spec"
+                                                :rules="[v => !!v || '不能為空']"
+                                                required
+                                            ></v-select>
+                                            <span v-else>{{ item.color }}</span>
+                                        </v-col>
+                                    </v-row>
                                 </template>
                                 <template v-slot:item.size="{ item }">
-                                    <v-select
-                                        v-model="item.size"
-                                        :items="cloths.filter(x=> x.remain_quantity > 0)"
-                                        item-text="spec"
-                                        item-value="spec"
-                                        :rules="[v => !!v || '不能為空']"
-                                        required
-                                    ></v-select>
+                                    <v-row dense>
+                                        <v-col cols="auto">
+                                            <v-select
+                                                v-model="item.size"
+                                                :items="cloths.filter(x=> x.remain_quantity > 0)"
+                                                item-text="spec"
+                                                item-value="spec"
+                                                :rules="[v => !!v || '不能為空']"
+                                                required
+                                            ></v-select>
+                                        </v-col>
+                                    </v-row>
                                 </template>
                                 <template v-slot:item.actions="{ item }">
                                     <v-icon
@@ -338,17 +348,13 @@
                                 class="mt-2"
                                 style="list-style: decimal;"
                             >
-                                <li>5a6s4d6a4sd564as65d4a6s54d65as4d56as564d56as4d56a4s564d56a45a4sd54as56d46as54d56a4s5d6
+                                <li>
+                                    <p>請在繳費期限{{ payment_time_range.start_time }}至{{ payment_time_range.end_time }}止，至校園繳費機進行繳費，繳費完成後請持繳費單據與本訂單至{{ $page.configs.payment_location }}完成繳費登記。
+                                    </p>
                                 </li>
-                                <li>5a6s4d6a4sd564as65d4a6s54d65as4d56as564d56as4d56a4s564d56a45a4sd54as56d46as54d56a4s5d6
-                                </li>
-                                <li>5a6s4d6a4sd564as65d4a6s54d65as4d56as564d56as4d56a4s564d56a45a4sd54as56d46as54d56a4s5d6
-                                </li>
-                                <li>5a6s4d6a4sd564as65d4a6s54d65as4d56as564d56as4d56a4s564d56a45a4sd54as56d46as54d56a4s5d6
-                                </li>
-                                <li>5a6s4d6a4sd564as65d4a6s54d65as4d56as564d56as4d56a4s564d56a45a4sd54as56d46as54d56a4s5d6
-                                </li>
-                                <li>5a6s4d6a4sd564as65d4a6s54d65as4d56as564d56as4d56a4s564d56a45a4sd54as56d46as54d56a4s5d6
+                                <li>
+                                    <p>請於{{ receive_time_range.start_time }}至{{ receive_time_range.end_time }}，持本單學生存根聯至{{ $page.configs.receive_location }}領取{{ choose.name }}。
+                                    </p>
                                 </li>
                             </ol>
                         </v-card-text>
@@ -390,6 +396,27 @@
                                     {{ $page.orders.set.accessory.name }}顏色：{{ $page.orders.set.accessory.spec }}
                                 </v-col>
                             </v-row>
+                            <v-row
+                                dense
+                                class="mt-5"
+                            >
+                                <v-col cols="12">
+                                    備註
+                                </v-col>
+                            </v-row>
+                            <ol
+                                class="mt-2"
+                                style="list-style: decimal;"
+                            >
+                                <li>
+                                    <p>請在繳費期限{{ payment_time_range.start_time }}至{{ payment_time_range.end_time }}止，至校園繳費機進行繳費，繳費完成後請持繳費單據與本單至{{ $page.configs.payment_location }}完成繳費登記。
+                                    </p>
+                                </li>
+                                <li>
+                                    <p>請於{{ receive_time_range.start_time }}至{{ receive_time_range.end_time }}，持本單學生存根聯至{{ $page.configs.receive_location }}領取{{ choose.name }}。
+                                    </p>
+                                </li>
+                            </ol>
                         </v-card-text>
                     </v-card>
 
@@ -409,7 +436,7 @@
                             class="mb-3 mr-3"
                             download
                         >
-                            下載訂單明細
+                            下載訂單
                         </v-btn>
                         <v-btn
                             color="primary"
@@ -468,6 +495,21 @@
         </v-snackbar>
     </VuetifyLayout>
 </template>
+
+
+<style>
+    /* .v-select.v-input--is-dirty input {
+        display: none;
+        min-width: 20px;
+    }
+
+    .v-select__selection {
+        max-width: none;
+        min-width: 20px;
+    } */
+
+</style>
+
 <script>
     import VuetifyLayout from '@/Layouts/VuetifyLayout'
     import * as easings from 'vuetify/es5/services/goto/easing-patterns'
@@ -506,6 +548,14 @@
                 order_check: false,
                 msg: '',
                 owner: null,
+                payment_time_range: {
+                    start_time: '',
+                    end_time: ''
+                },
+                receive_time_range: {
+                    start_time: '',
+                    end_time: ''
+                },
                 choose: {
                     type: 1,
                     name: '學士服',
@@ -531,7 +581,7 @@
                         text: '學號',
                         align: 'start',
                         value: 'stu_id',
-                        width: 100,
+                        width: 80,
                         sortable: false,
                     },
                     {
@@ -549,7 +599,7 @@
                     {
                         text: '配件顏色',
                         value: 'color',
-                        width: 20,
+                        width: 50,
                         sortable: false
                     },
                     {
@@ -571,7 +621,8 @@
                     name: '',
                     department: '',
                     color: '',
-                    size: ''
+                    size: '',
+                    read_only: false,
                 },
                 form: this.$inertia.form({
                     '_method': 'POST',
@@ -625,11 +676,20 @@
                     this.price = parseInt(this.$page.configs.master_price, 10);
                     this.margin = parseInt(this.$page.configs.master_margin_price, 10);
                 }
+
+                let x = this.$page.configs.time_range[1]
+                let y = this.$page.configs.time_range[this.$page.user.username[0] < "5" ? 2 : 3]
+                this.payment_time_range.start_time = new Date(x.start_time).Format('yyyy/MM/dd')
+                this.payment_time_range.end_time = new Date(x.end_time).Format('yyyy/MM/dd')
+                this.receive_time_range.start_time = new Date(y.start_time).Format('yyyy/MM/dd')
+                this.receive_time_range.end_time = new Date(y.end_time).Format('yyyy/MM/dd')
+
                 let order_item = Object.assign({}, this.edited_item)
                 order_item.stu_id = this.$page.user.username
                 order_item.name = this.$page.user.name
                 order_item.department = this.$page.user.school_class.class_name
                 order_item.color = this.$page.user.school_class.default_color
+                order_item.read_only = !!this.$page.user.school_class.default_color
                 this.order.push(order_item)
 
                 let open_time = this.$page.configs.time_range.find(x => x.id == 1)
@@ -667,6 +727,15 @@
                     this.snackbar = true
                     return
                 }
+
+                if (this.order.length >= 10) {
+                    this.student_id = ''
+                    this.msg = '最多只能訂 10 件'
+                    this.snackbar_true = false
+                    this.snackbar = true
+                    return
+                }
+
                 if (this.order.find(x => x.stu_id == this.student_id)) {
                     this.student_id = ''
                     this.msg = '此學號已在訂單中'
@@ -701,6 +770,7 @@
                                 order_item.department = res.data.school_class.class_name
                                 order_item.color =
                                     res.data.school_class.default_color
+                                order_item.read_only = !!res.data.school_class.default_color
                                 this.order.push(order_item)
                                 this.student_id = ''
                                 this.msg = '新增成功'
