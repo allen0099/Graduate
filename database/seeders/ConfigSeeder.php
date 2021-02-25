@@ -15,6 +15,14 @@ class ConfigSeeder extends Seeder
     public function run()
     {
         DB::table('configs')->insert([
+            'key' => '付款地點',
+            'value' => '守謙會議中心HC308事務整備組',
+        ]);
+        DB::table('configs')->insert([
+            'key' => '領取地點',
+            'value' => '守謙會議中心HC308事務整備組',
+        ]);
+        DB::table('configs')->insert([
             'key' => '歸還地點',
             'value' => '守謙會議中心HC308事務整備組',
         ]);

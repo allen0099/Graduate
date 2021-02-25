@@ -50,7 +50,9 @@ class AppServiceProvider extends ServiceProvider
                 if (Auth::check()) {
                     return [
                         'time_range' => TimeRange::all(),
-                        'location' => Config::getReturnLocationValue(),
+                        'return_location' => Config::getReturnLocationValue(),
+                        'payment_location' => Config::getPaymentLocationValue(),
+                        'receive_location' => Config::getReceiveLocationValue(),
                         'bachelor_price' => Config::getBachelorPrice()->value,
                         'master_price' => Config::getMasterPrice()->value,
                         'bachelor_margin_price' => Config::getBachelorMarginPrice()->value,

@@ -5,7 +5,7 @@
         class="mt-5"
     >
         <template #title>
-            {{ '領取與歸還地點設定' }}
+            {{ title + '地點設定' }}
         </template>
 
         <!-- form grid-cols-6 -->
@@ -13,11 +13,11 @@
             <div class="col-span-6 sm:col-span-4">
                 <div class="col-span-6 sm:col-span-4">
                     <jet-label
-                        for="location"
+                        :for="type"
                         value="地點"
                     />
                     <jet-input
-                        id="location"
+                        :id="type"
                         type="text"
                         class="mt-1 block w-full"
                         v-model="location"
@@ -67,6 +67,7 @@
             JetInputError,
             JetInput,
         },
+        props: ['title', 'type'],
         data() {
             return {
                 dates: [], // new Date().toISOString().substr(0, 10)
@@ -75,6 +76,7 @@
                 form: this.$inertia.form({
                     '_method': 'POST',
                     location: '',
+                    type: this.type,
                 }, {
                     bag: 'updateLocation',
                 }),
@@ -86,7 +88,7 @@
                 this.form.post('/location');
             },
             init() {
-                this.location = this.$page.configs.location
+                this.location = this.$page.configs[this.type + '_location']
             }
         },
         mounted() {

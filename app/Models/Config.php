@@ -93,6 +93,26 @@ class Config extends Model
         return Config::where('key', '歸還地點')->first()->value;
     }
 
+    public static function getPaymentLocation()
+    {
+        return Config::where('key', '付款地點')->first();
+    }
+
+    public static function getPaymentLocationValue()
+    {
+        return Config::where('key', '付款地點')->first()->value;
+    }
+
+    public static function getReceiveLocation()
+    {
+        return Config::where('key', '領取地點')->first();
+    }
+
+    public static function getReceiveLocationValue()
+    {
+        return Config::where('key', '領取地點')->first()->value;
+    }
+
     public static function getPdfName(string $name)
     {
         return Config::where('key', $name)->first()->value;

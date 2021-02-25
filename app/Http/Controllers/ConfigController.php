@@ -56,17 +56,29 @@ class ConfigController extends Controller
 
     public function updateLocation(Request $request)
     {
-        // flash?
-        // https://github.com/inertiajs/pingcrm/commit/f61d969aa59fc89255f26f55e4dbe5f6eea1eefb
         $request->validate([
             'location' => 'required|string',
+            'type' => 'required|in:return,payment,receive',
         ]);
+        
+        $type = $request->input('type');
+        $msg = '';
 
-        $location = Config::getReturnLocation();
+        if($type === 'return') {
+            $location = Config::getReturnLocation();
+            $msg = '歸還';
+        } else if($type === 'payment') {
+            $location = Config::getPaymentLocation();
+            $msg = '付款';
+        } else if($type === 'receive') {
+            $location = Config::getReceiveLocation();
+            $msg = '領取';
+        }
+
         $location->value = $request->input('location');
         $location->save();
 
-        return redirect()->back()->with('success', '歸還地點更新成功！');
+        return redirect()->back()->with('success', $msg.'地點更新成功！');
     }
 
     public function editSetPrice(Request $request)

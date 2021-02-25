@@ -60,7 +60,7 @@ class PDFController extends Controller
 
                 $paid_time = TimeRange::find(TimeRange::PAID_TIME);
                 $rec_time = TimeRange::find($result->owner->isMaster() ? TimeRange::M : TimeRange::B);
-                $location = Config::getReturnLocation();
+                $return_location = Config::getReturnLocationValue();
                 $price = $result->owner->isMaster() ? Config::getMasterPrice() : Config::getBachelorPrice();
                 $margin = $result->owner->isMaster() ? Config::getMasterMarginPrice() : Config::getBachelorMarginPrice();
 
@@ -74,7 +74,7 @@ class PDFController extends Controller
                     'price' => (int)$price->value,
                     'margin' => (int)$margin->value,
                     'cloth_type' => $cloth_type,
-                    'location' => $location->value,
+                    'return_location' => $return_location,
                     'paid_time' => $paid_time,
                     'rec_time' => $rec_time,
                     'department_stamp' => 'data:image/' . $D_type . ';base64,' . base64_encode($D_data),
