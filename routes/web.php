@@ -37,10 +37,6 @@ Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
 // Gate is registered in \App\Providers\AuthServiceProvider.php
 // Global Inertia shared data is in \app\Providers\AppServiceProvider.php
 
-// return use helper function below, backend test data in this route
-Route::get('/test', fn() => Inertia::render('HelloWorld', ['name' => 'bro, this is not cool']))
-    ->name('test');
-
 Route::get('find_pdf', [PDFController::class, 'findPdf'])
     ->name('find_pdf');
 
@@ -63,6 +59,15 @@ Route::group([
 
     Route::post('/cancel_order', [OrderController::class, 'cancelOrder'])
         ->name('cancel_order');
+
+    Route::get('preserve', [PDFController::class, 'preservePdf'])
+        ->name('preserve-pdf');
+
+    Route::get('/return_pdf', [PDFController::class, 'returnPdf'])
+        ->name('return_pdf');
+
+    Route::get('/receipt_pdf', [PDFController::class, 'receiptPdf'])
+        ->name('receipt_pdf');
 
     Route::apiResource('order', OrderController::class, ['only' => ['index', 'store', 'update']]);
     Route::apiResource('item', ItemController::class, ['only' => ['index']]);
@@ -133,9 +138,6 @@ Route::group([
     Route::post('/upload_student', [UserController::class, 'uploadStudentList'])
         ->name('upload_student');
 
-    Route::get('/meow', fn() => Inertia::render('Test', ['name' => 'Test meow']))
-        ->name('meow'); // routes name as 'admin.meow'
-
     Route::get('/admin/home', fn() => Inertia::render('Admin/Home/Show'))
         ->name('home');
 
@@ -198,24 +200,7 @@ Route::group([
         ->name('order_owner');
 });
 
-Route::middleware(['auth:sanctum'])->get('/meow', function () {
-    return Inertia::render('Test', ['name' => 'Test meow']);
-})->name('meow'); // new dashboard
-
 Route::middleware(['auth:sanctum'])->get('index', RedirectAfterLoginController::class);
 
-Route::get('preserve', [PDFController::class, 'preservePdf'])
-    ->name('preserve-pdf');
-
-Route::get('/receipt_pdf', [PDFController::class, 'receiptPdf'])
-    ->name('receipt_pdf');
-
-Route::get('/return_pdf', [PDFController::class, 'returnPdf'])
-    ->name('return_pdf');
-
-Route::get('/upload', fn() => Inertia::render('Admin/Setting/UploadFile'))
-    ->name('upload');
-
-
 Route::get('p', [PDFController::class, 'preserveCount'])
-        ->name('preserve-test');
+    ->name('preserve-test');
