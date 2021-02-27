@@ -14,7 +14,6 @@
                     <v-text-field
                         v-model="$page.search"
                         label="訂單搜尋 (學號、訂單編號或付款單據)"
-                        single-line
                         hide-details
                         clearable
                         @keyup.enter="search_submit"
@@ -280,8 +279,6 @@
                                 <v-text-field
                                     v-model="order.payment_id"
                                     label="付款單據編號"
-                                    single-line
-                                    hide-details
                                 ></v-text-field>
                             </v-col>
                             <v-col
@@ -314,7 +311,7 @@
                             color="primary"
                             text
                             @click="edit_save"
-                            :disabled="!order.payment_id"
+                            :disabled="!order.payment_id && order.status_code > 1"
                         >
                             儲存
                         </v-btn>
