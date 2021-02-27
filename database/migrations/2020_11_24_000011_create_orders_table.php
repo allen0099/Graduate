@@ -26,8 +26,6 @@ class CreateOrdersTable extends Migration
             $table->integer('status_code');
             $table->date('preserve')->nullable();
 
-            $table->boolean('lock')->default(false);
-
             $table->softDeletes();
             $table->timestamps();
         });
