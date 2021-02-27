@@ -243,7 +243,6 @@
                 this.pageLoading = true
                 let form_data = new FormData()
                 form_data.append('csv_file', this.file)
-                console.log(this.file)
                 await apiUploadStudent(form_data).then(res => {
                     if (res.status === 204) {
                         this.msg = '上傳成功'

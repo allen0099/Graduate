@@ -531,7 +531,6 @@
                     this.form.document_id = this.order.document_id
                     this.form.payment_id = this.order.payment_id
                     this.form.owner_username = this.order.owner.username
-                    console.log(this.order.status_code)
                     this.form.patch('/order/' + this.order.id).then(() => {
                         this.edit_cancel()
                         this.msg = this.$page.errorBags.length > 0 ? '發生錯誤' : ''

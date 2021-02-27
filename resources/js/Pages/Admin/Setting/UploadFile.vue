@@ -39,7 +39,6 @@
             async upload() {
                 let form_data = new FormData()
                 form_data.append('file', this.file)
-                console.log(form_data)
                 await apiUploadFile(form_data).then(res => {
                     this.res = res.data
                 })

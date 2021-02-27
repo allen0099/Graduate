@@ -633,7 +633,6 @@
                 for (let i = start_time; i <= end_time; i = new Date(i.getTime() + 24 * 60 * 60 * 1000)) {
                     if (x <= i) {
                         this.timeList.push(i.Format("yyyy-MM-dd"))
-                        console.log(i)
                     }
                 }
             },
