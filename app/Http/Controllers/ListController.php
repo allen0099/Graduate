@@ -130,4 +130,18 @@ class ListController extends Controller
 
         return $list->fresh();
     }
+
+    public function lockList(Request $request)
+    {
+        $request->validate([
+            'id' => ['required', 'exists:lists,id'],
+        ]);
+
+        $list = CashierList::find($request->id);
+
+        $list->lock = true;
+        $list->save();
+
+        return response()->noContent();
+    }
 }
