@@ -93,7 +93,6 @@
                             <v-text-field
                                 v-model="order.payment_id"
                                 label="付款單據編號"
-                                single-line
                                 hide-details
                                 autofocus
                             ></v-text-field>

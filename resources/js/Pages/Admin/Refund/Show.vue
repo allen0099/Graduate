@@ -285,7 +285,6 @@
                         v-model="search_sets_search"
                         class="mb-3"
                         label="搜尋"
-                        single-line
                         hide-details
                         clearable
                     ></v-text-field>

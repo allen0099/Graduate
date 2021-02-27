@@ -101,7 +101,6 @@
                             <v-text-field
                                 v-model="search"
                                 label="搜尋"
-                                single-line
                                 hide-details
                             ></v-text-field>
                         </v-col>
