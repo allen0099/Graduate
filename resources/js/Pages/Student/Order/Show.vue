@@ -38,8 +38,8 @@
                                         :href="`${route('find_pdf')}?name=學位服樣式`"
                                         download
                                     >
-                                        <v-icon small>mdi-information-variant</v-icon>
-                                        <span class="ml-2">下載學位服樣式</span>
+                                        <v-icon small>mdi-cloud-download-outline</v-icon>
+                                        <span class="ml-xs-2">下載學位服樣式</span>
                                     </v-btn>
                                 </span>
                             </v-card-title>
@@ -159,7 +159,6 @@
                                     <v-row dense>
                                         <v-col cols="auto">
                                             <v-select
-                                                v-if="!item.read_only"
                                                 v-model="item.color"
                                                 :items="accessories.filter(x=> x.remain_quantity > 0)"
                                                 item-text="spec"
@@ -167,7 +166,6 @@
                                                 :rules="[v => !!v || '不能為空']"
                                                 required
                                             ></v-select>
-                                            <span v-else>{{ item.color }}</span>
                                         </v-col>
                                     </v-row>
                                 </template>
@@ -498,15 +496,9 @@
 
 
 <style>
-    /* .v-select.v-input--is-dirty input {
-        display: none;
-        min-width: 20px;
+    .v-select__selections input {
+        max-width: 80px;
     }
-
-    .v-select__selection {
-        max-width: none;
-        min-width: 20px;
-    } */
 
 </style>
 
@@ -622,7 +614,6 @@
                     department: '',
                     color: '',
                     size: '',
-                    read_only: false,
                 },
                 form: this.$inertia.form({
                     '_method': 'POST',
@@ -689,7 +680,6 @@
                 order_item.name = this.$page.user.name
                 order_item.department = this.$page.user.school_class.class_name
                 order_item.color = this.$page.user.school_class.default_color
-                order_item.read_only = !!this.$page.user.school_class.default_color
                 this.order.push(order_item)
 
                 let open_time = this.$page.configs.time_range.find(x => x.id == 1)
@@ -768,9 +758,7 @@
                                 order_item.stu_id = res.data.username
                                 order_item.name = res.data.name
                                 order_item.department = res.data.school_class.class_name
-                                order_item.color =
-                                    res.data.school_class.default_color
-                                order_item.read_only = !!res.data.school_class.default_color
+                                order_item.color = res.data.school_class.default_color
                                 this.order.push(order_item)
                                 this.student_id = ''
                                 this.msg = '新增成功'
