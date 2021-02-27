@@ -57,18 +57,18 @@ class StoreOrder extends FormRequest
             'sets.*.accessory' => [
                 'exists:items,id',
                 function ($attribute, $value, $fail) use ($request) {
-                    $index = explode('.', $attribute)[1];
+                    // $index = explode('.', $attribute)[1];
 
-                    $username = $request->sets[$index]['set_owner'];
+                    // $username = $request->sets[$index]['set_owner'];
 
-                    $user = User::where('username', $username)->first();
-                    $school_class = $user->school_class;
+                    // $user = User::where('username', $username)->first();
+                    // $school_class = $user->school_class;
 
-                    $accessory = Item::find($value);
+                    // $accessory = Item::find($value);
 
-                    if (!is_null($school_class->default_color) && $accessory->spec !== $school_class->default_color) {
-                        $fail(__('validation.color_not_match'));
-                    }
+                    // if (!is_null($school_class->default_color) && $accessory->spec !== $school_class->default_color) {
+                    //   $fail(__('validation.color_not_match'));
+                    // }
 
                     if (!in_array($value, Item::accessoryIds())) {
                         $fail(__('validation.item_set_wrong'));
