@@ -256,7 +256,7 @@
                     <v-btn
                         color="primary"
                         text
-                        @click="save"
+                        @click="open_alert"
                         :disabled="order.status_code != Status.paid"
                     >
                         領取
@@ -280,6 +280,60 @@
                             class="mb-0"
                         ></v-progress-linear>
                     </v-card-text>
+                </v-card>
+            </v-dialog>
+            <v-dialog
+                v-model="alert_dialog"
+                persistent
+                max-width="650"
+            >
+                <v-card>
+                    <v-card-title>
+                        <v-icon
+                            color="red"
+                            large
+                        >mdi-alert-octagon-outline</v-icon><span class="ml-3">領取資料確認</span>
+                    </v-card-title>
+                    <v-card-text class="font-weight-bold">
+                        <v-row
+                            dense
+                            v-if="order"
+                        >
+                            <v-col
+                                cols="12"
+                                md="4"
+                            >系級：{{ order.owner.school_class.class_name }}</v-col>
+                            <v-col
+                                cols="12"
+                                md="4"
+                            >學生：{{ order.owner.name }}</v-col>
+                            <v-col
+                                cols="12"
+                                md="4"
+                            >學號：{{ order.owner.username }}</v-col>
+                            <v-col cols="12"></v-col>
+                            <v-col cols="12">
+                                確定進行領取?
+                            </v-col>
+                        </v-row>
+                    </v-card-text>
+                    <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn
+                            color="error"
+                            text
+                            @click="cancel_alert"
+                        >
+                            取消
+                        </v-btn>
+                        <v-btn
+                            color="primary"
+                            text
+                            @click="save"
+                        >
+                            確定
+                        </v-btn>
+                    </v-card-actions>
                 </v-card>
             </v-dialog>
         </v-dialog>
@@ -311,6 +365,7 @@
             msg: '',
             show_msg: false,
             dialog: false,
+            alert_dialog: false,
             error: false,
             pageLoading: false,
             search_loading: false,
@@ -462,7 +517,14 @@
                     this.show_msg = false
                 }, 2000)
             },
+            open_alert() {
+                this.alert_dialog = true
+            },
+            cancel_alert() {
+                this.alert_dialog = false
+            },
             async save() {
+                this.alert_dialog = true
                 this.pageLoading = true
                 await this.$inertia.patch(`/order/${this.order.id}`, {
                     document_id: this.order.document_id,
@@ -491,6 +553,7 @@
                 this.order_id = ''
                 this.order = null
                 this.dialog = false
+                this.alert_dialog = false
             },
         },
         created() {
