@@ -17,6 +17,7 @@ class CreateListsTable extends Migration
             $table->id();
             $table->integer('type')->default(0);
             $table->integer('status')->default(1);
+            $table->boolean('lock')->default(false);
             $table->date('start');
             $table->date('end');
             $table->timestamps();

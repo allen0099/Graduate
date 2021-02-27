@@ -31,6 +31,15 @@ class CashierList extends Model
         'sets'
     ];
 
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'lock' => 'boolean',
+    ];
+
     public function sets()
     {
         return $this->hasMany('App\Models\Set', 'list_id');

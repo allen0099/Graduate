@@ -115,6 +115,9 @@ class ListController extends Controller
 
         $list = CashierList::find($request->id);
 
+        if ($list->lock)
+            abort(403);
+
         if ($request->status === 0) {
             $list->delete();
 
