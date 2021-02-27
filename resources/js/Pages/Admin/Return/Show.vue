@@ -31,6 +31,7 @@
                                 :success="!error && show_msg"
                                 :error="error && show_msg"
                                 @keyup.enter="return_submit"
+                                autofocus
                             ></v-text-field>
                         </v-col>
                         <v-col

@@ -31,6 +31,8 @@
                                 :success="!error && show_msg"
                                 :error="error && show_msg"
                                 @keyup.enter="receive_submit"
+                                autofocus
+                                ref="barcode_input"
                             ></v-text-field>
                         </v-col>
                         <v-col
@@ -93,6 +95,7 @@
                                 label="付款單據編號"
                                 single-line
                                 hide-details
+                                autofocus
                             ></v-text-field>
                         </v-col>
                         <v-col
@@ -333,6 +336,9 @@
                 }, 2000)
             },
             async save() {
+                if (!!this.order.payment_id === false) {
+                    return
+                }
                 this.pageLoading = true
                 await this.$inertia.patch(`/order/${this.order.id}`, {
                     document_id: this.order.document_id,
@@ -340,8 +346,7 @@
                     payment_id: this.order.payment_id,
                     status_code: this.Status.paid
                 }, {
-                    onSuccess: (page) => {
-                        console.log(page)
+                    onSuccess: () => {
                         this.msg = '已儲存'
                         this.error = false
                         this.show_msg = true
@@ -362,6 +367,7 @@
                 this.order_id = ''
                 this.order = null
                 this.dialog = false
+                this.$refs.barcode_input.focus()
             },
             download() {
                 alert(this.choose_file.filename)
