@@ -77,6 +77,9 @@ class OrderController extends Controller
         $order = Order::find($id);
         $user = Auth::user();
 
+        if ($order->lock)
+            abort(403);
+
         if (is_null($order))
             abort(404);
 
@@ -118,6 +121,10 @@ class OrderController extends Controller
     public function destroy($id)
     {
         $order = Order::find($id);
+
+        if ($order->lock)
+            abort(403);
+
         $order->delete();
 
         return response()->noContent();

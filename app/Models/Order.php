@@ -38,6 +38,15 @@ class Order extends Model
         'owner_id',
     ];
 
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'lock' => 'boolean',
+    ];
+
     public static function createDocumentId()
     {
         // todo: replace with document id generate method
