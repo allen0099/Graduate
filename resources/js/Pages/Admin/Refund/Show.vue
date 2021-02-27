@@ -182,7 +182,7 @@
                         <v-btn
                             :href="`/refund_pdf?id=${item.id}`"
                             target="_blank"
-                        >下載</v-btn>
+                        >列印(請款)</v-btn>
                     </template>
                     <template v-slot:item.back="{ item }">
                         <v-btn @click="alert_open(item, '退回', 1)">退回</v-btn>

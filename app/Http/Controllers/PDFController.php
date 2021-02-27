@@ -300,7 +300,7 @@ class PDFController extends Controller
         if(!is_null($id)){
             $list = CashierList::find($id);
             
-            $state =  ['meow', '尚未送出', '還款中', '已還款'];
+            $state =  ['meow', '尚未送出', '請款中', '已還款'];
             if(!is_null($list)){
 
                 foreach ($list->sets as $item => $set) {

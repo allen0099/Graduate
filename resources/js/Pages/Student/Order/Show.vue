@@ -39,7 +39,7 @@
                                         download
                                     >
                                         <v-icon small>mdi-information-variant</v-icon>
-                                        <span class="ml-2">查看樣式</span>
+                                        <span class="ml-2">下載學位服樣式</span>
                                     </v-btn>
                                 </span>
                             </v-card-title>
@@ -436,7 +436,7 @@
                             class="mb-3 mr-3"
                             download
                         >
-                            下載訂單
+                            列印訂單
                         </v-btn>
                         <v-btn
                             color="primary"

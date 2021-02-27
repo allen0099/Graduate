@@ -74,7 +74,7 @@
                                             :href="`${route('order-pdf')}?document_id=${order.document_id}`"
                                             download
                                         >
-                                            下載訂單
+                                            列印訂單
                                             <v-icon right>
                                                 mdi-download
                                             </v-icon>
@@ -96,19 +96,6 @@
                                         class="d-flex justify-end"
                                         v-if="order.status_code === Status.paid && order.owner.username == username"
                                     >
-                                        <!-- <v-btn
-                                            outlined
-                                            color="indigo"
-                                            class="mr-3"
-                                            dense
-                                            :href="`${route('order-pdf')}?document_id=${order.document_id}`"
-                                            download
-                                        >
-                                            下載領據
-                                            <v-icon right>
-                                                mdi-download
-                                            </v-icon>
-                                        </v-btn> -->
                                         <v-btn
                                             outlined
                                             color="teal darken-2"
@@ -135,7 +122,7 @@
                                             :href="`${route('return_pdf')}?document_id=${order.document_id}&stu_id=${$page.user.username}`"
                                             download
                                         >
-                                            下載歸還單
+                                            列印歸還單
                                             <v-icon right>
                                                 mdi-download
                                             </v-icon>
@@ -214,7 +201,7 @@
                                         </span>
                                         <span v-if="order.status_code===Status.received">
                                             請在歸還期限 {{ return_time_range.start_time }} 至 {{ return_time_range.end_time }}
-                                            止，下載並填寫歸還證明單，並持單至{{ $page.configs.return_location }}辦理歸還手續。
+                                            止，列印並填寫歸還證明單，並持單至{{ $page.configs.return_location }}辦理歸還手續。
                                         </span>
                                     </v-col>
                                 </v-row>
@@ -582,6 +569,10 @@
                 this.orderList = this.$page.orders.own.map(x => Object.assign({
                     show: false
                 }, x))
+
+                if (this.orderList.length > 0) {
+                    this.statusFilterSelected = this.orderList[0].status_code - 1
+                }
 
                 if (this.$page.orders.shared && !this.orderList.find(x => x.id === this.$page.orders.shared.id)) {
                     this.orderList.push({
