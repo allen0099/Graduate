@@ -232,7 +232,18 @@
                         >下載</v-btn>
                     </template>
                     <template v-slot:item.back="{ item }">
-                        <v-btn @click="alert_open(item, '退回', 2)">退回</v-btn>
+                        <v-btn
+                            @click="alert_open(item, '退回', 2)"
+                            :disabled="item.lock"
+                        >退回</v-btn>
+                    </template>
+                    <template v-slot:item.lock="{ item }">
+                        <v-btn
+                            @click="alert_open(item, '鎖定', -1)"
+                            :disabled="item.lock"
+                        >
+                            {{item.lock ? '已鎖定' : '鎖定'}}
+                        </v-btn>
                     </template>
                 </v-data-table>
             </v-card-text>
@@ -374,7 +385,7 @@
                     <v-btn
                         color="primary"
                         text
-                        @click="alert_confirm"
+                        @click="alert_confirm()"
                     >
                         確定
                     </v-btn>
@@ -457,6 +468,7 @@
         apiNewCashierList,
         apiGetListByStatus,
         apiUpdateListStatus,
+        apiLockList
     } from '@/api/api'
 
     import {
@@ -647,7 +659,14 @@
                     sortable: false,
                     value: 'done',
                     code: 2
-                }
+                },
+                {
+                    text: '鎖定',
+                    align: 'center',
+                    sortable: false,
+                    value: 'lock',
+                    code: 3
+                },
             ],
         }),
         computed: {
@@ -810,12 +829,13 @@
                 })
                 this.pageLoading = false
             },
-
             alert_open(item, btn_name, status_code) {
                 this.dialog_alert = true
                 this.btn_name = btn_name
                 this.edit_list = Object.assign({}, item)
-                this.edit_status_code = status_code
+                if (status_code != -1) {
+                    this.edit_status_code = status_code
+                }
             },
             alert_cancel() {
                 this.dialog_alert = false
@@ -827,51 +847,69 @@
             async alert_confirm() {
                 this.pageLoading = true
                 let id = this.edit_list.id
-                await apiUpdateListStatus(id, this.edit_status_code).then(res => {
-                    if (res.status === 200 || res.status === 204) {
-                        if (this.edit_list.status === 1) {
-                            this.init_list = this.init_list.filter(x => x.id != id)
-                        } else if (this.edit_list.status === 2) {
-                            this.progress_list = this.progress_list.filter(x => x.id != id)
-                        } else if (this.edit_list.status === 3) {
-                            this.finished_list = this.finished_list.filter(x => x.id != id)
+                if (this.btn_name === '鎖定') {
+                    await apiLockList(id).then(res => {
+                        if (res.status === 204) {
+                            this.msg = this.btn_name + '成功'
+                            this.snackbar_true = true
+                            this.edit_list.lock = true
+                            this.finished_list.find(x => x.id === id).lock = true
+                        } else {
+                            this.msg = this.btn_name + '失敗'
+                            this.snackbar_true = false
                         }
-
-                        this.edit_list.status = this.edit_status_code
-                        if (this.edit_status_code === 1) {
-                            this.init_list.push(res.data)
-                        } else if (this.edit_status_code === 2) {
-                            this.progress_list.push(res.data)
-                        } else if (this.edit_status_code === 3) {
-                            this.finished_list.push(res.data)
-                        }
-
-                        this.msg = this.btn_name + '成功'
-                        this.snackbar_true = true
-
-                    } else {
+                    }).catch((err) => {
+                        console.log(err)
                         this.msg = '連線失敗'
                         this.snackbar_true = false
-                    }
-                }).catch((err) => {
-                    console.log(err)
-                    this.msg = '連線失敗'
-                    this.snackbar_true = false
-                })
-
-                if (this.edit_status_code === 0) {
-                    await apiNoneListedSets(this.dateList[0], this.dateList[this.dateList.length -
-                        1]).then(res => {
-                        if (res.status === 200) {
-                            let sets_M = res.data.master
-                            let sets_B = res.data.bachelor
-                            this.none_list = sets_B.concat(sets_M)
-                        }
                     })
+                } else {
+                    await apiUpdateListStatus(id, this.edit_status_code).then(res => {
+                        if (res.status === 200 || res.status === 204) {
+                            if (this.edit_list.status === 1) {
+                                this.init_list = this.init_list.filter(x => x.id != id)
+                            } else if (this.edit_list.status === 2) {
+                                this.progress_list = this.progress_list.filter(x => x.id != id)
+                            } else if (this.edit_list.status === 3) {
+                                this.finished_list = this.finished_list.filter(x => x.id != id)
+                            }
+
+                            this.edit_list.status = this.edit_status_code
+                            if (this.edit_status_code === 1) {
+                                this.init_list.push(res.data)
+                            } else if (this.edit_status_code === 2) {
+                                this.progress_list.push(res.data)
+                            } else if (this.edit_status_code === 3) {
+                                this.finished_list.push(res.data)
+                            }
+
+                            this.msg = this.btn_name + '成功'
+                            this.snackbar_true = true
+
+                        } else {
+                            this.msg = '連線失敗'
+                            this.snackbar_true = false
+                        }
+                    }).catch((err) => {
+                        console.log(err)
+                        this.msg = '連線失敗'
+                        this.snackbar_true = false
+                    })
+
+                    if (this.edit_status_code === 0) {
+                        await apiNoneListedSets(this.dateList[0], this.dateList[this.dateList.length -
+                            1]).then(res => {
+                            if (res.status === 200) {
+                                let sets_M = res.data.master
+                                let sets_B = res.data.bachelor
+                                this.none_list = sets_B.concat(sets_M)
+                            }
+                        })
+                    }
                 }
                 this.snackbar = true
                 await this.alert_cancel()
-            }
+            },
         },
         created() {
             this.init()
