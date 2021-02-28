@@ -50,7 +50,7 @@ class TimeRange extends Model
 
     public static function getMasterReceiveEndTime()
     {
-        return TimeRange::find(TimeRange::RET)->end_time;
+        return TimeRange::find(TimeRange::M)->end_time;
     }
 
     public static function getBachelorReceiveStartTime()
