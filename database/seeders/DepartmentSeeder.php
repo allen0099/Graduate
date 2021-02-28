@@ -386,5 +386,29 @@ class DepartmentSeeder extends Seeder
             'department_id' => 'TSPX',
             'name' => '物理'
         ]);
+        DB::table('departments')->insert([
+            'department_id' => 'TDXX',
+            'name' => '教管'
+        ]);
+                DB::table('departments')->insert([
+            'department_id' => 'TEXA',
+            'name' => '機器'
+        ]);
+                DB::table('departments')->insert([
+            'department_id' => 'TLXE',
+            'name' => '商管'
+        ]);
+                DB::table('departments')->insert([
+            'department_id' => 'TRFX',
+            'name' => '美洲'
+        ]);
+                DB::table('departments')->insert([
+            'department_id' => 'TSMX',
+            'name' => '數學'
+        ]);
+                DB::table('departments')->insert([
+            'department_id' => 'TSXA',
+            'name' => '應科'
+        ]);
     }
 }
