@@ -115,9 +115,16 @@
                 <div class="l-child" style="width: 17%;">
                     編號：{{ $list->id }}
                 </div>
-                <div class="l-child" style="width: 51%;">
-                    成立日期：2020-10-02 11:33
-                </div>
+                @if ($state !== '請款中')
+                    <div class="l-child" style="width: 51%;">
+                        成立日期：{{ $list->created_at->format('Y/m/d H:i') }}
+                    </div>
+                @endif
+                @if ($state === '請款中')
+                    <div class="l-child" style="width: 51%;">
+                        列印日期：{{ now()->format('Y/m/d H:i') }}
+                    </div>
+                @endif
                 <div class="r-child" style="width: 30%;">狀態：{{ $state }}</div>
             </div>
             <table border="1">

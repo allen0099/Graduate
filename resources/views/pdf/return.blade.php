@@ -25,7 +25,7 @@
         }
 
         .title {
-            font-size: 32px;
+            font-size: 40px;
             text-align: center;
             margin-top: 10px;
             margin-bottom: 40px;
@@ -43,11 +43,12 @@
         th {
             text-align: left;
             padding: 0px 10px;
+            margin-bottom: 50px;
         }
 
         table {
-            margin-top: 3px;
-            margin-bottom: 5px;
+            margin-top: 5px;
+            margin-bottom: 20px;
             font-size: 18px;
         }
 
@@ -62,13 +63,14 @@
         }
 
         .remark li {
+            margin-top: 5px;
             padding: 0px 5px;
             word-wrap: break-word;
         }
 
         .img {
             position: absolute;
-            top: 24%;
+            top: 42%;
             width: 120px;
             height: 120px;
             left: 53%;
@@ -83,7 +85,8 @@
         }
 
         .date {
-            margin-top: 15px;
+            margin-top: 60px;
+            margin-bottom: 70px;
             font-size: 20px;
             text-align: center;
         }
@@ -96,14 +99,14 @@
 
         .sign1 {
             margin-top: 15px;
-            margin-left: 70px;
-            font-size: 16px;
+            margin-bottom: 50px;
+            font-size: 18px;
+            text-align: center;
         }
 
         .sign2 {
             margin-top: 15px;
-            margin-left: 60px;
-            font-size: 13px;
+            font-size: 14px;
         }
 
         .half-bar {
@@ -121,11 +124,35 @@
             /* border-radius: 4px; */
         }
 
+        .barcode {
+            display: flex;
+            justify-content: flex-start;
+        }
+
+
+        .r-child {
+            position: absolute;
+            bottom: 0;
+            font-size: 32px;
+            text-align: right;
+            right: 0;
+        }
+
+        .l-child {
+            position: absolute;
+            bottom: 0;
+            font-size: 32px;
+            left: 0;
+        }
+
     </style>
 </head>
 
 <body>
     <img class="img" src="{{ $department_stamp }}" />
+    <div>
+        <h1 style="font-size: 32px;"> {{ $set->student->username[0] }}</h1>
+    </div>
     <div class="return_id">
         <p>單據編號：{{ $payment_id . '-' . $pos }}</p>
     </div>
@@ -144,10 +171,16 @@
             </p>
             <p style="margin-top: 10px;">借用{{ $set->cloth->name }}一套。</p>
         </div>
-        <table style="margin-top: 30px;">
+        <table style="margin-top: 30px; border-spacing: 0 1em;">
             <tr>
                 <th>
                     <p>學號：{{ $set->student->username }}</p>
+                    <div class="barcode">
+                        <span>
+                            <img
+                                src="data:image/png;base64,{{ DNS1D::getBarcodePNG((string) $set->student->username, 'C39', 1.5, 30) }}" />
+                        </span>
+                    </div>
                 </th>
                 <th>
                     <p>系級：{{ $set->student->school_class->class_name }}</p>
@@ -207,21 +240,13 @@
     </div>
     <div class="sign1">退還人姓名：____________________，連絡電話：____________________</div>
     <div class="sign2">
+        <p>※無法親自歸還學位服時，請借用學位服者親自填寫下列資料。</p>
+    </div>
+    <div class="sign2">
         <p>本人______________(請簽章)，連絡電話______________，茲委託______________(代理人姓名)協助歸還學位服。</p>
-        <p>(無法親自歸還學位服時填寫，請借用學位服者親自填寫。)</p>
     </div>
-    {{-- <hr class="half-bar" />
-    <div class="hr-more">更多bai</div> --}}
-    <hr style="position: relative; margin: 0.5cm 0px; border-bottom: 1px dashed #000000;">
-    <div
-        style="position: relative; left: 30%; top: -28px; height: 22px; width: 300px; text-align: center; font-size: 12px; opacity: 0.7;">
-        請&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        沿&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        虛&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        線&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        撕&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        下
-    </div>
+    <div class="l-child">{{ substr($set->student->school_class->class_id, 0, 2) }}</div>
+    <div class="r-child">{{ substr($set->student->school_class->class_id, 2, 2) }}</div>
 </body>
 
 </html>
