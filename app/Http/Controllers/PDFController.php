@@ -40,6 +40,7 @@ class PDFController extends Controller
         return response()->noContent();
     }
 
+    /** 學生的借用單 **/
     public function orderPdf(Request $request)
     {
         $document_id = $request->document_id;
@@ -94,6 +95,7 @@ class PDFController extends Controller
         return abort(404);
     }
 
+    /** 預約清單的數量計算 **/
     public function preserveCount($orders, $type){
 
         foreach ($orders as $index => $order) {
@@ -129,8 +131,14 @@ class PDFController extends Controller
         return collect($sorted_orders);
     }
 
-    public function preservePdf()
-    {
+    /** 管理員的預約清單 **/
+public function preservePdf()
+    {   
+        $year = today()->year - 1911;
+        if(today()->month <= 7){
+            $year -= 1;
+        }
+
         $disk = Storage::disk('pdf');
         $Bachelor_start = TimeRange::getBachelorReceiveStartTime();
         $Bachelor_end = TimeRange::getBachelorReceiveEndTime();
@@ -175,10 +183,11 @@ class PDFController extends Controller
 
                 $data = [
                     'type' => '學士',
-                    'date' => $start->format('Y-m-d'), 
+                    'date' => $start->format('m-d'), 
                     'orders_chunk' => $computed_orders->chunk(40),
                     'sizeList' => $sizeList,
                     'colorList' => $colorList,
+                    'year' => $year
                 ];
 
                 $pdf = PDF::setOptions(['isRemoteEnabled' => true, 'isFontSubsettingEnabled' => true])->setPaper('a4', 'potrait')->loadView('pdf/preserve', $data);
@@ -233,10 +242,11 @@ class PDFController extends Controller
 
                 $data = [
                     'type' => '碩士',
-                    'date' => $start->format('Y-m-d'), 
+                    'date' => $start->format('m-d'), 
                     'orders_chunk' => $computed_orders->chunk(40),
                     'sizeList' => $sizeList,
                     'colorList' => $colorList,
+                    'year' => $year,
                 ];
 
                 $pdf = PDF::setOptions(['isRemoteEnabled' => true, 'isFontSubsettingEnabled' => true])->setPaper('a4', 'potrait')->loadView('pdf/preserve', $data);
@@ -255,46 +265,7 @@ class PDFController extends Controller
         return $res;
     }
 
-    public function receiptPdf(Request $request)
-    {
-        if (Auth::user()->role !== User::ADMIN) {
-            $find_set = Set::where('student_id', Auth::user()->id);
-        } else if (Auth::user()->role === User::ADMIN) {
-            $student_id = $request->student_id;
-            if (!is_null($student_id)) {
-                $find_studnet = User::where('username', $student_id);
-                if ($find_studnet->count() === 0) {
-                    return abort(404);
-                }
-                $find_set = Set::where('student_id', $find_studnet->first()->id);
-            } else {
-                return abort(404);
-            }
-        } else {
-            return abort(403);
-        }
-
-        if ($find_set->count() === 0) {
-            return abort(404);
-        }
-
-        $set = $find_set->first();
-
-        $data = [
-            'student' => $set->student,
-            'accessory' => $set->accessory,
-            'cloth' => $set->cloth
-        ];
-
-        $pdf = PDF::setOptions([
-            'isRemoteEnabled' => true, 
-            'isFontSubsettingEnabled' => true,
-            'isPhpEnabled' => true
-            ])->setPaper('a4', 'potrait')->loadView('pdf/receipt', $data);
-
-        return $pdf->stream('歸還證明單-' . $set->student->username . '.pdf');
-    }
-
+    /** 還款那頁的清單 **/
     public function refundPdf(Request $request) {
         $id = $request->id;
         if(!is_null($id)){
@@ -313,6 +284,10 @@ class PDFController extends Controller
                             $pos = $key + 1;
                             break;
                         }
+                    }
+
+                    if(count($order->sets) === 0){
+                        $pos = 0;
                     }
 
                     $set['return_id'] = $order->payment_id.'-'.$pos;
@@ -345,7 +320,7 @@ class PDFController extends Controller
         }
         return abort(404);
     }
-
+    /** 學生個人歸還單 **/
     public function returnPdf(Request $request) {
         if(Auth::check()) {
             $document_id = $request->document_id;
@@ -383,6 +358,10 @@ class PDFController extends Controller
                             $pos = $key + 1;
                             break;
                         }
+                    }
+
+                    if(count($order->sets) === 1) {
+                        $pos = 0;
                     }
 
                     $D_data = file_get_contents('picture/' .Config::getDepartmentStampFilename());

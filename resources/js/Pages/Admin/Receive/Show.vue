@@ -59,6 +59,7 @@
                         item-text="filename"
                         label="檔案"
                         return-object
+                        :loading="file_list_loading"
                     ></v-select>
                     <v-btn
                         class="ml-3"
@@ -67,113 +68,6 @@
                     >下載</v-btn>
                 </v-card-title>
             </v-card>
-            <!-- <v-divider class="mx-5 v-divider-bold" />
-            <v-card-title>今日預約數量</v-card-title>
-            <v-card
-                flat
-                class="mx-5"
-            >
-
-                <v-card
-                    class="mt-3"
-                    flat
-                >
-                    <v-card-title>學士服數量</v-card-title>
-                    <v-row dense>
-                        <v-col
-                            v-for="(bc_item, index) in bachelor_cloths"
-                            :key="`bachelor_cloths-${index}`"
-                            cols="6"
-                            lg="2"
-                            sm="4"
-                        >
-                            <v-card color="#FFF5EB">
-                                <v-card-title class="body2 pb-1 font-weight-bold">
-                                    <span style="color:#968C83">{{ bc_item.spec }}：</span>
-                                    <span>{{ bc_item.remain_quantity + 1000 }}</span>
-                                </v-card-title>
-                            </v-card>
-                        </v-col>
-                    </v-row>
-                </v-card>
-
-                <v-card
-                    class="mt-3"
-                    flat
-                >
-                    <v-card-title>學士服領巾、帽子數量</v-card-title>
-                    <v-row dense>
-                        <v-col
-                            v-for="(ba_item, index) in bachelor_accessories"
-                            :key="`bachelor_accessories-${index}`"
-                            cols="6"
-                            lg="2"
-                            sm="4"
-                        >
-                            <v-card :color="card_color[ba_item.spec] ? card_color[ba_item.spec].bg : '#ffffff'">
-                                <v-card-title class="body2 pb-1 font-weight-bold">
-                                    <span
-                                        :style="{color: card_color[ba_item.spec] ? card_color[ba_item.spec].q : '#000000'}"
-                                    >{{ ba_item.spec }}：</span>
-                                    <span :style="{color: card_color[ba_item.spec] ? card_color[ba_item.spec].q :
-                                    '#000000'}">{{ ba_item.remain_quantity }}</span>
-                                </v-card-title>
-                            </v-card>
-                        </v-col>
-                    </v-row>
-                </v-card>
-                <v-divider class="mt-6 mb-3"></v-divider>
-
-                <v-card
-                    class="mt-3"
-                    flat
-                >
-                    <v-card-title>碩士服數量</v-card-title>
-                    <v-row dense>
-                        <v-col
-                            v-for="(mc_item, index) in master_cloths"
-                            :key="`master_cloths-${index}`"
-                            cols="6"
-                            lg="2"
-                            sm="4"
-                        >
-                            <v-card color="#FFF5EB">
-                                <v-card-title class="body2 pb-1 font-weight-bold">
-                                    <span style="color: #968C83">{{ mc_item.spec }}：</span>
-                                    <span>{{ mc_item.remain_quantity }}</span>
-                                </v-card-title>
-
-                            </v-card>
-                        </v-col>
-                    </v-row>
-                </v-card>
-
-                <v-card
-                    class="mt-3"
-                    flat
-                >
-                    <v-card-title>披肩、帽穗數量 (剩餘/總數)</v-card-title>
-                    <v-row dense>
-                        <v-col
-                            v-for="(ma_item, index) in master_accessories"
-                            :key="`master_accessories-${index}`"
-                            cols="6"
-                            lg="2"
-                            sm="4"
-                        >
-                            <v-card :color="card_color[ma_item.spec] ? card_color[ma_item.spec].bg : '#ffffff'">
-                                <v-card-title class="body2 pb-1 font-weight-bold">
-                                    <span
-                                        :style="{color: card_color[ma_item.spec] ? card_color[ma_item.spec].q : '#000000'}"
-                                    >{{ ma_item.spec }}：</span>
-                                    <span :style="{color: card_color[ma_item.spec] ? card_color[ma_item.spec].q :
-                                    '#000000'}">{{ ma_item.remain_quantity + 1000 }}</span>
-                                </v-card-title>
-                            </v-card>
-                        </v-col>
-                    </v-row>
-                </v-card>
-            </v-card> -->
         </v-card>
 
         <v-dialog
@@ -373,6 +267,7 @@
             error: false,
             pageLoading: false,
             search_loading: false,
+            file_list_loading: false,
             choose_file: {
                 filepath: '',
                 filename: ''
@@ -486,11 +381,13 @@
 
 
                 this.today = new Date().Format("yyyy-MM-dd")
-
+                this.file_list_loading = true
                 await apiPreservePdf().then(res => {
                     if (res.status == 200) {
                         this.file_list = res.data
                     }
+                }).then(() => {
+                    this.file_list_loading = false
                 })
 
             },

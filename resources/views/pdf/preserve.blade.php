@@ -2,7 +2,8 @@
 <html>
 
 <head>
-    <title>meow</title>
+    <title>{{ $year }}學年度{{ $type }}服預約清單 {{ $date }}</h1>
+    </title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <style>
         html {
@@ -105,9 +106,15 @@
 </head>
 
 <body>
+    @if (count($orders_chunk) === 0)
+        <div id="header">
+            <h1 class="title">{{ $year }}學年度{{ $type }}服預約清單 {{ $date }}</h1>
+        </div>
+        <h1 class="title">無任何預約</h1>
+    @endif
     @foreach ($orders_chunk as $chunk_index => $orders)
         <div id="header">
-            <h1 class="title">109學年度{{ $type }}服預約清單 {{ $date }}</h1>
+            <h1 class="title">{{ $year }}學年度{{ $type }}服預約清單 {{ $date }}</h1>
         </div>
         <div id="main">
             <table border="1">
