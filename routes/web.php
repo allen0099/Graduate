@@ -66,9 +66,6 @@ Route::group([
     Route::get('/return_pdf', [PDFController::class, 'returnPdf'])
         ->name('return_pdf');
 
-    Route::get('/receipt_pdf', [PDFController::class, 'receiptPdf'])
-        ->name('receipt_pdf');
-
     Route::apiResource('order', OrderController::class, ['only' => ['index', 'store', 'update']]);
     Route::apiResource('item', ItemController::class, ['only' => ['index']]);
 });
