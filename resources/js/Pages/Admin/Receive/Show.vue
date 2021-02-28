@@ -219,18 +219,21 @@
                             cols="12"
                             md="4"
                         ><span>訂單當前狀態：</span>
-                            <span :class="order.status_code === Status.returned || order.status_code === Status.refunded ? 'green--text text--accent--3' :
-                                            'red--text'">{{ statusMsg[order.status_code] }}</span>
+                            <span
+                                :class="order.status_code === Status.returned || order.status_code === Status.refunded ? 'green--text text--accent--3' :
+                                            'red--text'">{{ statusMsg[order.status_code] === '未歸還衣服' ? '已領取衣服，未歸還' : statusMsg[order.status_code] }}</span>
                         </v-col>
                         <v-col
-                            v-if="order.status_code"
+                            v-if="order.status_code === Status.paid"
                             cols="12"
                             md="4"
                         >
                             <span>{{ '預約領衣日期：' }}</span>
                             <span
                                 :class=" !order.preserve ? 'red--text' : order.preserve === today ? 'green--text text--accent--3' : 'orange--text text--lighten--3'"
-                            >{{ order.preserve ? order.preserve : '未預約' }}</span>
+                            >
+                                {{ order.preserve ? order.preserve : '未預約' }}
+                            </span>
                         </v-col>
                         <v-col cols="12">訂單內容：</v-col>
                         <v-col cols="12">

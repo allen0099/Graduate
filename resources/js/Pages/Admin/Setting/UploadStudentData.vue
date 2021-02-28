@@ -63,7 +63,15 @@
                 width="450"
             >
                 <v-card>
-                    <v-card-title>上傳學生資料</v-card-title>
+                    <v-card-title>
+                        <v-icon
+                            color="red"
+                            large
+                        >
+                            mdi-alert-octagon-outline
+                        </v-icon>
+                        <span class="ml-3">上傳學生資料</span>
+                    </v-card-title>
                     <v-card-text class="font-weight-bold">
                         請注意，進行上傳會將舊有的學生資料進行刪除。
                         上傳資料請耐心等候，切勿離開網站。
