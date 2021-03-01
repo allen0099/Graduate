@@ -90,6 +90,10 @@ Route::group([
     Route::get('/search_order', [OrderController::class, 'searchOrder'])
         ->name('search_order');
 
+    Route::get('/not_returned_set', [OrderController::class, 'showNotReturned']);
+
+    Route::get('/not_received_set', [OrderController::class, 'showNotReceived']);
+
     Route::get('/not_returned_total', [ListController::class, 'notReturnedTotal'])
         ->name('not_returned_total');
 

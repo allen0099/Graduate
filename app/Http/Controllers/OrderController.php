@@ -339,6 +339,25 @@ class OrderController extends Controller
         })->get();
     }
 
+    public static function showNotReceived(Request $request)
+    {
+        $set = Set::all()
+            ->where('order.status_code', Order::code_paid)
+            ->makeHidden('order');
+
+        return [...$set];
+    }
+
+    public static function showNotReturned(Request $request)
+    {
+        $set = Set::all()
+            ->where('order.status_code', Order::code_received)
+            ->whereNull('returned')
+            ->makeHidden('order');
+
+        return [...$set];
+    }
+
     public static function showOrders()
     {
         if (Auth::check()) {
