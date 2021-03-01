@@ -69,10 +69,10 @@ class PDFController extends Controller
                 $price = $result->owner->isMaster() ? Config::getMasterPrice() : Config::getBachelorPrice();
                 $margin = $result->owner->isMaster() ? Config::getMasterMarginPrice() : Config::getBachelorMarginPrice();
 
-                $D_data = file_get_contents('picture/' .Config::getDepartmentStampFilename());
-                $A_data = file_get_contents('picture/' .Config::getAdminStampFilename());
-                $D_type = pathinfo('picture/' .Config::getDepartmentStampFilename(), PATHINFO_EXTENSION);
-                $A_type = pathinfo('picture/' .Config::getAdminStampFilename(), PATHINFO_EXTENSION);
+                $D_data = file_get_contents('picture/' . Config::getDepartmentStampFilename());
+                $A_data = file_get_contents('picture/' . Config::getAdminStampFilename());
+                $D_type = pathinfo('picture/' . Config::getDepartmentStampFilename(), PATHINFO_EXTENSION);
+                $A_type = pathinfo('picture/' . Config::getAdminStampFilename(), PATHINFO_EXTENSION);
 
                 $data = [
                     'order' => $result,
@@ -96,14 +96,15 @@ class PDFController extends Controller
     }
 
     /** 預約清單的數量計算 **/
-    public function preserveCount($orders, $type){
+    public function preserveCount($orders, $type)
+    {
 
         foreach ($orders as $index => $order) {
             $sizeList = $type === 0 ? ['S' => 0, 'M' => 0, 'L' => 0, 'XL' => 0] : ['M' => 0, 'L' => 0, 'XL' => 0];
             $colorList = $type === 0 ? ['白' => 0, '藍' => 0] : ['白' => 0, '黃' => 0, '橘' => 0, '灰' => 0, '藍' => 0, '紫' => 0];
 
             foreach ($order->sets as $i => $i_value) {
-                if($i === 0){
+                if ($i === 0) {
                     $order['rep_color'] = $i_value->accessory->spec;
                 }
                 $colorList[$i_value->accessory->spec] += 1;
@@ -118,7 +119,7 @@ class PDFController extends Controller
         $colorList = $type === 0 ? ['白' => 0, '藍' => 0] : ['白' => 0, '黃' => 0, '橘' => 0, '灰' => 0, '藍' => 0, '紫' => 0];
 
         while (count($orders) !== 0) {
-            foreach ($colorList as $color => $value){
+            foreach ($colorList as $color => $value) {
                 foreach ($orders as $index => $order) {
                     if ($order->colorList[$color] > 0) {
                         array_push($sorted_orders, $order);
@@ -127,15 +128,15 @@ class PDFController extends Controller
                 }
             }
         }
-        
+
         return collect($sorted_orders);
     }
 
     /** 管理員的預約清單 **/
-public function preservePdf()
-    {   
+    public function preservePdf()
+    {
         $year = today()->year - 1911;
-        if(today()->month <= 7){
+        if (today()->month <= 7) {
             $year -= 1;
         }
 
@@ -183,7 +184,7 @@ public function preservePdf()
 
                 $data = [
                     'type' => '學士',
-                    'date' => $start->format('m-d'), 
+                    'date' => $start->format('m-d'),
                     'orders_chunk' => $computed_orders->chunk(40),
                     'sizeList' => $sizeList,
                     'colorList' => $colorList,
@@ -242,7 +243,7 @@ public function preservePdf()
 
                 $data = [
                     'type' => '碩士',
-                    'date' => $start->format('m-d'), 
+                    'date' => $start->format('m-d'),
                     'orders_chunk' => $computed_orders->chunk(40),
                     'sizeList' => $sizeList,
                     'colorList' => $colorList,
@@ -266,44 +267,45 @@ public function preservePdf()
     }
 
     /** 還款那頁的清單 **/
-    public function refundPdf(Request $request) {
+    public function refundPdf(Request $request)
+    {
         $id = $request->id;
-        if(!is_null($id)){
+        if (!is_null($id)) {
             $list = CashierList::find($id);
-            
-            $state =  ['meow', '尚未送出', '請款中', '已還款'];
-            if(!is_null($list)){
+
+            $state = ['meow', '尚未送出', '請款中', '已還款'];
+            if (!is_null($list)) {
 
                 foreach ($list->sets as $item => $set) {
                     $order = Order::find($set->order_id);
                     $set['document_id'] = $order->document_id;
                     $pos = -1;
 
-                    foreach ($order->sets as $key => $value){
-                        if ($set->id === $value->id){
+                    foreach ($order->sets as $key => $value) {
+                        if ($set->id === $value->id) {
                             $pos = $key + 1;
                             break;
                         }
                     }
 
-                    if(count($order->sets) === 0){
+                    if (count($order->sets) === 0) {
                         $pos = 0;
                     }
 
-                    $set['return_id'] = $order->payment_id.'-'.$pos;
+                    $set['return_id'] = $order->payment_id . '-' . $pos;
                 }
-                
+
 
                 $year = today()->year - 1911;
-                if(today()->month <= 7){
+                if (today()->month <= 7) {
                     $year -= 1;
                 }
 
                 $type = $list->type === 0 ? '學士' : '碩士';
 
-                $margin = $list->type === 0 
-                        ? Config::getBachelorMarginPrice()
-                        : Config::getMasterMarginPrice();
+                $margin = $list->type === 0
+                    ? Config::getBachelorMarginPrice()
+                    : Config::getMasterMarginPrice();
 
                 $data = [
                     'list' => $list,
@@ -315,22 +317,24 @@ public function preservePdf()
                 ];
                 $pdf = PDF::loadView('pdf/refund', $data)->setPaper('a4', 'potrait');
 
-                return $pdf->stream($year.'學年度'.$type.'學位服還款清單-'.$list->id.'-'.$state[$list->status] .'.pdf');
+                return $pdf->stream($year . '學年度' . $type . '學位服還款清單-' . $list->id . '-' . $state[$list->status] . '.pdf');
             }
         }
         return abort(404);
     }
+
     /** 學生個人歸還單 **/
-    public function returnPdf(Request $request) {
-        if(Auth::check()) {
+    public function returnPdf(Request $request)
+    {
+        if (Auth::check()) {
             $document_id = $request->document_id;
-            $stu_id =$request->stu_id;
-            if(!is_null($stu_id) && !is_null($document_id)){
-                if (Auth::user()->role === User::STUDENT && Auth::user()->username !== $stu_id){
+            $stu_id = $request->stu_id;
+            if (!is_null($stu_id) && !is_null($document_id)) {
+                if (Auth::user()->role === User::STUDENT && Auth::user()->username !== $stu_id) {
                     return abort(403);
                 } else {
                     $find_studnet = User::where('username', $stu_id);
-                    
+
                     if ($find_studnet->count() === 0) {
                         return abort(404);
                     }
@@ -353,21 +357,21 @@ public function preservePdf()
 
                     $pos = -1;
 
-                    foreach ($order->sets as $key => $value){
-                        if ($set->id === $value->id){
+                    foreach ($order->sets as $key => $value) {
+                        if ($set->id === $value->id) {
                             $pos = $key + 1;
                             break;
                         }
                     }
 
-                    if(count($order->sets) === 1) {
+                    if (count($order->sets) === 1) {
                         $pos = 0;
                     }
 
-                    $D_data = file_get_contents('picture/' .Config::getDepartmentStampFilename());
-                    $A_data = file_get_contents('picture/' .Config::getAdminStampFilename());
-                    $D_type = pathinfo('picture/' .Config::getDepartmentStampFilename(), PATHINFO_EXTENSION);
-                    $A_type = pathinfo('picture/' .Config::getAdminStampFilename(), PATHINFO_EXTENSION);
+                    $D_data = file_get_contents('picture/' . Config::getDepartmentStampFilename());
+                    $A_data = file_get_contents('picture/' . Config::getAdminStampFilename());
+                    $D_type = pathinfo('picture/' . Config::getDepartmentStampFilename(), PATHINFO_EXTENSION);
+                    $A_type = pathinfo('picture/' . Config::getAdminStampFilename(), PATHINFO_EXTENSION);
 
                     $return_location = Config::getReturnLocationValue();
 
