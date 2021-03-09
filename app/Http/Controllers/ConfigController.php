@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Config;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class ConfigController extends Controller
 {
@@ -29,7 +29,12 @@ class ConfigController extends Controller
         $stamp->forceFill([
             'value' => $request->file('image')->store('', 'picture'),
         ])->save();
-        Log::info("[Log::updateDepartmentStamp]", ['ip' => $request->ip(), 'username'=>Auth::user()->username]);
+
+        Log::info("[Log::updateDepartmentStamp]", [
+            'ip' => $request->ip(),
+            'username' => Auth::user()->username
+        ]);
+
         return response()->noContent();
     }
 
@@ -52,7 +57,12 @@ class ConfigController extends Controller
         $stamp->forceFill([
             'value' => $request->file('image')->store('', 'picture'),
         ])->save();
-        Log::info("[Log::updateAdminStamp]", ['ip' => $request->ip(), 'username'=>Auth::user()->username]);
+
+        Log::info("[Log::updateAdminStamp]", [
+            'ip' => $request->ip(),
+            'username' => Auth::user()->username
+        ]);
+
         return response()->noContent();
     }
 
@@ -62,25 +72,30 @@ class ConfigController extends Controller
             'location' => 'required|string',
             'type' => 'required|in:return,payment,receive',
         ]);
-        
+
         $type = $request->input('type');
         $msg = '';
 
-        if($type === 'return') {
+        if ($type === 'return') {
             $location = Config::getReturnLocation();
             $msg = '歸還';
-        } else if($type === 'payment') {
+        } else if ($type === 'payment') {
             $location = Config::getPaymentLocation();
             $msg = '付款';
-        } else if($type === 'receive') {
+        } else if ($type === 'receive') {
             $location = Config::getReceiveLocation();
             $msg = '領取';
         }
 
         $location->value = $request->input('location');
         $location->save();
-        Log::info("[Log::updateLocation]", ['location' => $msg, 'ip' => $request->ip(), 'username'=>Auth::user()->username]);
-        return redirect()->back()->with('success', $msg.'地點更新成功！');
+
+        Log::info("[Log::updateLocation]", [
+            'location' => $msg, 'ip' => $request->ip(),
+            'username' => Auth::user()->username
+        ]);
+
+        return redirect()->back()->with('success', $msg . '地點更新成功！');
     }
 
     public function editSetPrice(Request $request)
@@ -89,12 +104,14 @@ class ConfigController extends Controller
             'type' => 'required|in:bachelor,master,bachelor_margin,master_margin',
             'price' => 'required|integer',
         ]);
+
         Log::info("[Log::editSetPrice]", [
-            'type' => $request->type, 
-            'price' => $request->price, 
-            'ip' => $request->ip(), 
-            'username'=>Auth::user()->username
+            'type' => $request->type,
+            'price' => $request->price,
+            'ip' => $request->ip(),
+            'username' => Auth::user()->username
         ]);
+
         return Config::editSetPrice($request->type, $request->price);
     }
 
@@ -104,12 +121,14 @@ class ConfigController extends Controller
             'pdf' => 'required|in:a,b,c',
             'value' => 'required|string',
         ]);
+
         Log::info("[Log::updatePdfName]", [
-            'pdf' => $request->pdf, 
-            'value' => $request->value, 
-            'ip' => $request->ip(), 
-            'username'=>Auth::user()->username
+            'pdf' => $request->pdf,
+            'value' => $request->value,
+            'ip' => $request->ip(),
+            'username' => Auth::user()->username
         ]);
+
         return Config::editPdfName($request->pdf, $request->value);
     }
 }
