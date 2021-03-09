@@ -6,6 +6,8 @@ use App\Models\DepartmentClass;
 use App\Models\Item;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 
 class DepartmentClassController extends Controller
 {
@@ -39,7 +41,11 @@ class DepartmentClassController extends Controller
                 'default_color' => $request->color,
             ])->save();
         }
-
+        Log::info("[Log::DepartmentClassControllerStore]", [
+            'set_color' => $request->color,
+            'ip' => $request->ip(), 
+            'username'=>Auth::user()->username
+        ]);
         return response()->noContent();
     }
 

@@ -39,7 +39,10 @@ class ClassImport implements ToModel, WithCustomCsvSettings
         $cid = trim($row['系年班代碼'] ?? $row[0]);
         $cname = trim($row['系年班簡稱'] ?? $row[1]);
 
-        Log::info("New class importing\n  cid -> $cid\n  cname -> $cname");
+        Log::info("[Log::NewStudentImporting]", [
+            'cid' => $cid,
+            'cname' => $cname,
+        ]);
 
         if (!is_null(DepartmentClass::where('class_id', $cid)->first()))
             return null;

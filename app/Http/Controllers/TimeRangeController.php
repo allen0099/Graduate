@@ -6,6 +6,8 @@ use App\Models\TimeRange;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 
 class TimeRangeController extends Controller
 {
@@ -19,7 +21,11 @@ class TimeRangeController extends Controller
             'start_time' => $request->start_time,
             'end_time' => Carbon::createFromFormat('Y-m-d', $request->end_time)->endOfDay(),
         ])->save();
-
+        Log::info("[Log::TimeRangeControllerUpdate]", [
+            'id' => $id,
+            'ip' => $request->ip(), 
+            'username'=>Auth::user()->username
+        ]);
         return $this->redirectAfterDone('success', '資料變更成功！');
     }
 

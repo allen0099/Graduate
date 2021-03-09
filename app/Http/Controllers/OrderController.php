@@ -13,6 +13,7 @@ use App\Models\TimeRange;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class OrderController extends Controller
 {
@@ -48,8 +49,11 @@ class OrderController extends Controller
 
         $this->saveSets($order, $request->sets);
 
-        // return Inertia::render('Student/Order/Show', ['re_order'=> $order, 'finish'=> true]);
-        // return redirect()->back()->with('success', $order->fresh());
+        Log::info("[Log::OrderControllerStore]", [
+            'id' => $order->id, 
+            'ip' => $request->ip(), 
+            'username'=>Auth::user()->username
+        ]);
         return $order->fresh();
     }
 
@@ -105,6 +109,13 @@ class OrderController extends Controller
             $order->sets()->delete();
             $this->saveSets($order, $request->sets);
         }
+
+        Log::info("[Log::OrderControllerUpdate]", [
+            'id' => $order->id,
+            'status_code' => $request->status_code,
+            'ip' => $request->ip(), 
+            'username'=>Auth::user()->username
+        ]);
 
         return redirect()->back()->with('success', $order->fresh());
     }
@@ -176,6 +187,13 @@ class OrderController extends Controller
             'preserve' => $request['preserve_date'],
         ])->save();
 
+        Log::info("[Log::preserveDate]", [
+            'id' => $order->id,
+            'preserve' => $request['preserve_date'],
+            'ip' => $request->ip(), 
+            'username'=>Auth::user()->username
+        ]);
+
         return $order->fresh();
     }
 
@@ -196,6 +214,12 @@ class OrderController extends Controller
             'status_code' => Order::code_paid,
         ])->save();
 
+        Log::info("[Log::paidOrder]", [
+            'id' => $order->id,
+            'ip' => $request->ip(), 
+            'username'=>Auth::user()->username
+        ]);
+
         return $order->fresh();
     }
 
@@ -215,7 +239,13 @@ class OrderController extends Controller
         $order->forceFill([
             'status_code' => Order::code_received,
         ])->save();
-
+        
+        Log::info("[Log::receiveCloth]", [
+            'id' => $order->id,
+            'ip' => $request->ip(), 
+            'username'=>Auth::user()->username
+        ]);
+        
         return $order->fresh();
     }
 
@@ -262,6 +292,12 @@ class OrderController extends Controller
             'status_code' => Order::code_returned,
         ])->save();
 
+        Log::info("[Log::returnCloth]", [
+            'id' => $order->id,
+            'ip' => $request->ip(), 
+            'username'=>Auth::user()->username
+        ]);
+
         return $order->fresh();
     }
 
@@ -295,6 +331,12 @@ class OrderController extends Controller
         $set->forceFill([
             'refund' => true,
         ])->save();
+        
+        Log::info("[Log::refundOrder]", [
+            'id' => $order->id,
+            'ip' => $request->ip(), 
+            'username'=>Auth::user()->username
+        ]);
 
         return $student->fresh();
     }
@@ -306,9 +348,16 @@ class OrderController extends Controller
         $order = Order::where('document_id', $request->order_id)->first();
         $order->status_code = Order::code_canceled;
         $order->save();
+        
+        Log::info("[Log::cancelOrder]", [
+            'id' => $order->id,
+            'ip' => $request->ip(), 
+            'username'=>Auth::user()->username
+        ]);
+
         $order->sets()->delete();
         $order->delete();
-        error_log($order->status_code);
+
         return response()->noContent();
     }
 

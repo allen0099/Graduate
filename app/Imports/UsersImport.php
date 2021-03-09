@@ -44,7 +44,11 @@ class UsersImport implements ToModel, WithCustomCsvSettings, WithValidation, Ski
         $uid = trim($row['學號'] ?? $row[2]);
         $cid = trim($row['系年班代碼'] ?? $row[0]);
 
-        Log::info("Importing\n  cid -> $cid\n  uid -> $uid\n  uname -> $uname");
+        Log::info("[Log::NewStudentImporting]", [
+            'cid' => $cid,
+            'uid' => $uid,
+            'uname' => $uname,
+        ]);
 
         return new User([
             'name' => $uname,

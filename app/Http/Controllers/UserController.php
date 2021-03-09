@@ -29,19 +29,39 @@ class UserController extends Controller
         $path = $request->file('csv_file')->store('', 'public');
         $fp = Storage::disk('public')->get($path);
 
-        Log::info('Upload started!');
+        Log::info("[Log::uploadStudentList]", [
+            'info' => 'Upload started!', 
+            'ip' => $request->ip(), 
+            'username'=>Auth::user()->username
+        ]);
+
 
         mb_detect_order('ASCII,UTF-8,BIG-5');
         $encode = mb_detect_encoding($request->file('csv_file')->getContent());
 
-        Log::info("Encoding: $encode");
+        Log::info("[Log::uploadStudentList]", [
+            'info' => "Encoding: $encode", 
+            'ip' => $request->ip(), 
+            'username'=>Auth::user()->username
+        ]);
+
 
         $firstLine = preg_split('/\r\n|\r|\n/', $fp)[0];
         $convertedLine = mb_convert_encoding($firstLine, 'UTF-8', $encode);
         $check = str_contains($convertedLine, '系年班代碼');
 
-        Log::info("First Line: $check");
-        Log::info('Clear started!');
+        Log::info("[Log::uploadStudentList]", [
+            'info' => "First Line: $check", 
+            'ip' => $request->ip(), 
+            'username'=>Auth::user()->username
+        ]);
+
+        Log::info("[Log::uploadStudentList]", [
+            'info' => 'Clear started!', 
+            'ip' => $request->ip(), 
+            'username'=>Auth::user()->username
+        ]);
+
 
         DepartmentClass::all()
             ->each(function ($origin_data) {
@@ -58,7 +78,11 @@ class UserController extends Controller
                 $origin_data->delete();
             });
 
-        Log::info('Clear ended!');
+        Log::info("[Log::uploadStudentList]", [
+            'info' => 'Clear ended!', 
+            'ip' => $request->ip(), 
+            'username'=>Auth::user()->username
+        ]);
 
         if ($check) {
             Excel::import(new ClassImportWithHeadingRow($encode), $path, 'public');
@@ -90,7 +114,6 @@ class UserController extends Controller
         $filename = $request->file('image')->store('', 'picture');
         $user->stamp = $filename;
         $user->save();
-
         return response()->noContent();
     }
 

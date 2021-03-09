@@ -10,6 +10,8 @@ use App\Models\TimeRange;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 
 class ListController extends Controller
 {
@@ -105,7 +107,11 @@ class ListController extends Controller
                 'list_id' => $list->id,
             ])->save();
         }
-
+        Log::info("[Log::createNewList]", [
+            'list_id' => $list->id, 
+            'ip' => $request->ip(), 
+            'username'=>Auth::user()->username
+        ]);
         return $list->fresh();
     }
 
@@ -127,7 +133,12 @@ class ListController extends Controller
         $list->forceFill([
             'status' => $request->status,
         ])->save();
-
+        Log::info("[Log::updateList]", [
+            'list_id' => $list->id,
+            'list_status' => $request->status, 
+            'ip' => $request->ip(), 
+            'username'=>Auth::user()->username
+        ]);
         return $list->fresh();
     }
 
@@ -141,7 +152,11 @@ class ListController extends Controller
 
         $list->lock = true;
         $list->save();
-
+        Log::info("[Log::lockList]", [
+            'list_id' => $list->id,
+            'ip' => $request->ip(), 
+            'username'=>Auth::user()->username
+        ]);
         return response()->noContent();
     }
 }

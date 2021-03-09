@@ -5,7 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Item;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
-
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 class ItemController extends Controller
 {
     /**
@@ -35,7 +36,14 @@ class ItemController extends Controller
         $item->quantity = $request->quantity;
 
         $item->save();
-
+        Log::info("[Log::ItemControllerStore]", [
+            'item_type' => $request->type,
+            'item_name' => $request->name,
+            'item_spec' => $request->spec,
+            'item_quantity' => $request->quantity,
+            'ip' => $request->ip(), 
+            'username'=>Auth::user()->username
+        ]);
         return $item->fresh();
     }
 
@@ -69,6 +77,14 @@ class ItemController extends Controller
         $item->quantity = $request->quantity;
 
         $item->save();
+        Log::info("[Log::ItemControllerUpdate]", [
+            'item_type' => $request->type,
+            'item_name' => $request->name,
+            'item_spec' => $request->spec,
+            'item_quantity' => $request->quantity,
+            'ip' => $request->ip(), 
+            'username'=>Auth::user()->username
+        ]);
         return $item->fresh();
     }
 
