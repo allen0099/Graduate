@@ -59,7 +59,7 @@
                         {{ item.cloth.spec }}, {{ item.accessory.spec }}
                     </template>
                     <template v-slot:item.returned="{ item }">
-                        {{ new Date(item.returned).Format("MM-dd HH:mm") }}
+                        {{ new Date(item.returned).Format("MM-dd") }}
                     </template>
                 </v-data-table>
             </v-card-text>
@@ -312,7 +312,7 @@
                             {{ item.cloth.spec }}, {{ item.accessory.spec }}
                         </template>
                         <template v-slot:item.returned="{ item }">
-                            {{ new Date(item.returned).Format("MM-dd HH:mm") }}
+                            {{ new Date(item.returned).Format("MM-dd") }}
                         </template>
                     </v-data-table>
                 </v-card-text>
