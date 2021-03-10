@@ -93,11 +93,11 @@
             font-size: 16px;
         }
 
-        tr:nth-child(even) {
+        #orderlist tr:nth-child(even) {
             background: #CCC
         }
 
-        tr:nth-child(odd) {
+        #orderlist tr:nth-child(odd) {
             background: #FFF
         }
 
@@ -138,7 +138,7 @@
                         <th>歸還編號</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="orderlist">
                     @foreach ($chunk as $index => $set)
                         <tr>
                             <td>{{ $index + 1 }}</td>

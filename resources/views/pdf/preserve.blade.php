@@ -94,11 +94,11 @@
             font-size: 16px;
         }
 
-        tr:nth-child(even) {
+        #orderlist tr:nth-child(even) {
             background: #CCC
         }
 
-        tr:nth-child(odd) {
+        #orderlist tr:nth-child(odd) {
             background: #FFF
         }
 
@@ -133,7 +133,7 @@
                         @endforeach
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="orderlist">
                     @foreach ($orders as $order_index => $order)
                         <tr>
                             <td> {{ $order_index + 1 }}</td>
