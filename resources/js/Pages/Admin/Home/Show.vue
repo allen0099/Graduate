@@ -19,12 +19,12 @@
                 >
                     <v-card
                         color="#FFF5EB"
-                        :class="{'breathe-div' : !bc_item.remain_quantity || bc_item.remain_quantity < bc_item.quantity * 0.1}"
+                        :class="{'breathe-div' : bc_item.remain_quantity<=5 || bc_item.remain_quantity < bc_item.quantity * 0.1}"
                     >
                         <v-card-title
                             class="body2 pb-1 font-weight-bold"
                             style="color: #968C83"
-                        >{{ bc_item.spec }}</v-card-title>
+                        >{{ bc_item.spec }} {{ !bc_item.remain_quantity ? ' (售完)' : '' }}</v-card-title>
                         <v-row
                             class="pb-1 ml-7"
                             no-gutters
@@ -36,7 +36,7 @@
                                 cols="12"
                             >
                                 <span
-                                    :style="{color: !bc_item.remain_quantity || bc_item.remain_quantity < bc_item.quantity * 0.1 ? '#D19999' : '#8FB69B'}"
+                                    :style="{color: bc_item.remain_quantity<=5 || bc_item.remain_quantity < bc_item.quantity * 0.1 ? '#D19999' : '#8FB69B'}"
                                 >
                                     {{ bc_item.remain_quantity }}</span>
                                 /
@@ -63,12 +63,12 @@
                 >
                     <v-card
                         :color="card_color[ba_item.spec] ? card_color[ba_item.spec].bg : '#ffffff'"
-                        :class="{'breathe-div' : !ba_item.remain_quantity || ba_item.remain_quantity < ba_item.quantity * 0.1}"
+                        :class="{'breathe-div' : ba_item.remain_quantity<=5 || ba_item.remain_quantity < ba_item.quantity * 0.1}"
                     >
                         <v-card-title
                             class="body2 pb-1 font-weight-bold"
                             :style="{color: card_color[ba_item.spec] ? card_color[ba_item.spec].q : '#000000'}"
-                        >{{ ba_item.spec }}</v-card-title>
+                        >{{ ba_item.spec }} {{ !ba_item.remain_quantity ? ' (售完)' : '' }}</v-card-title>
                         <v-row
                             class="pb-1 ml-7"
                             no-gutters
@@ -106,12 +106,12 @@
                 >
                     <v-card
                         color="#FFF5EB"
-                        :class="{'breathe-div' : !mc_item.remain_quantity || mc_item.remain_quantity < mc_item.quantity * 0.1}"
+                        :class="{'breathe-div' : mc_item.remain_quantity<=5 || mc_item.remain_quantity < mc_item.quantity * 0.1}"
                     >
                         <v-card-title
                             class="body2 pb-1 font-weight-bold"
                             style="color: #968C83"
-                        >{{ mc_item.spec }}</v-card-title>
+                        >{{ mc_item.spec }} {{ !mc_item.remain_quantity ? ' (售完)' : '' }}</v-card-title>
                         <v-row
                             class="pb-1 ml-7"
                             no-gutters
@@ -123,7 +123,7 @@
                                 cols="12"
                             >
                                 <span
-                                    :style="{color: !mc_item.remain_quantity || mc_item.remain_quantity < mc_item.quantity * 0.1 ? '#D19999' : '#8FB69B'}"
+                                    :style="{color: mc_item.remain_quantity<=5 || mc_item.remain_quantity < mc_item.quantity * 0.1 ? '#D19999' : '#8FB69B'}"
                                 >
                                     {{ mc_item.remain_quantity }}
                                 </span> /
@@ -150,7 +150,7 @@
                 >
                     <v-card
                         :color="card_color[ma_item.spec] ? card_color[ma_item.spec].bg : '#ffffff'"
-                        :class="{'breathe-div' : !ma_item.remain_quantity || ma_item.remain_quantity <
+                        :class="{'breathe-div' : ma_item.remain_quantity<=5 || ma_item.remain_quantity <
                             ma_item.quantity
                             *
                             0.1}"
@@ -158,7 +158,7 @@
                         <v-card-title
                             class="body2 pb-1 font-weight-bold"
                             :style="{color: card_color[ma_item.spec] ? card_color[ma_item.spec].q : '#000000'}"
-                        >{{ ma_item.spec }}</v-card-title>
+                        >{{ ma_item.spec }} {{ !ma_item.remain_quantity ? ' (售完)' : '' }}</v-card-title>
                         <v-row
                             class="pb-1 ml-7"
                             no-gutters
