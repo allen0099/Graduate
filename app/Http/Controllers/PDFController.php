@@ -164,7 +164,7 @@ class PDFController extends Controller
 
                 $orders = Order::whereDate('preserve', '=', $start)->get();
                 $orders = $orders->filter(function ($value, $key) {
-                    return $value->owner->username[0] < "5";
+                    return $value->owner->username[0] < "5" && $value->status_code === Order::code_paid;
                 });
 
                 $computed_orders = $this->preserveCount($orders, 0);
@@ -224,7 +224,7 @@ class PDFController extends Controller
                 }
                 $orders = Order::whereDate('preserve', '=', $start)->get();
                 $orders = $orders->filter(function ($value, $key) {
-                    return $value->owner->username[0] > "5";
+                    return $value->owner->username[0] > "5" && $value->status_code === Order::code_paid;
                 });
 
                 $computed_orders = $this->preserveCount($orders, 1);
