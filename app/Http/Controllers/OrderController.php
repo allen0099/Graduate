@@ -114,10 +114,12 @@ class OrderController extends Controller
             $this->saveSets($order, $request->sets);
         }
 
+        $queries = DB::getQueryLog();
+
         Log::info("[Log::OrderControllerUpdate]", [
             'id' => $order->id,
-            'sql' => dump(DB::getQueryLog()),
             'status_code' => $request->status_code,
+            'sql' => $queries,
             'ip' => $request->ip(),
             'username' => Auth::user()->username
         ]);
@@ -230,7 +232,7 @@ class OrderController extends Controller
             'username' => Auth::user()->username
         ]);
 
-        return $order;
+        return $order->fresh();
     }
 
     public function receiveCloth(CheckOrder $request)
