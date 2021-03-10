@@ -115,13 +115,13 @@
                     class="elevation-1"
                     multi-sort
                 >
-                    <template v-slot:top>
+                    <!-- <template v-slot:top>
                         <v-text-field
                             v-model="init_list_search"
                             label="搜尋"
                             class="mx-4"
                         ></v-text-field>
-                    </template>
+                    </template> -->
                     <template v-slot:item.type="{ item }">
                         {{ item.type === 0 ? '學士' : '碩士' }}
                     </template>
@@ -162,13 +162,13 @@
                     class="elevation-1"
                     multi-sort
                 >
-                    <template v-slot:top>
+                    <!-- <template v-slot:top>
                         <v-text-field
                             v-model="progress_list_search"
                             label="搜尋"
                             class="mx-4"
                         ></v-text-field>
-                    </template>
+                    </template> -->
                     <template v-slot:item.type="{ item }">
                         {{ item.type === 0 ? '學士' : '碩士' }}
                     </template>
@@ -209,13 +209,13 @@
                     class="elevation-1"
                     multi-sort
                 >
-                    <template v-slot:top>
+                    <!-- <template v-slot:top>
                         <v-text-field
                             v-model="finished_list_search"
                             label="搜尋"
                             class="mx-4"
                         ></v-text-field>
-                    </template>
+                    </template> -->
                     <template v-slot:item.type="{ item }">
                         {{ item.type === 0 ? '學士' : '碩士' }}
                     </template>
