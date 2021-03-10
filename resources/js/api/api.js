@@ -42,6 +42,9 @@ export const apiSearchOrder = search =>
 export const apiOrderUpdate = (order_id, order) =>
     Request.patch(`/order/${order_id}`, order);
 
+export const apiPaidOrder = (order_id, payment_id) =>
+    Request.post("/paid_order", { order_id, payment_id });
+
 export const apiCancelOrder = order_id =>
     Request.post("/cancel_order", { order_id });
 

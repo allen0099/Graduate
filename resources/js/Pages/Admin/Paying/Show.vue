@@ -159,7 +159,7 @@
     import VuetifyLayout from '@/Layouts/VuetifyLayout'
     import {
         apiSearchOrder,
-        apiOrderUpdate
+        apiPaidOrder
     } from '@/api/api'
 
     import {
@@ -339,30 +339,28 @@
                     return
                 }
                 this.pageLoading = true
-                await this.$inertia.patch(`/order/${this.order.id}`, {
-                    document_id: this.order.document_id,
-                    owner_username: this.order.owner.username,
-                    payment_id: this.order.payment_id,
-                    status_code: this.Status.paid
-                }, {
-                    onSuccess: () => {
+
+                await apiPaidOrder(this.order.document_id, this.order.payment_id).then(res => {
+                    if (res.status == 200) {
                         this.msg = '已儲存'
                         this.error = false
                         this.show_msg = true
-                    },
-                    onError: (errors) => {
-                        this.msg = '發生錯誤'
+                    } else {
+                        this.msg = '發生不明錯誤，請確認訂單狀態'
                         this.error = true
                         this.show_msg = true
-                    },
-                    onFinish: () => {
-                        this.pageLoading = false
-                        this.show_msg = true
-                    },
+                    }
+                }).catch((err) => {
+                    console.log(err)
+                    this.msg = err.response.data.message
+                    this.error = true
+                    this.show_msg = true
                 })
+
                 await this.cancel()
             },
             cancel() {
+                this.pageLoading = false
                 this.order_id = ''
                 this.order = null
                 this.dialog = false

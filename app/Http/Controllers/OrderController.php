@@ -202,7 +202,16 @@ class OrderController extends Controller
     {
         $request->validated();
 
-        $order = Order::where('document_id', $request->order_id);
+        $order = Order::where('document_id', $request->order_id)->first();
+
+        $check = Order::where('payment_id', $request->payment_id)->first();
+
+        if (is_null($check) === false){
+            return response()->json([
+                'error' => 'error',
+                'message' => __('付款單據編號已存在')
+            ], 400);
+        }
 
         if ($order->status_code !== Order::code_created) {
             return response()->json([
@@ -213,6 +222,7 @@ class OrderController extends Controller
 
         $order->forceFill([
             'status_code' => Order::code_paid,
+            'payment_id' => $request->payment_id
         ])->save();
 
         Log::info("[Log::paidOrder]", [
@@ -221,7 +231,7 @@ class OrderController extends Controller
             'username' => Auth::user()->username
         ]);
 
-        return $order->fresh();
+        return $order;
     }
 
     public function receiveCloth(CheckOrder $request)
