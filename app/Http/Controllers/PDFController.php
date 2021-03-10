@@ -288,7 +288,7 @@ class PDFController extends Controller
                         }
                     }
 
-                    if (count($order->sets) === 0) {
+                    if (count($order->sets) === 1) {
                         $pos = 0;
                     }
 

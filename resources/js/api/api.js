@@ -52,8 +52,6 @@ export const apiReceiveCloth = order_id =>
     Request.post("/receive_order", { order_id });
 export const apiReturnCloth = stu_username =>
     Request.post("/return_order", { stu_username });
-export const apiRefundCloth = stu_username =>
-    Request.post("/refund_order", { stu_username });
 
 export const apiNotReturnedTotal = () => Request.get("/not_returned_total");
 

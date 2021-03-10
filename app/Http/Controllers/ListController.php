@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateList;
 use App\Models\CashierList;
 use App\Models\Set;
 use App\Models\TimeRange;
+use App\Models\Order;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -150,6 +151,34 @@ class ListController extends Controller
 
         $list = CashierList::find($request->id);
 
+        if ($list->status !== 3)
+            abort(403);
+
+        $sets = Set::all()->where('list_id', '=', $list->id);
+        
+        $sets->toQuery()->update(['refund' => true]);
+        
+        $record_order_id = [];
+
+        foreach ($sets as $item => $set) {
+            if(in_array($set->order_id, $record_order_id)){
+                continue;
+            }
+            array_push($record_order_id, $set->order_id);
+
+            $order = Order::find($set->order_id);
+            $order_sets = $order->sets()->get();
+
+            $flag = true;
+            foreach ($order_sets as $set) {
+                $flag = $flag && $set->refund;
+            }
+            if ($flag) {
+                $order->forceFill([
+                    'status_code' => Order::code_refunded,
+                ])->save();
+            }
+        }
         $list->lock = true;
         $list->save();
         Log::info("[Log::lockList]", [

@@ -165,7 +165,6 @@ class UpdateOrder extends FormRequest
                         Order::code_received,
                         Order::code_returned,
                         Order::code_canceled,
-                        Order::code_refunding,
                         Order::code_refunded,
                     ]),
                 ],

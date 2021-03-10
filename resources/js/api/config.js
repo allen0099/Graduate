@@ -2,9 +2,8 @@ export const created = 1; // 訂單成立 尚未繳費
 export const paid = 2; // 完成繳費 尚未領取衣服
 export const received = 3; // 完成領取衣服 尚未歸還衣服
 export const returned = 4; // 完成歸還衣服 完成歸還保證金
-export const refunding = 5; // 還款中
-export const refunded = 6; // 已還款
-export const canceled = 7; // 已取消訂單
+export const refunded = 5; // 已還款
+export const canceled = 6; // 已取消訂單
 
 export const Status = {
     created,
