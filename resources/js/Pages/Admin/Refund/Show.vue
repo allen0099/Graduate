@@ -111,7 +111,7 @@
                 <v-data-table
                     :headers="headers.filter(x=>x.code==0 || x.code==1)"
                     :items="init_list"
-                    :search="search"
+                    :search="init_list_search"
                     class="elevation-1"
                     multi-sort
                 >
@@ -158,7 +158,7 @@
                 <v-data-table
                     :headers="headers.filter(x=>x.code==0 || x.code==2)"
                     :items="progress_list"
-                    :search="search"
+                    :search="progress_list_search"
                     class="elevation-1"
                     multi-sort
                 >
@@ -205,7 +205,7 @@
                 <v-data-table
                     :headers="headers.filter(x=>x.code==0 || x.code==3)"
                     :items="finished_list"
-                    :search="search"
+                    :search="finished_list_search"
                     class="elevation-1"
                     multi-sort
                 >
