@@ -10,7 +10,6 @@ export const Status = {
     paid,
     received,
     returned,
-    refunding,
     refunded,
     canceled
 };
@@ -28,7 +27,6 @@ export const StatusMsg = [
     "未歸還衣服",
     "已歸還衣服",
     "還款中",
-    "已還款",
     "已取消"
 ];
 
@@ -48,10 +46,6 @@ export const colorList = [
     {
         bg: "#fef9ef",
         detail: "#d48344"
-    },
-    {
-        bg: "green lighten-5",
-        detail: "green darken-2"
     },
     {
         bg: "#fef9ef",
