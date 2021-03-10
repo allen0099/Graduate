@@ -13,6 +13,7 @@ use App\Models\TimeRange;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class OrderController extends Controller
@@ -79,6 +80,8 @@ class OrderController extends Controller
      */
     public function update(UpdateOrder $request, $id)
     {
+        DB::enableQueryLog();
+
         $order = Order::find($id);
         $user = Auth::user();
 
@@ -113,6 +116,7 @@ class OrderController extends Controller
 
         Log::info("[Log::OrderControllerUpdate]", [
             'id' => $order->id,
+            'sql' => dump(DB::getQueryLog()),
             'status_code' => $request->status_code,
             'ip' => $request->ip(),
             'username' => Auth::user()->username
@@ -204,14 +208,9 @@ class OrderController extends Controller
 
         $order = Order::where('document_id', $request->order_id)->first();
 
-        $check = Order::where('payment_id', $request->payment_id)->first();
-
-        if (is_null($check) === false){
-            return response()->json([
-                'error' => 'error',
-                'message' => __('付款單據編號已存在')
-            ], 400);
-        }
+        $request->validate([
+            'payment_id' => ['required', 'unique:orders,payment_id'],
+        ]);
 
         if ($order->status_code !== Order::code_created) {
             return response()->json([
