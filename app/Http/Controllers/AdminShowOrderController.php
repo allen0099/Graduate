@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Models\User;
+use App\Models\Set;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -20,29 +21,26 @@ class AdminShowOrderController extends Controller
         $search = $request->search;
 
         if ($search !== null) {
-            $find_owner = User::where('username', $search);
-            $find_document = Order::where('document_id', $search);
-            $find_payment_id = Order::where('payment_id', $search);
+            $find_user = User::where('username', $search);
+            $find_orders = Order::where('document_id', $search)->orWhere('payment_id', $search);
 
-            if ($find_owner->count() === 0 && $find_document->count() === 0 && $find_payment_id->count() === 0)
+            if ($find_user->count() === 0 && $find_orders->count() === 0)
                 $result = [];
 
-            if ($find_owner->count() > 0) {
-                $result = $find_owner->first()->orders()->get();
+            if ($find_user->count() > 0) {
+                $find_set = Set::where('student_id', $find_user->first()->id);
 
-                if ($result->count() === 0) {
-                    $set = $find_owner->first()->set()->first();
-                    if (!is_null($set))
-                        $result = $set->order()->get();
+                if($find_set->count() > 0){
+                    $tmp = Order::where('id', $find_set->first()->order_id);
+                    $result = $tmp->get();
+                }
+                else {
+                    $result = [];
                 }
             }
 
-            if ($find_document->count() > 0) {
-                $result = $find_document->get();
-            }
-
-            if ($find_payment_id->count() > 0) {
-                $result = $find_payment_id->get();
+            if ($find_orders->count() > 0) {
+                $result = $find_orders->get();
             }
 
         } else {
