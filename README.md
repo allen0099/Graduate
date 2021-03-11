@@ -54,6 +54,14 @@ php artisan migrate:fresh --seed
 php artisan storage:link
 ```
 
+- queue workers
+
+```shell
+php artisan queue:work --queue=high,default
+```
+
+for supervisor setup, read [this](https://learnku.com/docs/laravel/8.x/queues/9398#e45763)
+
 ## Security Vulnerabilities
 
 If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell
