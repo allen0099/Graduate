@@ -3,10 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\NewStudentCheck;
-use App\Imports\ClassImport;
-use App\Imports\ClassImportWithHeadingRow;
-use App\Imports\UsersImportWithHeadingRow;
-use App\Imports\UsersImport;
+use App\Jobs\ChangeStudentPassword;
 use App\Models\Department;
 use App\Models\DepartmentClass;
 use App\Models\OldClass;
@@ -16,7 +13,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
-use Maatwebsite\Excel\Facades\Excel;
+use Rap2hpoutre\FastExcel\Facades\FastExcel;
 
 class UserController extends Controller
 {
@@ -26,7 +23,7 @@ class UserController extends Controller
             'csv_file' => ['required', 'mimes:csv,txt', 'max:5000'],
         ]);
 
-        $path = $request->file('csv_file')->store('', 'public');
+        $path = $request->file('csv_file')->storeAs('', 'student.csv', 'public');
         $fp = Storage::disk('public')->get($path);
 
         Log::info("[Log::uploadStudentList]", [
@@ -44,9 +41,11 @@ class UserController extends Controller
             'username' => Auth::user()->username
         ]);
 
-        $firstLine = preg_split('/\r\n|\r|\n/', $fp)[0];
-        $convertedLine = mb_convert_encoding($firstLine, 'UTF-8', $encode);
-        $check = str_contains($convertedLine, '系年班代碼');
+        $fp_utf8 = mb_convert_encoding($fp, 'UTF-8', $encode);
+        Storage::disk('public')->put($path, $fp_utf8);
+
+        $firstLine = preg_split('/\r\n|\r|\n/', $fp_utf8)[0];
+        $check = str_contains($firstLine, '系年班代碼');
 
         Log::info("[Log::uploadStudentList]", [
             'info' => "First Line: $check",
@@ -81,13 +80,78 @@ class UserController extends Controller
             'username' => Auth::user()->username
         ]);
 
-        if ($check) {
-            Excel::import(new ClassImportWithHeadingRow($encode), $path, 'public');
-            Excel::import(new UsersImportWithHeadingRow($encode), $path, 'public');
-        } else {
-            Excel::import(new ClassImport($encode), $path, 'public');
-            Excel::import(new UsersImport($encode), $path, 'public');
+        $fsExcel = FastExcel::configureCsv(',', '"', '\n', 'UTF-8');
+
+        if (!$check) {
+            $fsExcel->withoutHeaders();
         }
+
+        Log::info('fast excel');
+        $fsExcel->import(Storage::disk('public')->path($path), function ($row) {
+            $time = microtime(true);
+            $cid = trim($row['系年班代碼'] ?? $row[0]);
+            $cname = trim($row['系年班簡稱'] ?? $row[1]);
+            $uid = trim($row['學號'] ?? $row[2]);
+            $uname = trim($row['姓名'] ?? $row[3]);
+            Log::debug('!!!Row setup!!!', [
+                'time' => microtime(true) - $time,
+                'row' => $row,
+            ]);
+
+            $func_time = microtime(true);
+            if (is_null(DepartmentClass::where('class_id', $cid)->first())) {
+                $department = Department::firstOrCreate(
+                    ['department_id' => substr($cid, 0, 4)],
+                    // regex remove (?:(?:(?:在職|碩士|碩專)班)|[ＡＢＣＤＥＦＧ]|[一二三四五六七八九]|進學班?)
+                    ['name' => substr($cname, 0, 6)]
+                );
+
+                $old = OldClass::where('class_id', $cid)->firstOrCreate(
+                    ['class_id' => $cid],
+                    ['department_id' => $department->id, 'class_name' => $cname]
+                );
+
+                DepartmentClass::create([
+                    'department_id' => $department->id,
+                    'class_id' => $cid,
+                    'class_name' => $cname,
+                    'default_color' => $old->default_color,
+                ]);
+            }
+            Log::debug('=> check department done', ['time' => microtime(true) - $func_time]);
+
+            $func_time = microtime(true);
+            if (is_null(User::where('username', $uid)->first())) {
+                $time = microtime(true);
+                $email = $uid . '@gms.tku.edu.tw';
+                Log::debug('build email', ['time' => microtime(true) - $time]);
+
+                $time = microtime(true);
+                $pwd = '';
+                Log::debug('build pwd', ['time' => microtime(true) - $time]);
+
+                $time = microtime(true);
+                $ccid = DepartmentClass::where('class_id', $cid)->first()->id;
+                Log::debug('get ccid', ['time' => microtime(true) - $time]);
+
+                $time = microtime(true);
+                $user = User::create([
+                    'name' => $uname,
+                    'username' => $uid,
+                    'email' => $email,
+                    'password' => $pwd,
+                    'role' => User::STUDENT,
+                    'class_id' => $ccid,
+                ]);
+                Log::debug('build user', ['time' => microtime(true) - $time]);
+
+                $time = microtime(true);
+                ChangeStudentPassword::dispatch($user);
+                Log::debug('send dispatch', ['time' => microtime(true) - $time]);
+            }
+            Log::debug('=> check user done', ['time' => microtime(true) - $func_time]);
+            return null;
+        });
 
         return response()->noContent();
     }
