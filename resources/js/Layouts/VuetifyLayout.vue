@@ -25,7 +25,7 @@
                     >
                         <span class="title">淡江大學總務處</span>
                         <v-spacer />
-                        <span class="title">學士服出租系統</span>
+                        <span class="title">學士服借用系統</span>
                     </v-toolbar-title>
                 </div>
                 <v-btn
