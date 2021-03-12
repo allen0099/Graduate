@@ -35,6 +35,15 @@ export const apiUpdatePdfName = (pdf, value) =>
 export const apiNewStudent = student =>
     Request.post("/create_new_student", student);
 
+export const apiNewAdmin = admin => Request.post("/create_new_admin", admin);
+
+export const apiResetPassword = id => Request.post("/reset_password", { id });
+
+export const apiAdminList = () => Request.get("/admin_list");
+
+export const apiUpdateUser = (id, name, class_id) =>
+    Request.post("/update_user", { id, name, class_id });
+
 // Admin Order Actions
 export const apiSearchOrder = search =>
     Request.get(`/search_order?search=${search}`);
@@ -95,8 +104,8 @@ export const apiCheckPdfExist = filename =>
 
 // Student order
 export const apiSearchOwner = () => Request.get(`/order_owner`);
-export const apiSearchStudent = stu_id =>
-    Request.get(`/search_user?search=${stu_id}`);
+export const apiSearchStudent = username =>
+    Request.get(`/search_user?search=${username}`);
 export const apiCreateOrder = order => Request.post("/order", order);
 
 // Student myorder

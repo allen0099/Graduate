@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Http\Requests\NewAdminCheck;
 use App\Http\Requests\NewStudentCheck;
 use App\Jobs\ChangeStudentPassword;
 use App\Models\Department;
@@ -16,7 +16,94 @@ use Illuminate\Support\Facades\Storage;
 use Rap2hpoutre\FastExcel\Facades\FastExcel;
 
 class UserController extends Controller
-{
+{   
+
+    public function updateUser(Request $request) {
+        $request->validate([
+            'id' => ['required'],
+            'name' => ['required'],
+            'class_id' => ['required'],
+        ]);
+        
+        $id = $request->id;
+        $name = $request->name;
+        $class_id = $request->class_id;
+
+        if (!is_null($id)) {
+            if(Auth::user()->isRole(User::ADMIN)){
+                $user = User::find($id);
+
+                if($user->isRole(User::ADMIN)){
+                    $user->forceFill([
+                        'name' => $name,
+                    ])->save();
+                } else {
+                    $d_class = DepartmentClass::all()
+                        ->where('class_id', $class_id)->first();
+
+                    $user->forceFill([
+                        'name' => $name,
+                        'class_id' => $d_class->id,
+                    ])->save();
+                }
+
+
+                Log::info("[Log::updateUser]", [
+                    'update' => $user->username,
+                    'ip' => $request->ip(),
+                    'username' => Auth::user()->username
+                ]);
+
+                return response()->noContent();
+            } else {
+                return abort(403);
+            }
+        }
+        return abort(404);
+    }
+
+    public function adminList(){
+        if(Auth::user()->isRole(User::ADMIN)){
+            $admins = User::where('role', User::ADMIN)->get();
+            return $admins;
+        } 
+        return abort(403);
+    }
+
+    public function resetPassword(Request $request){
+        $request->validate([
+            'id' => ['required'],
+        ]);
+
+        $id = $request->id;
+
+        if (!is_null($id)) {
+            if(Auth::user()->isRole(User::ADMIN)){
+                $user = User::find($id);
+
+                $password = $user->isRole(User::ADMIN)
+                    ? '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'
+                    : Hash::make(substr($user->username, -6));
+
+                $user->forceFill([
+                    'password' => $password,
+                ])->save();
+
+
+                Log::info("[Log::resetPassword]", [
+                    'reset who' => $user->username,
+                    'ip' => $request->ip(),
+                    'username' => Auth::user()->username
+                ]);
+
+                return response()->noContent();
+            } else {
+                return abort(403);
+            }
+        }
+        return abort(404);
+    }
+
     public function uploadStudentList(Request $request)
     {
         $request->validate([
@@ -223,6 +310,22 @@ class UserController extends Controller
             'password' => Hash::make(substr($request->username, -6)),
             'role' => User::STUDENT,
             'class_id' => $d_class->id,
+        ])->save();
+
+        return $user;
+    }
+
+    public function addNewAdmin(NewAdminCheck $request)
+    {
+        $request->validated();
+
+        $user = new User();
+        $user->forceFill([
+            'name' => $request->name,
+            'username' => $request->username,
+            'email' => $request->username . '@admin.email',
+            'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
+            'role' => User::ADMIN,
         ])->save();
 
         return $user;

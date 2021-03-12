@@ -25,6 +25,10 @@
                 <v-tab>
                     系級顏色設定
                 </v-tab>
+                <v-divider vertical></v-divider>
+                <v-tab>
+                    使用者設定
+                </v-tab>
                 <!-- tab 1 -->
                 <v-tab-item>
                     <v-card flat>
@@ -384,6 +388,11 @@
                 <v-tab-item>
                     <DepartmentColorSettimg></DepartmentColorSettimg>
                 </v-tab-item>
+
+                <!-- tab 5 -->
+                <v-tab-item>
+                    <UserSetting />
+                </v-tab-item>
             </v-tabs>
         </div>
 
@@ -425,6 +434,7 @@
     import LocationSetting from '@/Pages/Admin/Setting/LocationSetting'
     import DepartmentColorSettimg from '@/Pages/Admin/Setting/DepartmentColorSettimg'
     import UploadPdf from '@/Pages/Admin/Setting/UploadPdf'
+    import UserSetting from '@/Pages/Admin/Setting/UserSetting'
     import {
         apiInventoryUpdate,
         apiPriceUpdate
@@ -440,7 +450,8 @@
             TimeSetting,
             LocationSetting,
             DepartmentColorSettimg,
-            UploadPdf
+            UploadPdf,
+            UserSetting
         },
         name: "AdminSetting",
         data: () => ({

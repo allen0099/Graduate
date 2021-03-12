@@ -87,6 +87,15 @@ Route::group([
     'middleware' => ['auth:sanctum', 'can:admin'],
     'as' => 'admin.'
 ], function () {
+    Route::post('update_user', [UserController::class, 'updateUser'])
+        ->name('update_user');
+
+    Route::get('admin_list', [UserController::class, 'adminList'])
+        ->name('admin_list');
+
+    Route::post('reset_password', [UserController::class, 'resetPassword'])
+        ->name('reset_password');
+
     Route::get('/search_order', [OrderController::class, 'searchOrder'])
         ->name('search_order');
 
@@ -138,6 +147,9 @@ Route::group([
 
     Route::post('/create_new_student', [UserController::class, 'addNewStudent'])
         ->name('create_new_student');
+    
+    Route::post('/create_new_admin', [UserController::class, 'addNewAdmin'])
+        ->name('create_new_admin');
 
     Route::post('/upload_student', [UserController::class, 'uploadStudentList'])
         ->name('upload_student');

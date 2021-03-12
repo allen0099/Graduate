@@ -19,12 +19,14 @@ class UserSeeder extends Seeder
             ->admin()
             ->create([
                 'name' => '管理員',
-                'username' => 'admin',
+                'username' => 'tku_admin',
             ]);
         User::factory()
-            ->count(5)
             ->admin()
-            ->create();
+            ->create([
+                'name' => 'Tkuosc',
+                'username' => 'tkuosc',
+            ]);
 
         User::factory()
             ->student()
