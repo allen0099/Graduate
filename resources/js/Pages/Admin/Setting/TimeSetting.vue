@@ -38,18 +38,18 @@
                     >
                         <v-spacer></v-spacer>
                         <v-btn
-                            text
+                            dark
                             color="primary"
                             @click="show = false"
                         >
-                            Cancel
+                            取消
                         </v-btn>
                         <v-btn
-                            text
+                            dark
                             color="primary"
                             @click="$refs.menu.save(dates)"
                         >
-                            OK
+                            確定
                         </v-btn>
                     </v-date-picker>
                 </v-menu>

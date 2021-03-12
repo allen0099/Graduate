@@ -126,14 +126,14 @@
                     <v-spacer></v-spacer>
                     <v-btn
                         color="error"
-                        text
+                        dark
                         @click="cancel"
                     >
                         取消
                     </v-btn>
                     <v-btn
                         color="primary"
-                        text
+                        dark
                         @click="save"
                         :disabled="!color_choose"
                     >

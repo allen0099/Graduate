@@ -146,14 +146,14 @@
                     <v-spacer></v-spacer>
                     <v-btn
                         color="error"
-                        text
+                        dark
                         @click="cancel"
                     >
                         取消
                     </v-btn>
                     <v-btn
                         color="primary"
-                        text
+                        dark
                         @click="open_alert"
                         :disabled="order.status_code != Status.paid"
                     >
@@ -219,14 +219,14 @@
                         <v-spacer></v-spacer>
                         <v-btn
                             color="error"
-                            text
+                            dark
                             @click="cancel_alert"
                         >
                             取消
                         </v-btn>
                         <v-btn
                             color="primary"
-                            text
+                            dark
                             @click="save"
                         >
                             確定

@@ -302,14 +302,14 @@
                         <v-spacer></v-spacer>
                         <v-btn
                             color="error"
-                            text
+                            dark
                             @click="edit_cancel"
                         >
                             取消
                         </v-btn>
                         <v-btn
                             color="primary"
-                            text
+                            dark
                             @click="edit_save"
                             :disabled="!order.payment_id && order.status_code > 1"
                         >
@@ -334,14 +334,14 @@
                         <v-spacer></v-spacer>
                         <v-btn
                             color="error"
-                            text
+                            dark
                             @click="check_cancel"
                         >
                             返回
                         </v-btn>
                         <v-btn
                             color="primary"
-                            text
+                            dark
                             @click="check_save"
                         >
                             確定

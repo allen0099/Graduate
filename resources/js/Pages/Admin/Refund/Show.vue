@@ -323,14 +323,14 @@
                     <v-spacer></v-spacer>
                     <v-btn
                         color="error"
-                        text
+                        dark
                         @click="list_cancel"
                     >
                         取消
                     </v-btn>
                     <v-btn
                         color="primary"
-                        text
+                        dark
                         @click="list_build"
                         :disabled="selected_set.length == 0"
                     >
@@ -377,14 +377,14 @@
                     <v-spacer></v-spacer>
                     <v-btn
                         color="error"
-                        text
+                        dark
                         @click="alert_cancel"
                     >
                         取消
                     </v-btn>
                     <v-btn
                         color="primary"
-                        text
+                        dark
                         @click="alert_confirm()"
                     >
                         確定

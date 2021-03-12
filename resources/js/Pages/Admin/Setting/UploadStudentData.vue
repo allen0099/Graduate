@@ -81,14 +81,14 @@
                         <v-spacer></v-spacer>
                         <v-btn
                             color="error"
-                            text
+                            dark
                             @click="alert_dialog = false"
                         >
                             取消
                         </v-btn>
                         <v-btn
                             color="primary"
-                            text
+                            dark
                             @click="upload"
                         >
                             確定
@@ -178,14 +178,14 @@
                     <v-spacer></v-spacer>
                     <v-btn
                         color="error"
-                        text
+                        dark
                         @click="cancel"
                     >
                         取消
                     </v-btn>
                     <v-btn
                         color="primary"
-                        text
+                        dark
                         @click="save"
                         :disabled="!edit_student.username || !edit_student.name || !edit_student.class_id"
                     >
