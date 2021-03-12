@@ -133,7 +133,7 @@
                     </v-btn>
                     <v-btn
                         color="primary"
-                        dark
+                        :dark="!!color_choose"
                         @click="save"
                         :disabled="!color_choose"
                     >

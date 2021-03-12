@@ -330,7 +330,7 @@
                     </v-btn>
                     <v-btn
                         color="primary"
-                        dark
+                        :dark="selected_set.length != 0"
                         @click="list_build"
                         :disabled="selected_set.length == 0"
                     >

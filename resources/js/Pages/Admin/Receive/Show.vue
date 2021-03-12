@@ -153,7 +153,7 @@
                     </v-btn>
                     <v-btn
                         color="primary"
-                        dark
+                        :dark="order.status_code == Status.paid"
                         @click="open_alert"
                         :disabled="order.status_code != Status.paid"
                     >

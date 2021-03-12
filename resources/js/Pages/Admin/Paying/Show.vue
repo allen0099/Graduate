@@ -124,7 +124,7 @@
                     </v-btn>
                     <v-btn
                         color="primary"
-                        dark
+                        :dark="order.status_code == Status.created && !!order.payment_id"
                         @click="save"
                         :disabled="order.status_code != Status.created || !order.payment_id"
                     >

@@ -185,7 +185,7 @@
                     </v-btn>
                     <v-btn
                         color="primary"
-                        dark
+                        :dark="(!edit_student.username || !edit_student.name || !edit_student.class_id) == false"
                         @click="save"
                         :disabled="!edit_student.username || !edit_student.name || !edit_student.class_id"
                     >

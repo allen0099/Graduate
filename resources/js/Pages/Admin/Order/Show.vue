@@ -309,7 +309,7 @@
                         </v-btn>
                         <v-btn
                             color="primary"
-                            dark
+                            :dark="(!order.payment_id && order.status_code > 1) == false"
                             @click="edit_save"
                             :disabled="!order.payment_id && order.status_code > 1"
                         >
