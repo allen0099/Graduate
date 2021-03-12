@@ -201,7 +201,7 @@
                         dark
                         v-show="edit_toggle"
                     >
-                        修改姓名
+                        修改資料
                     </v-btn>
                     <v-spacer></v-spacer>
                     <v-btn
@@ -219,7 +219,7 @@
                 max-width="300"
             >
                 <v-card>
-                    <v-card-title>修改使用者姓名</v-card-title>
+                    <v-card-title>修改使用者資料</v-card-title>
                     <v-card-text class="font-weight-bold">
                         <v-row>
                             <v-col cols="12">確定要修改?</v-col>
