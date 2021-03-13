@@ -20,7 +20,7 @@ class ConfigSeeder extends Seeder
         ]);
         DB::table('configs')->insert([
             'key' => '領取地點',
-            'value' => '守謙會議中心HC308事務整備組',
+            'value' => '覺生紀念圖書館正門入口前左側',
         ]);
         DB::table('configs')->insert([
             'key' => '歸還地點',
@@ -28,11 +28,11 @@ class ConfigSeeder extends Seeder
         ]);
         DB::table('configs')->insert([
             'key' => 'bachelor_price',
-            'value' => '400',
+            'value' => '100',
         ]);
         DB::table('configs')->insert([
             'key' => 'master_price',
-            'value' => '600',
+            'value' => '200',
         ]);
         DB::table('configs')->insert([
             'key' => 'bachelor_margin_price',
@@ -40,11 +40,11 @@ class ConfigSeeder extends Seeder
         ]);
         DB::table('configs')->insert([
             'key' => 'master_margin_price',
-            'value' => '800',
+            'value' => '1000',
         ]);
         DB::table('configs')->insert([
             'key' => 'pdf_a',
-            'value' => '108學年度學士學位服借用公告',
+            'value' => '109學年度學士學位服借用公告',
         ]);
         DB::table('configs')->insert([
             'key' => 'pdf_b',
