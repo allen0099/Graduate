@@ -311,7 +311,8 @@
                             color="primary"
                             :dark="(!order.payment_id && order.status_code > 1) == false"
                             @click="edit_save"
-                            :disabled="!order.payment_id && order.status_code > 1"
+                            :disabled="!order.payment_id 
+                            && (order.status_code > 1 && order.status_code !== Status.canceled)"
                         >
                             儲存
                         </v-btn>
