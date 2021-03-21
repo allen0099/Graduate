@@ -351,7 +351,7 @@
                                     </p>
                                 </li>
                                 <li>
-                                    <p>請於{{ receive_time_range.start_time }}至{{ receive_time_range.end_time }}，持本單學生存根聯至{{ $page.configs.receive_location }}領取{{ choose.name }}。
+                                    <p>請於{{ receive_time_range.start_time }}至{{ receive_time_range.end_time }}，下午2~4點持本單學生存根聯至{{ $page.configs.receive_location }}領取{{ choose.name }}。
                                     </p>
                                 </li>
                             </ol>
@@ -407,11 +407,11 @@
                                 style="list-style: decimal;"
                             >
                                 <li>
-                                    <p>請在繳費期限{{ payment_time_range.start_time }}至{{ payment_time_range.end_time }}止，至校園繳費機進行繳費，繳費完成後請持繳費單據與本單至{{ $page.configs.payment_location }}完成繳費登記。
+                                    <p>請在繳費期限{{ payment_time_range.start_time }}至{{ payment_time_range.end_time }}止，至校園繳費機進行繳費，繳費完成後請持繳費單據與本訂單至{{ $page.configs.payment_location }}完成繳費登記。
                                     </p>
                                 </li>
                                 <li>
-                                    <p>請於{{ receive_time_range.start_time }}至{{ receive_time_range.end_time }}，持本單學生存根聯至{{ $page.configs.receive_location }}領取{{ choose.name }}。
+                                    <p>請於{{ receive_time_range.start_time }}至{{ receive_time_range.end_time }}，下午2~4點持本單學生存根聯至{{ $page.configs.receive_location }}領取{{ choose.name }}。
                                     </p>
                                 </li>
                             </ol>

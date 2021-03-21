@@ -192,12 +192,12 @@
                                             v-if="order.status_code === Status.paid && order.owner.username[0] <= '5'">
                                             請在領取期限 {{ B_receive_time_range.start_time }} 至
                                             {{ B_receive_time_range.end_time }}
-                                            止，持借用單之學生存根聯至{{ $page.configs.receive_location }}領取學士服。
+                                            止，在下午2~4點持借用單之學生存根聯至{{ $page.configs.receive_location }}領取學士服。
                                         </span>
                                         <span v-if="order.status_code === Status.paid && order.owner.username[0] > '5'">
                                             請在領取期限 {{ M_receive_time_range.start_time }} 至
                                             {{ M_receive_time_range.end_time }}
-                                            止，持借用單之學生存根聯至{{ $page.configs.receive_location }}領取碩士服。
+                                            止，在下午2~4點持借用單之學生存根聯至{{ $page.configs.receive_location }}領取碩士服。
                                         </span>
                                         <span v-if="order.status_code===Status.received">
                                             請在歸還期限 {{ return_time_range.start_time }} 至 {{ return_time_range.end_time }}
