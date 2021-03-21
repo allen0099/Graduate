@@ -208,7 +208,7 @@
                     <p>付款編號：{{ $payment_id }}</p>
                 </th>
                 <th>
-                    <span style="vertical-align:middle;">經手人蓋章：</span>
+                    <span style="vertical-align:middle;">事務整備組經手人簽章：</span>
                 </th>
             </tr>
         </table>
@@ -268,7 +268,7 @@
     </div>
     <div id="main">
         <div class="centent">
-            <p>茲收到&nbsp;&nbsp;
+            <p>茲歸還&nbsp;&nbsp;
                 @for ($i = 0; $i < 20 - strlen($set->student->name); $i++)
                     &nbsp;
                 @endfor
@@ -276,7 +276,7 @@
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 同學
             </p>
-            <p style="margin-top: 5px;">歸還{{ $set->cloth->name }}一套。</p>
+            <p style="margin-top: 5px;">借用{{ $set->cloth->name }}一套，保證金請依規定匯入約定之個人帳戶。</p>
         </div>
         <table style="margin-top: 5px; border-spacing: 0 0.5em;">
             <tr>
