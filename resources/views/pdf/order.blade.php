@@ -213,7 +213,7 @@
                             </p>
                         </li>
                         <li>
-                            <p>請於{{ $rec_time->start_time->format('Y/m/d') }}至{{ $rec_time->end_time->format('Y/m/d') }}，持本單學生存根聯至{{ $receive_location }}領取{{ $cloth_type }}。
+                            <p>請於{{ $rec_time->start_time->format('Y/m/d') }}至{{ $rec_time->end_time->format('Y/m/d') }}，在下午2~4點持本單學生存根聯至{{ $receive_location }}領取{{ $cloth_type }}。
                             </p>
                         </li>
                         <li>
