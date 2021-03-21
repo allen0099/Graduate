@@ -13,6 +13,7 @@ use Barryvdh\DomPDF\Facade as PDF;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Milon\Barcode\DNS1D;
 
 class PDFController extends Controller
@@ -85,7 +86,8 @@ class PDFController extends Controller
                     'paid_time' => $paid_time,
                     'rec_time' => $rec_time,
                     'department_stamp' => 'data:image/' . $D_type . ';base64,' . base64_encode($D_data),
-                    'admin_stamp' => 'data:image/' . $A_type . ';base64,' . base64_encode($A_data)
+                    'admin_stamp' => 'data:image/' . $A_type . ';base64,' . base64_encode($A_data),
+                    'check_code' => Str::random(5)
                 ];
 
                 $pdf = PDF::setOptions(['isRemoteEnabled' => true, 'isFontSubsettingEnabled' => true])->setPaper('a4', 'potrait')->loadView('pdf/order', $data);
@@ -384,6 +386,7 @@ class PDFController extends Controller
                         'admin_stamp' => 'data:image/' . $A_type . ';base64,' . base64_encode($A_data),
                         'return_time' => TimeRange::find(TimeRange::RET),
                         'return_location' => $return_location,
+                        'check_code' => Str::random(5)
                     ];
 
                     $pdf = PDF::setOptions(['isRemoteEnabled' => true, 'isFontSubsettingEnabled' => true])->setPaper('a4', 'potrait')->loadView('pdf/return', $data);

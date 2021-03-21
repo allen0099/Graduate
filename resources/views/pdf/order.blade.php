@@ -224,7 +224,7 @@
             </div>
         </div>
         <div id="footer">
-            <p>{{ $part === 0 ? '（學生存根聯）' : '（事務組整備組收執聯）' }}
+            <p>{{ $part === 0 ? '（學生存根聯-' . $check_code . '）' : '（事務組整備組收執聯-' . $check_code . '）' }}
                 @for ($i = 0; $i < ($part === 0 ? 18 : 7); $i++)
                     &nbsp;
                 @endfor

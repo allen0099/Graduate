@@ -25,10 +25,9 @@
         }
 
         .title {
-            font-size: 40px;
+            font-size: 36px;
             text-align: center;
-            margin-top: 10px;
-            margin-bottom: 40px;
+            margin-bottom: 20px;
         }
 
         .page-break {
@@ -43,13 +42,13 @@
         th {
             text-align: left;
             padding: 0px 10px;
-            margin-bottom: 50px;
+            margin-bottom: 30px;
         }
 
         table {
             margin-top: 5px;
-            margin-bottom: 20px;
-            font-size: 18px;
+            margin-bottom: 10px;
+            font-size: 16px;
         }
 
         #footer {
@@ -58,7 +57,7 @@
         }
 
         .remark {
-            font-size: 15px;
+            font-size: 14px;
             width: 90%;
         }
 
@@ -70,25 +69,36 @@
 
         .img {
             position: absolute;
-            top: 42%;
+            top: 28%;
             width: 120px;
             height: 120px;
-            left: 53%;
+            left: 80%;
             z-index: 2;
             /* opacity: 0.65; */
         }
 
         .centent {
-            margin-top: 15px;
-            font-size: 18px;
+            margin-top: 5px;
+            font-size: 16px;
             text-align: center;
         }
 
-        .date {
-            margin-top: 60px;
-            margin-bottom: 70px;
+        .date1 {
+            font-size: 16px;
+            text-align: center;
+        }
+
+        .date2 {
+            margin-top: 30px;
+            margin-bottom: 30px;
             font-size: 20px;
             text-align: center;
+        }
+
+        .number {
+            position: absolute;
+            z-index: 999;
+            text-align: left;
         }
 
         .return_id {
@@ -99,13 +109,19 @@
 
         .sign1 {
             margin-top: 15px;
-            margin-bottom: 50px;
+            margin-bottom: 35px;
             font-size: 18px;
             text-align: center;
         }
 
         .sign2 {
-            margin-top: 15px;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+
+        .sign3 {
+            margin-top: 10px;
+            margin-bottom: 20px;
             font-size: 14px;
         }
 
@@ -133,7 +149,7 @@
         .r-child {
             position: absolute;
             bottom: 0;
-            font-size: 32px;
+            font-size: 28px;
             text-align: right;
             right: 0;
         }
@@ -141,7 +157,7 @@
         .l-child {
             position: absolute;
             bottom: 0;
-            font-size: 32px;
+            font-size: 28px;
             left: 0;
         }
 
@@ -149,9 +165,100 @@
 </head>
 
 <body>
-    <img class="img" src="{{ $department_stamp }}" />
+    <div class="return_id">
+        <p>單據編號：{{ $payment_id . '-' . $pos }}</p>
+    </div>
+    <div id="header">
+        <h1 class="title">歸還證明單</h1>
+    </div>
+    <div id="main">
+        <div class="centent">
+            <p>茲收到&nbsp;&nbsp;
+                @for ($i = 0; $i < 20 - strlen($set->student->name); $i++)
+                    &nbsp;
+                @endfor
+                {{ $set->student->name }}
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                同學
+            </p>
+            <p style="margin-top: 5px;">歸還{{ $set->cloth->name }}一套。</p>
+        </div>
+        <table style="margin-top: 5px; border-spacing: 0 0.5em;">
+            <tr>
+                <th>
+                    <p>學號：{{ $set->student->username }}</p>
+                    <div class="barcode">
+                        <span>
+                            <img
+                                src="data:image/png;base64,{{ DNS1D::getBarcodePNG((string) $set->student->username, 'C39', 1.5, 30) }}" />
+                        </span>
+                    </div>
+                </th>
+                <th>
+                    <p>系級：{{ $set->student->school_class->class_name }}</p>
+                </th>
+                <th>
+                </th>
+            </tr>
+            <tr>
+                <th>
+                    <p>訂單編號：{{ $document_id }}</p>
+                </th>
+                <th>
+                    <p>付款編號：{{ $payment_id }}</p>
+                </th>
+                <th>
+                    <span style="vertical-align:middle;">經手人蓋章：</span>
+                </th>
+            </tr>
+        </table>
+    </div>
+    <div class="date1">
+        <p>中&nbsp;&nbsp;華&nbsp;&nbsp;民&nbsp;&nbsp;國&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ today()->year - 1911 }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;年
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ '6' }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;月
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;日
+        </p>
+    </div>
+    <div id="footer">
+        <table>
+            <ul class="remark">
+                <li>
+                    <p>重要事項：保證金退還，一律採取匯款方式退還保證金，配合學校付款作業時程，於歸還學位服後約7~10個工作日之後匯入「出納付款查詢平台」約定之個人帳戶中。
+                    </p>
+                </li>
+            </ul>
+        </table>
+        <div style="text-align: right;">
+            <p>{{ '（學生證明聯-' . $check_code . ')' }}
+                @for ($i = 0; $i < 22; $i++)
+                    &nbsp;
+                @endfor
+            </p>
+        </div>
+    </div>
     <div>
-        <h1 style="font-size: 32px;"> {{ $set->student->username[0] }}</h1>
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
+    </div>
+
+    <hr style="position: relative; margin: 0.1cm 0px; border-bottom: 1px dashed #000000;">
+    <div
+        style="position: relative; left: 30%; top: -13px; height: 22px; width: 300px; text-align: center; font-size: 12px; opacity: 0.7;">
+        請&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        沿&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        虛&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        線&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        撕&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        下
+    </div>
+    <div>
+        <p>&nbsp;</p>
+    </div>
+    {{-- 下半部 --}}
+    <img class="img" src="{{ $department_stamp }}" />
+    <div class="number">
+        <p style="font-size: 28px;"> {{ $set->student->username[0] }}</p>
     </div>
     <div class="return_id">
         <p>單據編號：{{ $payment_id . '-' . $pos }}</p>
@@ -161,7 +268,7 @@
     </div>
     <div id="main">
         <div class="centent">
-            <p>茲退還&nbsp;&nbsp;
+            <p>茲收到&nbsp;&nbsp;
                 @for ($i = 0; $i < 20 - strlen($set->student->name); $i++)
                     &nbsp;
                 @endfor
@@ -169,9 +276,9 @@
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 同學
             </p>
-            <p style="margin-top: 10px;">借用{{ $set->cloth->name }}一套。</p>
+            <p style="margin-top: 5px;">歸還{{ $set->cloth->name }}一套。</p>
         </div>
-        <table style="margin-top: 30px; border-spacing: 0 1em;">
+        <table style="margin-top: 5px; border-spacing: 0 0.5em;">
             <tr>
                 <th>
                     <p>學號：{{ $set->student->username }}</p>
@@ -203,35 +310,7 @@
             </tr>
         </table>
     </div>
-    <div id="footer">
-        <div style="padding: 10px 0px;"></div>
-        <table>
-            <th>
-                注意事項：
-            </th>
-            <ol class="remark">
-                <li>
-                    <p>請於{{ $return_time->end_time->format('Y/m/d') }}前，持本單與所借用服飾至{{ $return_location }}辦理歸還手續。
-                    </p>
-                </li>
-                <li>
-                    <p>服裝如有毀損或非本校學位服之情事者，須照價賠償。</p>
-                </li>
-                {{-- <li>
-                    <p>請於109年06月30日前，持本單與所借用服飾至守謙會議中心HC308辦理歸還手續。</p>
-                </li>
-                <li>
-                    <p>服裝如有毀損或非本校學位服之情事者，須照價賠償，價目表如下：
-                    <ul>
-                        <li>衣服：????元、帽子(連帽穗)：????元</li>
-                        <li>領巾：????元、帽穗：????元</li>
-                    </ul>
-                    </p>
-                </li> --}}
-            </ol>
-        </table>
-    </div>
-    <div class="date">
+    <div class="date2">
         <p>中&nbsp;&nbsp;華&nbsp;&nbsp;民&nbsp;&nbsp;國&nbsp;&nbsp;
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ today()->year - 1911 }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;年
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ today()->month }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;月
@@ -242,11 +321,33 @@
     <div class="sign2">
         <p>※無法親自歸還學位服時，請借用學位服者親自填寫下列資料。</p>
     </div>
-    <div class="sign2">
+    <div class="sign3">
         <p>本人______________(請簽章)，連絡電話______________，茲委託______________(代理人姓名)協助歸還學位服。</p>
     </div>
+    <div id="footer">
+        <table>
+            <th>
+                重要事項：
+            </th>
+            <ol class="remark">
+                <li>
+                    <p>請於{{ $return_time->end_time->format('Y/m/d') }}前，持本單與所借用服飾至{{ $return_location }}辦理歸還手續。
+                    </p>
+                </li>
+                <li>
+                    <p>服裝如有毀損或非本校學位服之情事者，須照價賠償。</p>
+                </li>
+            </ol>
+        </table>
+    </div>
     <div class="l-child">{{ substr($set->student->school_class->class_id, 0, 2) }}</div>
-    <div class="r-child">{{ substr($set->student->school_class->class_id, 2, 2) }}</div>
+    <div class="r-child">
+        <span style="font-size: 14px;">
+            {{ '（事務組整備組收執聯-' . $check_code . ')' }}
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        </span>
+        {{ substr($set->student->school_class->class_id, 2, 2) }}
+    </div>
 </body>
 
 </html>
