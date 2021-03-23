@@ -796,6 +796,9 @@
                         let sets_B = res.data.bachelor
                         this.none_list = sets_B.concat(sets_M)
                     }
+                }).catch((err) => {
+                    console.log(err)
+                    this.pageLoading = false
                 })
 
                 this.snackbar = true
@@ -909,6 +912,9 @@
                                 let sets_B = res.data.bachelor
                                 this.none_list = sets_B.concat(sets_M)
                             }
+                        }).catch((err) => {
+                            console.log(err)
+                            this.pageLoading = false
                         })
                     }
                 }
