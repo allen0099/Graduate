@@ -754,6 +754,9 @@
                         this.none_list = sets_B.concat(sets_M)
                     }
                 })
+                await this.pageLoading_cancel();
+            },
+            pageLoading_cancel() {
                 this.pageLoading = false
             },
             list_cancel() {
