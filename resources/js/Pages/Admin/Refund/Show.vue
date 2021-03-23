@@ -752,13 +752,15 @@
                         let sets_M = res.data.master
                         let sets_B = res.data.bachelor
                         this.none_list = sets_B.concat(sets_M)
+                    } else {
+                        this.pageLoading = false
                     }
+                }).catch((err) => {
+                    console.log(err)
+                    this.pageLoading = false
                 })
-                await this.pageLoading_cancel();
             },
-            pageLoading_cancel() {
-                this.pageLoading = false
-            },
+
             list_cancel() {
                 this.pageLoading = false
                 this.dialog_search_set = false
