@@ -1,9 +1,11 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Http\Requests\NewAdminCheck;
 use App\Http\Requests\NewStudentCheck;
 use App\Jobs\ChangeStudentPassword;
+use App\Models\CashierList;
 use App\Models\Department;
 use App\Models\DepartmentClass;
 use App\Models\OldClass;
@@ -16,24 +18,25 @@ use Illuminate\Support\Facades\Storage;
 use Rap2hpoutre\FastExcel\Facades\FastExcel;
 
 class UserController extends Controller
-{   
+{
 
-    public function updateUser(Request $request) {
+    public function updateUser(Request $request)
+    {
         $request->validate([
             'id' => ['required'],
             'name' => ['required'],
             'class_id' => ['required'],
         ]);
-        
+
         $id = $request->id;
         $name = $request->name;
         $class_id = $request->class_id;
 
         if (!is_null($id)) {
-            if(Auth::user()->isRole(User::ADMIN)){
+            if (Auth::user()->isRole(User::ADMIN)) {
                 $user = User::find($id);
 
-                if($user->isRole(User::ADMIN)){
+                if ($user->isRole(User::ADMIN)) {
                     $user->forceFill([
                         'name' => $name,
                     ])->save();
@@ -62,15 +65,17 @@ class UserController extends Controller
         return abort(404);
     }
 
-    public function adminList(){
-        if(Auth::user()->isRole(User::ADMIN)){
+    public function adminList()
+    {
+        if (Auth::user()->isRole(User::ADMIN)) {
             $admins = User::where('role', User::ADMIN)->get();
             return $admins;
-        } 
+        }
         return abort(403);
     }
 
-    public function resetPassword(Request $request){
+    public function resetPassword(Request $request)
+    {
         $request->validate([
             'id' => ['required'],
         ]);
@@ -78,7 +83,7 @@ class UserController extends Controller
         $id = $request->id;
 
         if (!is_null($id)) {
-            if(Auth::user()->isRole(User::ADMIN)){
+            if (Auth::user()->isRole(User::ADMIN)) {
                 $user = User::find($id);
 
                 $password = $user->isRole(User::ADMIN)
@@ -160,6 +165,8 @@ class UserController extends Controller
 
                 $origin_data->delete();
             });
+
+        CashierList::all()->each(fn($o) => $o->delete()->save());
 
         Log::info("[Log::uploadStudentList]", [
             'info' => 'Clear ended!',
