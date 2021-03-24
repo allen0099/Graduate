@@ -229,135 +229,60 @@
                     </div>
                 </v-card>
             </v-container>
-
-            <!-- footer -->
             <v-footer
-                id="footer"
-                class="d-block py-0"
-                color="grey darken-4"
                 dark
+                padless
+                class="w-full bg-gray-800 text-white mt-5 my-0"
             >
-                <!-- hidden when xs -->
-                <v-container class="text-center d-none d-sm-flex">
-                    <v-row>
-                        <v-col cols="12">
-                            <div class="mb-2">
-                                Copyright &copy; 2020-{{ (new Date()).getFullYear() }} 淡江大學版權所有
-                            </div>
-                            <div class="mb-2">
-                                本網站建議使用 Chrome、FireFox 瀏覽器瀏覽
-                            </div>
-                            <a
-                                class="grey--text text--lighten-1"
-                                href="https://www.tku.edu.tw/privacy.asp"
-                                rel="noopener"
-                                target="_blank"
-                            >
-                                隱私政策
-                            </a>
-
-                            &nbsp;•&nbsp;
-
-                            <a
-                                class="grey--text text--lighten-1"
-                                href="https://www.tku.edu.tw/pdp.asp"
-                                rel="noopener"
-                                target="_blank"
-                            >
-                                個資政策
-                            </a>
-
-                            &nbsp;•&nbsp;
-
-                            <a
-                                class="grey--text text--lighten-1"
-                                href="http://www.ipc.tku.edu.tw/"
-                                rel="noopener"
-                                target="_blank"
-                            >
-                                個資保護聯絡窗口
-                            </a>
-                            <div class="mt-5">
-                                地址：251301 新北市淡水區英專路151號
-                            </div>
-                            <div class="mt-2">
-                                單位：事務整備組（淡江大學守謙國際會議中心 H308）
-                            </div>
-                            <div class="mt-2">
-                                上班時間：平日週一至週五 08:00~12:00、13:00~17:00
-                            </div>
-                            <div class="mt-2">
-                                連絡電話：（市話）02-26215656 轉 2275、（手機）0919-585656
-                            </div>
-                        </v-col>
-                    </v-row>
-                </v-container>
-
-                <!-- show when xs -->
-                <v-container class="text-center d-flex d-sm-none">
-                    <v-row>
-                        <v-col cols="12">
-                            <div class="mb-2">
-                                Copyright &copy; 2020-{{ (new Date()).getFullYear() }} 淡江大學版權所有
-                            </div>
-                            <div class="mb-2">
-                                建議使用 Chrome、FireFox 瀏覽器瀏覽
-                            </div>
-                            <a
-                                class="grey--text text--lighten-1"
-                                href="https://www.tku.edu.tw/privacy.asp"
-                                rel="noopener"
-                                target="_blank"
-                            >
-                                隱私政策
-                            </a>
-
-                            &nbsp;•&nbsp;
-
-                            <a
-                                class="grey--text text--lighten-1"
-                                href="https://www.tku.edu.tw/pdp.asp"
-                                rel="noopener"
-                                target="_blank"
-                            >
-                                個資政策
-                            </a>
-
-                            &nbsp;•&nbsp;
-
-                            <a
-                                class="grey--text text--lighten-1"
-                                href="http://www.ipc.tku.edu.tw/"
-                                rel="noopener"
-                                target="_blank"
-                            >
-                                個資保護聯絡窗口
-                            </a>
-                            <div class="mt-5">
-                                地址：251301 新北市淡水區英專路151號
-                            </div>
-                            <div class="mt-2">
-                                單位：事務整備組（淡江大學守謙國際會議中心 H308）
-                            </div>
-                            <div class="mt-2">
-                                上班時間：平日週一至週五 08:00~12:00、13:00~17:00
-                            </div>
-                            <div class="mt-2">
-                                市話：02-26215656 轉 2275
-                            </div>
-                            <div class="mt-2">
-                                手機：0919-585656
-                            </div>
-                            <div class="mt-2">
-                                信箱：<a
-                                    class="grey--text text--lighten-1"
+                <div class="xl:px-40 pb-5 lg:px-20 md:px-10 sm:px-5 px-10">
+                    <div class="w-full pt-12 flex flex-col sm:flex-row space-y-2  justify-start">
+                        <div class="w-full sm:w-1/2 pr-6 flex flex-col space-y-4">
+                            <div class="md:text-3xl sm:text-2xl text-xl">總務處事務整備組：</div>
+                            <p class="opacity-60">上班時間：星期一至星期五 上午8:00~12:00 下午1:00~5:00</p>
+                            <p class="opacity-60">電話：(02)2621-5656 / 0919-585656 轉 2275</p>
+                            <p class="opacity-60">地址：25137新北市淡水區英專路151號 守謙會議中心HC308室</p>
+                        </div>
+                        <div class="w-full sm:w-1/2 flex flex-col space-y-4 sm:pt-0">
+                            <div class="md:text-3xl sm:text-2xl text-xl">網頁維護及個資聯絡窗口：</div>
+                            <p class="opacity-60">本網頁由事務整備組黃慶文先生負責維護，個資保護聯絡窗口為賴文經專員；若您有任何問題及意見，歡迎來信批評指教。</p>
+                            <p class="opacity-60">聯絡信箱：<a
                                     href="mailto:agox@oa.tku.edu.tw"
-                                >agox@oa.tku.edu.tw</a>
-                            </div>
-                        </v-col>
-                    </v-row>
-                </v-container>
+                                    class="orange--text text--lighten-3"
+                                >agox@oa.tku.edu.tw</a></p>
+                        </div>
+                    </div>
+                    <hr class="mt-5" />
+                    <div class="w-full pt-5 flex flex-col sm:flex-row space-y-2  justify-start">
+                        <div class="w-full pr-6 flex flex-col space-y-4">
+                            <p class="opacity-60">本網站著作權屬於淡江大學總務處，請詳見。
+                                <a
+                                    href="https://www.tku.edu.tw/privacy.asp"
+                                    class="orange--text text--lighten-3"
+                                    target="_blank"
+                                >隱私權政策</a>
+                                │ <a
+                                    href="https://www.tku.edu.tw/pdp.asp"
+                                    class="orange--text text--lighten-3"
+                                    target="_blank"
+                                >個資政策</a>
+                                │ <a
+                                    href="https://www.tku.edu.tw/notify.asp"
+                                    class="orange--text text--lighten-3"
+                                    target="_blank"
+                                >個人資料告知聲明</a>
+                            </p>
+                            <p class="opacity-60">建議最佳瀏覽 Google Chrome / Mozilla Firefox / Edge 或相容 W3C 網頁標準之最新版瀏覽器。</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="w-full bg-gray-600 xl:px-20 lg:px-10 md:px-5 sm:px-3 px-5">
+                    <div class="opacity-60 pt-5 text-center">
+                        <p>Copyright © 2020-{{ year }} ALL RIGHTS RESERVED BY TAMKANG UNIVERSITY OFFICE OF
+                            INFORMATION SERVICES.</p>
+                    </div>
+                </div>
             </v-footer>
+
         </v-main>
         <v-dialog
             v-model="license_check"
@@ -459,33 +384,6 @@
                     url: 'profile.show', // 在 vendor 裡面有 定義
                     icon: 'mdi-account-cog-outline',
                 }, ],
-                email: '',
-                socials: [{
-                        icon: 'mdi-reddit',
-                        href: 'https://www.reddit.com/r/vuetifyjs',
-                        title: 'Reddit',
-                    },
-                    {
-                        icon: 'mdi-medium',
-                        href: 'https://medium.com/vuetify',
-                        title: 'Medium',
-                    },
-                    {
-                        icon: 'mdi-github-circle',
-                        href: 'https://github.com/vuetifyjs/vuetify',
-                        title: 'Github',
-                    },
-                    {
-                        icon: 'mdi-twitter',
-                        href: 'https://twitter.com/vuetifyjs',
-                        title: 'Twitter',
-                    },
-                    {
-                        icon: 'mdi-discord',
-                        href: 'https://community.vuetifyjs.com',
-                        title: 'Discord Community',
-                    },
-                ],
             }
         },
 
@@ -517,6 +415,12 @@
         mounted() {
             this.check()
         },
+        computed: {
+            year() {
+                let today = new Date()
+                return today.getFullYear()
+            }
+        }
     }
 
 </script>
