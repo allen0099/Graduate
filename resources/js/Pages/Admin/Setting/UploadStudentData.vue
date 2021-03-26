@@ -265,6 +265,9 @@
                 }).catch((err) => {
                     console.log(err)
                     this.msg = err.response.data.errors
+                    if (!!this.msg === false) {
+                        this.msg = '上傳失敗'
+                    }
                     this.snackbar = true
                     this.snackbar_true = false
                     this.pageLoading = false
@@ -301,6 +304,9 @@
                     console.log(res)
                 }).catch((err) => {
                     this.msg = err.response.data.errors
+                    if (!!this.msg === false) {
+                        this.msg = '上傳失敗'
+                    }
                     this.snackbar = true
                     this.snackbar_true = false
                     this.pageLoading = false
