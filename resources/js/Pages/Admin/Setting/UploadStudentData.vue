@@ -73,7 +73,7 @@
                         <span class="ml-3">上傳學生資料</span>
                     </v-card-title>
                     <v-card-text class="font-weight-bold">
-                        請注意，進行上傳會將舊有的學生資料進行刪除。
+                        請注意，進行上傳會將舊有的學生資料與訂單資料進行刪除。
                         上傳資料請耐心等候，切勿離開網站。
                         確定要上傳?
                     </v-card-text>
