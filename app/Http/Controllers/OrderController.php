@@ -36,6 +36,11 @@ class OrderController extends Controller
      */
     public function store(StoreOrder $request)
     {
+        Log::info("[Log::OrderControllerStore]", [
+            'ip' => $request->ip(),
+            'username' => Auth::user() ? Auth::user()->username : 'who_are_you'
+        ]);
+
         $request->validated();
 
         $order = new Order();
@@ -50,7 +55,7 @@ class OrderController extends Controller
 
         $this->saveSets($order, $request->sets);
 
-        Log::info("[Log::OrderControllerStore]", [
+        Log::info("[Log::OrderControllerStore::SUCCESS]", [
             'id' => $order->id,
             'ip' => $request->ip(),
             'username' => Auth::user()->username
@@ -84,6 +89,11 @@ class OrderController extends Controller
 
         $order = Order::find($id);
         $user = Auth::user();
+
+        Log::info("[Log::OrderControllerUpdate]", [
+            'ip' => $request->ip(),
+            'username' => Auth::user() ? Auth::user()->username : 'who_are_you'
+        ]);
 
         if (is_null($order))
             abort(404);
@@ -179,11 +189,21 @@ class OrderController extends Controller
 
     public function preserveDate(PreserveDate $request)
     {
+        Log::info("[Log::preserveDate]", [
+                'ip' => $request->ip(),
+                'username' => Auth::user()->username ? Auth::user() : 'who_are_you'
+        ]);
+
         $request->validated();
 
         $order = Order::where('document_id', $request->order_id)->first();
 
         if (!is_null($order->preserve)) {
+            Log::info("[Log::preserveDate::FAILED]", [
+                'id' => $order->id,
+                'ip' => $request->ip(),
+                'username' => Auth::user()->username
+            ]);
             return response()->json([
                 'error' => 'error',
                 'message' => __('validation.order_had_preserve')
@@ -194,7 +214,7 @@ class OrderController extends Controller
             'preserve' => $request['preserve_date'],
         ])->save();
 
-        Log::info("[Log::preserveDate]", [
+        Log::info("[Log::preserveDate::SUCCESS]", [
             'id' => $order->id,
             'preserve' => $request['preserve_date'],
             'ip' => $request->ip(),
@@ -206,6 +226,11 @@ class OrderController extends Controller
 
     public function paidOrder(CheckOrder $request)
     {
+        Log::info("[Log::paidOrder]", [
+            'ip' => $request->ip(),
+            'username' => Auth::user() ? Auth::user()->username : 'who_are_you'
+        ]);
+
         $request->validated();
 
         $order = Order::where('document_id', $request->order_id)->first();
@@ -215,6 +240,10 @@ class OrderController extends Controller
         ]);
 
         if ($order->status_code !== Order::code_created) {
+            Log::info("[Log::paidOrder::FAILED]", [
+                'ip' => $request->ip(),
+                'username' => Auth::user() ? Auth::user()->username : 'who_are_you'
+            ]);
             return response()->json([
                 'error' => 'error',
                 'message' => __('validation.order_status_error')
@@ -226,7 +255,7 @@ class OrderController extends Controller
             'payment_id' => $request->payment_id
         ])->save();
 
-        Log::info("[Log::paidOrder]", [
+        Log::info("[Log::paidOrder::SUCCESS]", [
             'id' => $order->id,
             'ip' => $request->ip(),
             'username' => Auth::user()->username
@@ -237,11 +266,20 @@ class OrderController extends Controller
 
     public function receiveCloth(CheckOrder $request)
     {
+        Log::info("[Log::receiveCloth]", [
+            'ip' => $request->ip(),
+            'username' => Auth::user() ? Auth::user()->username : 'who_are_you'
+        ]);
+
         $request->validated();
 
         $order = Order::where('document_id', $request->order_id)->first();
 
         if ($order->status_code !== Order::code_paid) {
+            Log::info("[Log::receiveCloth::FAILED]", [
+                'ip' => $request->ip(),
+                'username' => Auth::user() ? Auth::user()->username : 'who_are_you'
+            ]);
             return response()->json([
                 'error' => 'error',
                 'message' => __('validation.order_status_error')
@@ -252,7 +290,7 @@ class OrderController extends Controller
             'status_code' => Order::code_received,
         ])->save();
 
-        Log::info("[Log::receiveCloth]", [
+        Log::info("[Log::receiveCloth::SUCCESS]", [
             'id' => $order->id,
             'ip' => $request->ip(),
             'username' => Auth::user()->username
@@ -263,6 +301,11 @@ class OrderController extends Controller
 
     public function returnCloth(Request $request)
     {
+        Log::info("[Log::returnCloth]", [
+            'ip' => $request->ip(),
+            'username' => Auth::user() ? Auth::user()->username : 'who_are_you'
+        ]);
+
         $request->validate([
             'stu_username' => ['required', 'exists:users,username'],
         ]);
@@ -273,6 +316,10 @@ class OrderController extends Controller
         $order = $set->order()->get()->first();
 
         if ($order->status_code !== Order::code_received) {
+            Log::info("[Log::returnCloth::FAILED]", [
+                'ip' => $request->ip(),
+                'username' => Auth::user() ? Auth::user()->username : 'who_are_you'
+            ]);
             return response()->json([
                 'error' => 'error',
                 'message' => __('validation.order_status_error')
@@ -304,7 +351,7 @@ class OrderController extends Controller
             'status_code' => Order::code_returned,
         ])->save();
 
-        Log::info("[Log::returnCloth]", [
+        Log::info("[Log::returnCloth::SUCCESS]", [
             'id' => $order->id,
             'ip' => $request->ip(),
             'username' => Auth::user()->username
@@ -315,6 +362,11 @@ class OrderController extends Controller
 
     public function refundOrder(Request $request)
     {
+        Log::info("[Log::refundOrder]", [
+            'ip' => $request->ip(),
+            'username' => Auth::user() ? Auth::user()->username : 'who_are_you'
+        ]);
+
         $request->validate([
             'stu_username' => ['required', 'exists:users,username'],
         ]);
@@ -325,6 +377,10 @@ class OrderController extends Controller
         $this->setExistCheck($set);
 
         if (is_null($set->returned)) {
+            Log::info("[Log::refundOrder::FAILED]", [
+                'ip' => $request->ip(),
+                'username' => Auth::user() ? Auth::user()->username : 'who_are_you'
+            ]);
             return response()
                 ->json([
                     'error' => 'duplicate',
@@ -344,7 +400,7 @@ class OrderController extends Controller
             'refund' => true,
         ])->save();
 
-        Log::info("[Log::refundOrder]", [
+        Log::info("[Log::refundOrder::SUCCESS]", [
             'stu_username' => $request->stu_username,
             'ip' => $request->ip(),
             'username' => Auth::user()->username
@@ -355,6 +411,10 @@ class OrderController extends Controller
 
     public function cancelOrder(CheckOrder $request)
     {
+        Log::info("[Log::cancelOrder]", [
+            'ip' => $request->ip(),
+            'username' => Auth::user() ? Auth::user()->username : 'who_are_you'
+        ]);
         $request->validated();
 
         $order = Order::where('document_id', $request->order_id)->first();
@@ -364,7 +424,7 @@ class OrderController extends Controller
         $order->sets()->delete();
         $order->delete();
 
-        Log::info("[Log::cancelOrder]", [
+        Log::info("[Log::cancelOrder::SUCCESS]", [
             'id' => $order->id,
             'ip' => $request->ip(),
             'username' => Auth::user()->username
