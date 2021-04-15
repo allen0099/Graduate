@@ -200,6 +200,24 @@
                             </v-data-table>
                         </v-form>
                     </v-card>
+                    <v-row
+                        dense
+                        class="mx-1 my-1 my-md-0"
+                    >
+                        <code
+                            class="caption"
+                            v-if="$page.user.username[0] < '5'"
+                        >
+                            * 學士服尺寸計有四種，參考標準為
+                            XL(175CM以上)、L(166-174CM)、M(160-165CM)、S(159CM以下)。
+                        </code>
+                        <code
+                            class="caption"
+                            v-else
+                        >
+                            * 碩士服尺寸計有三種，參考標準為 XL(175CM以上)、L(166-174CM)、M(165CM以下)。
+                        </code>
+                    </v-row>
                     <v-row class="mx-1">
                         <v-spacer></v-spacer>
                         <v-btn
