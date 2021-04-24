@@ -24,8 +24,7 @@
     </div>
 </body>
 <!-- component -->
-<script src="https://kit.fontawesome.com/4db6b32bd3.js" crossorigin="anonymous"></script>
-<div class="w-full bg-gray-800 text-white mt-5">
+<div class="w-full bg-gray-800 text-white">
     <div class="xl:px-40 pb-5 lg:px-20 md:px-10 sm:px-5 px-10">
         <div class="w-full pt-12 flex flex-col sm:flex-row space-y-2  justify-start">
             <div class="w-full sm:w-1/2 pr-6 flex flex-col space-y-4">
