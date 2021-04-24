@@ -133,7 +133,7 @@
 
         methods: {
             init() {
-                this.stamp = this.$page.configs.admin_stamp_url
+                this.stamp = this.$page.props.configs.admin_stamp_url
             },
             selectNewPhoto() {
                 this.$refs.photo.click();
@@ -151,7 +151,9 @@
 
             deletePhoto() {
                 this.photoPreview = null
-                this.$refs.photo.files[0] = null
+                if (!!this.$refs.photo.file) {
+                    this.$refs.photo.files[0] = null
+                }
             },
 
             async submit() {

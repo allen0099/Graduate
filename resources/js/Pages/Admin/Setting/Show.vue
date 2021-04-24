@@ -70,7 +70,7 @@
                     <v-card flat>
                         <v-card-text>
                             <div
-                                v-for="(time, index) in $page.configs.time_range"
+                                v-for="(time, index) in $page.props.configs.time_range"
                                 :key="`time-${index}`"
                             >
                                 <TimeSetting :time="time"></TimeSetting>
@@ -475,14 +475,14 @@
         }),
         methods: {
             init_obj() {
-                this.bachelor_accessories = this.$page.inventory.slice(0, 2)
-                this.master_accessories = this.$page.inventory.slice(2, 8)
-                this.bachelor_cloths = this.$page.inventory.slice(8, 12)
-                this.master_cloths = this.$page.inventory.slice(12, 15)
-                this.bachelor_price = this.$page.configs.bachelor_price
-                this.bachelor_margin_price = this.$page.configs.bachelor_margin_price
-                this.master_price = this.$page.configs.master_price
-                this.master_margin_price = this.$page.configs.master_margin_price
+                this.bachelor_accessories = this.$page.props.inventory.slice(0, 2)
+                this.master_accessories = this.$page.props.inventory.slice(2, 8)
+                this.bachelor_cloths = this.$page.props.inventory.slice(8, 12)
+                this.master_cloths = this.$page.props.inventory.slice(12, 15)
+                this.bachelor_price = this.$page.props.configs.bachelor_price
+                this.bachelor_margin_price = this.$page.props.configs.bachelor_margin_price
+                this.master_price = this.$page.props.configs.master_price
+                this.master_margin_price = this.$page.props.configs.master_margin_price
             },
             async save_inventory(item) {
                 this.snackbar = false

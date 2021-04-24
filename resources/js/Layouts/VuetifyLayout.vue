@@ -37,7 +37,7 @@
                     class="ml-2 bottom hidden-sm-and-down text-decoration-none"
                     :href="route(link.url)"
                     :class="{'v-btn--active': route().current(link.url)}"
-                    v-if="link.role.indexOf($page.user.role) >= 0"
+                    v-if="link.role.indexOf($page.props.user.role) >= 0"
                 >
                     <v-icon
                         left
@@ -56,7 +56,7 @@
                     class="ml-2 hidden-sm-and-down text-decoration-none"
                     :href="route(link.url)"
                     :class="{'v-btn--active': route().current(link.url)}"
-                    v-if="link.role.indexOf($page.user.role) >= 0"
+                    v-if="link.role.indexOf($page.props.user.role) >= 0"
                 >
                     <v-icon left>{{ link.icon }}</v-icon>
                     {{ link.label }}
@@ -74,7 +74,7 @@
                             text
                             class="ml-2 hidden-sm-and-down text-decoration-none"
                         >
-                            {{$page.user.name}}<v-icon right>{{ 'mdi-menu-down' }}</v-icon>
+                            {{$page.props.user.name}}<v-icon right>{{ 'mdi-menu-down' }}</v-icon>
                         </v-btn>
                     </template>
                     <v-list class="hidden-sm-and-down">
@@ -124,10 +124,10 @@
                         <v-list-item>
                             <v-list-item-content>
                                 <v-list-item-title class="title">
-                                    {{$page.user.name? $page.user.name : "訪客"}}
+                                    {{$page.props.user.name? $page.props.user.name : "訪客"}}
                                 </v-list-item-title>
                                 <v-list-item-subtitle>
-                                    {{ $page.user.username? $page.user.username : "Owooooooooo" }}
+                                    {{ $page.props.user.username? $page.props.user.username : "Owooooooooo" }}
                                 </v-list-item-subtitle>
                             </v-list-item-content>
                             <v-list-item-avatar>
@@ -149,7 +149,7 @@
                             class="text-decoration-none"
                             color="primary"
                             :class="{'v-btn--active': route().current(link.url)}"
-                            v-if="link.role.indexOf($page.user.role) >= 0"
+                            v-if="link.role.indexOf($page.props.user.role) >= 0"
                         >
                             <v-list-item-icon>
                                 <v-icon v-text="link.icon" />
@@ -169,7 +169,7 @@
                             class="text-decoration-none"
                             color="primary"
                             :class="{'v-btn--active': route().current(link.url)}"
-                            v-if="link.role.indexOf($page.user.role) >= 0"
+                            v-if="link.role.indexOf($page.props.user.role) >= 0"
                         >
                             <v-list-item-icon>
                                 <v-icon v-text="link.icon" />
@@ -405,9 +405,9 @@
                 this.license_check = false
             },
             check() {
-                if (this.$page.user.role === 'student') {
+                if (this.$page.props.user.role === 'student') {
                     if (this.$inertia.page.url !== '/user/profile') {
-                        this.license_check = !this.$page.user.filled_pay_form
+                        this.license_check = !this.$page.props.user.filled_pay_form
                     }
                 }
             },

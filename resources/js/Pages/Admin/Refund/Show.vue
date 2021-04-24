@@ -714,7 +714,7 @@
                     return fmt;
                 }
 
-                let time_range = this.$page.configs.time_range[4]
+                let time_range = this.$page.props.configs.time_range[4]
 
                 let today = new Date(new Date().Format("yyyy-MM-dd") + " 00:00:00")
 
@@ -922,8 +922,9 @@
                 await this.alert_cancel()
             },
         },
-        created() {
-            this.init()
+        async created() {
+            await this.init()
+            this.pageLoading = false
         },
     }
 

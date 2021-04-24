@@ -101,7 +101,7 @@
                                             color="teal darken-2"
                                             dense
                                             @click="reservation(order)"
-                                            :disabled="order.preserve"
+                                            :disabled="!!order.preserve"
                                         >
                                             預約領衣
                                             <v-icon right>
@@ -119,7 +119,7 @@
                                             color="indigo"
                                             class="mr-3"
                                             dense
-                                            :href="`${route('return_pdf')}?document_id=${order.document_id}&stu_id=${$page.user.username}`"
+                                            :href="`${route('return_pdf')}?document_id=${order.document_id}&stu_id=${$page.props.user.username}`"
                                             download
                                         >
                                             列印歸還單
@@ -187,21 +187,21 @@
                                         <span v-if="order.status_code===Status.created">
                                             請在繳費期限 {{ payment_time_range.start_time }} 至
                                             {{ payment_time_range.end_time }}
-                                            止，至校園繳費機進行繳費，繳費完成後請持繳費單據與本單至{{ $page.configs.payment_location }}完成繳費登記。</span>
+                                            止，至校園繳費機進行繳費，繳費完成後請持繳費單據與本單至{{ $page.props.configs.payment_location }}完成繳費登記。</span>
                                         <span
                                             v-if="order.status_code === Status.paid && order.owner.username[0] <= '5'">
                                             請在領取期限 {{ B_receive_time_range.start_time }} 至
                                             {{ B_receive_time_range.end_time }}
-                                            止，在下午2~4點持借用單之學生存根聯至{{ $page.configs.receive_location }}領取學士服。
+                                            止，在下午2~4點持借用單之學生存根聯至{{ $page.props.configs.receive_location }}領取學士服。
                                         </span>
                                         <span v-if="order.status_code === Status.paid && order.owner.username[0] > '5'">
                                             請在領取期限 {{ M_receive_time_range.start_time }} 至
                                             {{ M_receive_time_range.end_time }}
-                                            止，在下午2~4點持借用單之學生存根聯至{{ $page.configs.receive_location }}領取碩士服。
+                                            止，在下午2~4點持借用單之學生存根聯至{{ $page.props.configs.receive_location }}領取碩士服。
                                         </span>
                                         <span v-if="order.status_code===Status.received">
                                             請在歸還期限 {{ return_time_range.start_time }} 至 {{ return_time_range.end_time }}
-                                            止，列印並填寫歸還證明單，並持單至{{ $page.configs.return_location }}辦理歸還手續。
+                                            止，列印並填寫歸還證明單，並持單至{{ $page.props.configs.return_location }}辦理歸還手續。
                                         </span>
                                     </v-col>
                                 </v-row>
@@ -345,7 +345,7 @@
                         class="mt-2"
                         style="list-style: decimal;"
                     >
-                        <li>開放領取{{ $page.user.username[0] < "5" ? '學士服' : '碩士服' }}時段：
+                        <li>開放領取{{ $page.props.user.username[0] < "5" ? '學士服' : '碩士服' }}時段：
                             <span style="color: #d48344;">{{ new Date(time_range.start_time).Format("yyyy-MM-dd") }}
                                 ~
                                 {{ new Date(time_range.end_time).Format("yyyy-MM-dd") }}
@@ -565,8 +565,8 @@
                 return true
             },
             async init() {
-                this.username = this.$page.user.username
-                this.orderList = this.$page.orders.own.map(x => Object.assign({
+                this.username = this.$page.props.user.username
+                this.orderList = this.$page.props.orders.own.map(x => Object.assign({
                     show: false
                 }, x))
 
@@ -574,14 +574,16 @@
                     this.statusFilterSelected = this.orderList[0].status_code - 1
                 }
 
-                if (this.$page.orders.shared && !this.orderList.find(x => x.id === this.$page.orders.shared.id)) {
+                if (this.$page.props.orders.shared && !this.orderList.find(x => x.id === this.$page.props.orders
+                        .shared.id)) {
                     this.orderList.push({
-                        ...this.$page.orders.shared,
+                        ...this.$page.props.orders.shared,
                         show: false
                     });
                 }
 
-                this.time_range = this.$page.configs.time_range[this.$page.user.username[0] < "5" ? 2 : 3]
+                this.time_range = this.$page.props.configs.time_range[this.$page.props.user.username[0] < "5" ? 2 :
+                    3]
 
                 Date.prototype.Format = function (fmt) {
                     var o = {
@@ -607,10 +609,10 @@
                     return fmt;
                 }
 
-                let pay = this.$page.configs.time_range[1]
-                let B_rev = this.$page.configs.time_range[2]
-                let M_rev = this.$page.configs.time_range[3]
-                let ret = this.$page.configs.time_range[4]
+                let pay = this.$page.props.configs.time_range[1]
+                let B_rev = this.$page.props.configs.time_range[2]
+                let M_rev = this.$page.props.configs.time_range[3]
+                let ret = this.$page.props.configs.time_range[4]
 
                 this.payment_time_range.start_time = new Date(pay.start_time).Format('yyyy/MM/dd')
                 this.payment_time_range.end_time = new Date(pay.end_time).Format('yyyy/MM/dd')

@@ -24,7 +24,7 @@
                         ref="location"
                     />
                     <jet-input-error
-                        :message="form.error('location')"
+                        :message="form.errors.location"
                         class="mt-2"
                     />
                 </div>
@@ -34,9 +34,9 @@
             <jet-action-message
                 :on="form.recentlySuccessful"
                 class="mr-3"
-                :color="Object.values($page.errors).length > 0 ? 'red' : ''"
+                :color="Object.values($page.props.errors).length > 0 ? 'red' : ''"
             >
-                {{ Object.values($page.errors).length > 0 ? Object.values($page.errors)[0] : $page.flash.success }}
+                {{ Object.values($page.props.errors).length > 0 ? Object.values($page.props.errors)[0] : $page.props.flash.success }}
 
             </jet-action-message>
 
@@ -88,7 +88,7 @@
                 this.form.post('/location');
             },
             init() {
-                this.location = this.$page.configs[this.type + '_location']
+                this.location = this.$page.props.configs[this.type + '_location']
             }
         },
         mounted() {

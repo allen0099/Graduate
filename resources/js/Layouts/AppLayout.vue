@@ -43,13 +43,13 @@
                             >
                                 <template #trigger>
                                     <button
-                                        v-if="$page.jetstream.managesProfilePhotos"
+                                        v-if="$page.props.jetstream.managesProfilePhotos"
                                         class="flex text-sm border-2 border-transparent rounded-full focus:outline-none focus:border-gray-300 transition duration-150 ease-in-out"
                                     >
                                         <img
                                             class="h-8 w-8 rounded-full object-cover"
-                                            :src="$page.user.profile_photo_url"
-                                            :alt="$page.user.name"
+                                            :src="$page.props.user.profile_photo_url"
+                                            :alt="$page.props.user.name"
                                         />
                                     </button>
 
@@ -57,7 +57,7 @@
                                         v-else
                                         class="flex items-center text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:outline-none focus:text-gray-700 focus:border-gray-300 transition duration-150 ease-in-out"
                                     >
-                                        <div>{{ $page.user.name }}</div>
+                                        <div>{{ $page.props.user.name }}</div>
 
                                         <div class="ml-1">
                                             <svg
@@ -87,7 +87,7 @@
 
                                     <jet-dropdown-link
                                         :href="route('api-tokens.index')"
-                                        v-if="$page.jetstream.hasApiFeatures"
+                                        v-if="$page.props.jetstream.hasApiFeatures"
                                     >
                                         API Tokens
                                     </jet-dropdown-link>
@@ -95,19 +95,19 @@
                                     <div class="border-t border-gray-100"></div>
 
                                     <!-- Team Management -->
-                                    <template v-if="$page.jetstream.hasTeamFeatures">
+                                    <template v-if="$page.props.jetstream.hasTeamFeatures">
                                         <div class="block px-4 py-2 text-xs text-gray-400">
                                             Manage Team
                                         </div>
 
                                         <!-- Team Settings -->
-                                        <jet-dropdown-link :href="route('teams.show', $page.user.current_team)">
+                                        <jet-dropdown-link :href="route('teams.show', $page.props.user.current_team)">
                                             Team Settings
                                         </jet-dropdown-link>
 
                                         <jet-dropdown-link
                                             :href="route('teams.create')"
-                                            v-if="$page.jetstream.canCreateTeams"
+                                            v-if="$page.props.jetstream.canCreateTeams"
                                         >
                                             Create New Team
                                         </jet-dropdown-link>
@@ -119,7 +119,7 @@
                                             Switch Teams
                                         </div>
 
-                                        <template v-for="team in $page.user.all_teams">
+                                        <template v-for="team in $page.props.user.all_teams">
                                             <form
                                                 @submit.prevent="switchToTeam(team)"
                                                 :key="team.id"
@@ -127,7 +127,7 @@
                                                 <jet-dropdown-link as="button">
                                                     <div class="flex items-center">
                                                         <svg
-                                                            v-if="team.id == $page.user.current_team_id"
+                                                            v-if="team.id == $page.props.user.current_team_id"
                                                             class="mr-2 h-5 w-5 text-green-400"
                                                             fill="none"
                                                             stroke-linecap="round"
@@ -211,14 +211,14 @@
                         <div class="flex-shrink-0">
                             <img
                                 class="h-10 w-10 rounded-full"
-                                :src="$page.user.profile_photo_url"
-                                :alt="$page.user.name"
+                                :src="$page.props.user.profile_photo_url"
+                                :alt="$page.props.user.name"
                             />
                         </div>
 
                         <div class="ml-3">
-                            <div class="font-medium text-base text-gray-800">{{ $page.user.name }}</div>
-                            <div class="font-medium text-sm text-gray-500">{{ $page.user.email }}</div>
+                            <div class="font-medium text-base text-gray-800">{{ $page.props.user.name }}</div>
+                            <div class="font-medium text-sm text-gray-500">{{ $page.props.user.email }}</div>
                         </div>
                     </div>
 
@@ -233,7 +233,7 @@
                         <jet-responsive-nav-link
                             :href="route('api-tokens.index')"
                             :active="route().current('api-tokens.index')"
-                            v-if="$page.jetstream.hasApiFeatures"
+                            v-if="$page.props.jetstream.hasApiFeatures"
                         >
                             API Tokens
                         </jet-responsive-nav-link>
@@ -249,7 +249,7 @@
                         </form>
 
                         <!-- Team Management -->
-                        <template v-if="$page.jetstream.hasTeamFeatures">
+                        <template v-if="$page.props.jetstream.hasTeamFeatures">
                             <div class="border-t border-gray-200"></div>
 
                             <div class="block px-4 py-2 text-xs text-gray-400">
@@ -258,7 +258,7 @@
 
                             <!-- Team Settings -->
                             <jet-responsive-nav-link
-                                :href="route('teams.show', $page.user.current_team)"
+                                :href="route('teams.show', $page.props.user.current_team)"
                                 :active="route().current('teams.show')"
                             >
                                 Team Settings
@@ -278,7 +278,7 @@
                                 Switch Teams
                             </div>
 
-                            <template v-for="team in $page.user.all_teams">
+                            <template v-for="team in $page.props.user.all_teams">
                                 <form
                                     @submit.prevent="switchToTeam(team)"
                                     :key="team.id"
@@ -286,7 +286,7 @@
                                     <jet-responsive-nav-link as="button">
                                         <div class="flex items-center">
                                             <svg
-                                                v-if="team.id == $page.user.current_team_id"
+                                                v-if="team.id == $page.props.user.current_team_id"
                                                 class="mr-2 h-5 w-5 text-green-400"
                                                 fill="none"
                                                 stroke-linecap="round"

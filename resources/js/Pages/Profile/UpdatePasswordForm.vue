@@ -23,7 +23,7 @@
                     autocomplete="current-password"
                 />
                 <jet-input-error
-                    :message="form.error('current_password')"
+                    :message="form.errors.current_password"
                     class="mt-2"
                 />
             </div>
@@ -41,7 +41,7 @@
                     autocomplete="new-password"
                 />
                 <jet-input-error
-                    :message="form.error('password')"
+                    :message="form.errors.password"
                     class="mt-2"
                 />
             </div>
@@ -59,7 +59,7 @@
                     autocomplete="new-password"
                 />
                 <jet-input-error
-                    :message="form.error('password_confirmation')"
+                    :message="form.errors.password_confirmation"
                     class="mt-2"
                 />
             </div>
@@ -100,9 +100,9 @@
             JetInputError,
             JetLabel,
         },
-
         data() {
             return {
+                username: 'meow',
                 form: this.$inertia.form({
                     current_password: '',
                     password: '',
@@ -116,9 +116,10 @@
         methods: {
             updatePassword() {
                 this.form.put(route('user-password.update'), {
-                    preserveScroll: true
-                }).then(() => {
-                    this.$refs.current_password.focus()
+                    preserveScroll: true,
+                    onFinish: () => {
+                        this.$refs.current_password.focus()
+                    }
                 })
             },
         },

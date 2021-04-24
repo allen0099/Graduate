@@ -59,9 +59,9 @@
             <jet-action-message
                 :on="form.recentlySuccessful"
                 class="mr-3"
-                :color="Object.values($page.errors).length > 0 ? 'red' : ''"
+                :color="Object.values($page.props.errors).length > 0 ? 'red' : ''"
             >
-                {{ Object.values($page.errors).length > 0 ? Object.values($page.errors)[0] : $page.flash.success }}
+                {{ Object.values($page.props.errors).length > 0 ? Object.values($page.props.errors)[0] : $page.props.flash.success }}
 
             </jet-action-message>
 

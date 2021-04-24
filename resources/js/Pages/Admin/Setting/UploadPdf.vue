@@ -132,7 +132,7 @@
         methods: {
             async init() {
                 if (this.pdf) {
-                    this.name = this.$page.configs['pdf_' + this.pdf]
+                    this.name = this.$page.props.configs['pdf_' + this.pdf]
                 } else {
                     this.name = this.title
                 }

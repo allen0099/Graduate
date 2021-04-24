@@ -14,7 +14,7 @@
             <!-- Profile Photo -->
             <!-- <div
                 class="col-span-6 sm:col-span-4"
-                v-if="$page.jetstream.managesProfilePhotos"
+                v-if="$page.props.jetstream.managesProfilePhotos"
             >
 
                 <input
@@ -71,7 +71,7 @@
                 </jet-secondary-button>
 
                 <jet-input-error
-                    :message="form.error('photo')"
+                    :message="form.errors.photo"
                     class="mt-2"
                 />
             </div> -->
@@ -136,7 +136,7 @@
                     v-model="form.email"
                 />
                 <jet-input-error
-                    :message="form.error('email')"
+                    :message="form.errors.email"
                     class="mt-2"
                 />
             </div>

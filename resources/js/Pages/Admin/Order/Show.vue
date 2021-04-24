@@ -12,7 +12,7 @@
                     cols="12"
                 >
                     <v-text-field
-                        v-model="$page.search"
+                        v-model="$page.props.search"
                         label="訂單搜尋 (學號、訂單編號或付款單據)"
                         hide-details
                         clearable
@@ -529,12 +529,20 @@
                     this.form.document_id = this.order.document_id
                     this.form.payment_id = this.order.payment_id
                     this.form.owner_username = this.order.owner.username
-                    this.form.patch('/order/' + this.order.id).then(() => {
-                        this.edit_cancel()
-                        this.msg = this.$page.errorBags.length > 0 ? '發生錯誤' : ''
-                        this.snackbar = this.$page.errorBags.length > 0
-                        this.search_submit()
+                    this.form.patch('/order/' + this.order.id, {
+                        onFinish: () => {
+                            this.edit_cancel()
+                            this.msg = this.$page.props.errorBags.length > 0 ? '發生錯誤' : ''
+                            this.snackbar = this.$page.props.errorBags.length > 0
+                            this.search_submit()
+                        }
                     });
+                    // this.form.patch('/order/' + this.order.id).then(() => {
+                    //     this.edit_cancel()
+                    //     this.msg = this.$page.props.errorBags.length > 0 ? '發生錯誤' : ''
+                    //     this.snackbar = this.$page.props.errorBags.length > 0
+                    //     this.search_submit()
+                    // });
                 }
             },
             check_cancel() {
@@ -571,16 +579,16 @@
             search_submit() {
                 this.pageLoading = true
 
-                if (this.$page.search) {
+                if (this.$page.props.search) {
                     this.$inertia.get('/admin/order', {
-                        search: this.$page.search
+                        search: this.$page.props.search
                     })
                 } else {
                     this.$inertia.get('/admin/order')
                 }
             },
             init_show() {
-                this.orderList = this.$page.orders.map(x => Object.assign({
+                this.orderList = this.$page.props.orders.map(x => Object.assign({
                     show: false
                 }, x))
             },
@@ -631,13 +639,13 @@
                     }, x))
                     let temp = []
                     for (let order of trashed_orders) {
-                        if (!this.$page.search) {
+                        if (!this.$page.props.search) {
                             temp = trashed_orders
                             break
                         }
-                        if (this.$page.search == order.document_id ||
-                            this.$page.search == order.payment_id ||
-                            order.sets.findIndex(x => this.$page.search == x.student.username) > -1) {
+                        if (this.$page.props.search == order.document_id ||
+                            this.$page.props.search == order.payment_id ||
+                            order.sets.findIndex(x => this.$page.props.search == x.student.username) > -1) {
                             temp.push(order)
                         }
                     }

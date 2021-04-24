@@ -20,7 +20,7 @@
 
                 <v-stepper-content
                     step="1"
-                    class="px-0 mx-0 px-sm-5 mx-sm-8"
+                    class="px-2 mx-2 px-sm-5 mx-sm-8"
                 >
                     <v-card
                         min-height="350px"
@@ -80,7 +80,7 @@
                             </v-card-text>
                         </v-card>
                     </v-card>
-                    <v-row class="mx-1">
+                    <v-row class="mx-1 my-0">
                         <v-spacer></v-spacer>
                         <v-btn
                             color="primary"
@@ -187,7 +187,7 @@
                                     <v-icon
                                         small
                                         @click="delete_item(item)"
-                                        v-if="item.stu_id != $page.user.username"
+                                        v-if="item.stu_id != $page.props.user.username"
                                     >
                                         mdi-delete
                                     </v-icon>
@@ -206,7 +206,7 @@
                     >
                         <code
                             class="caption"
-                            v-if="$page.user.username[0] < '5'"
+                            v-if="$page.props.user.username[0] < '5'"
                         >
                             * 學士服尺寸計有四種，參考標準為
                             XL(175CM以上)、L(166-174CM)、M(160-165CM)、S(159CM以下)。
@@ -218,7 +218,7 @@
                             * 碩士服尺寸計有三種，參考標準為 XL(175CM以上)、L(166-174CM)、M(165CM以下)。
                         </code>
                     </v-row>
-                    <v-row class="mx-1">
+                    <v-row class="mx-1 my-0">
                         <v-spacer></v-spacer>
                         <v-btn
                             text
@@ -257,9 +257,9 @@
                             class="body-1 pa-sm-5 pa-2"
                             dense
                         >
-                            <v-col cols="12"><span>訂購人：{{ $page.user.name }}</span></v-col>
-                            <v-col cols="12"><span>學號：{{ $page.user.username }}</span></v-col>
-                            <v-col cols="12"><span>系級：{{ $page.user.school_class.class_name }}</span></v-col>
+                            <v-col cols="12"><span>訂購人：{{ $page.props.user.name }}</span></v-col>
+                            <v-col cols="12"><span>學號：{{ $page.props.user.username }}</span></v-col>
+                            <v-col cols="12"><span>系級：{{ $page.props.user.school_class.class_name }}</span></v-col>
                             <v-col cols="12"><span>訂單內容：</span></v-col>
                             <v-col cols="12">
                                 <v-data-table
@@ -290,7 +290,7 @@
                         </v-row>
 
                     </v-card>
-                    <v-row class="mx-1">
+                    <v-row class="mx-1 my-0">
 
                         <v-spacer></v-spacer>
                         <v-btn
@@ -365,11 +365,11 @@
                                 style="list-style: decimal;"
                             >
                                 <li>
-                                    <p>請在繳費期限{{ payment_time_range.start_time }}至{{ payment_time_range.end_time }}止，至校園繳費機進行繳費，繳費完成後請持繳費單據與本訂單至{{ $page.configs.payment_location }}完成繳費登記。
+                                    <p>請在繳費期限{{ payment_time_range.start_time }}至{{ payment_time_range.end_time }}止，至校園繳費機進行繳費，繳費完成後請持繳費單據與本訂單至{{ $page.props.configs.payment_location }}完成繳費登記。
                                     </p>
                                 </li>
                                 <li>
-                                    <p>請於{{ receive_time_range.start_time }}至{{ receive_time_range.end_time }}，下午2~4點持本單學生存根聯至{{ $page.configs.receive_location }}領取{{ choose.name }}。
+                                    <p>請於{{ receive_time_range.start_time }}至{{ receive_time_range.end_time }}，下午2~4點持本單學生存根聯至{{ $page.props.configs.receive_location }}領取{{ choose.name }}。
                                     </p>
                                 </li>
                             </ol>
@@ -403,13 +403,13 @@
                                     cols="12"
                                     class="mt-3"
                                 >
-                                    您的{{ $page.orders.set.cloth.name }}規格
+                                    您的{{ $page.props.orders.set.cloth.name }}規格
                                 </v-col>
                                 <v-col cols="12">
-                                    {{ $page.orders.set.cloth.name }}尺寸：{{ $page.orders.set.cloth.spec }}
+                                    {{ $page.props.orders.set.cloth.name }}尺寸：{{ $page.props.orders.set.cloth.spec }}
                                 </v-col>
                                 <v-col cols="12">
-                                    {{ $page.orders.set.accessory.name }}顏色：{{ $page.orders.set.accessory.spec }}
+                                    {{ $page.props.orders.set.accessory.name }}顏色：{{ $page.props.orders.set.accessory.spec }}
                                 </v-col>
                             </v-row>
                             <v-row
@@ -425,18 +425,18 @@
                                 style="list-style: decimal;"
                             >
                                 <li>
-                                    <p>請在繳費期限{{ payment_time_range.start_time }}至{{ payment_time_range.end_time }}止，至校園繳費機進行繳費，繳費完成後請持繳費單據與本訂單至{{ $page.configs.payment_location }}完成繳費登記。
+                                    <p>請在繳費期限{{ payment_time_range.start_time }}至{{ payment_time_range.end_time }}止，至校園繳費機進行繳費，繳費完成後請持繳費單據與本訂單至{{ $page.props.configs.payment_location }}完成繳費登記。
                                     </p>
                                 </li>
                                 <li>
-                                    <p>請於{{ receive_time_range.start_time }}至{{ receive_time_range.end_time }}，下午2~4點持本單學生存根聯至{{ $page.configs.receive_location }}領取{{ choose.name }}。
+                                    <p>請於{{ receive_time_range.start_time }}至{{ receive_time_range.end_time }}，下午2~4點持本單學生存根聯至{{ $page.props.configs.receive_location }}領取{{ choose.name }}。
                                     </p>
                                 </li>
                             </ol>
                         </v-card-text>
                     </v-card>
 
-                    <v-row class="mx-1">
+                    <v-row class="mx-1 my-0">
                         <v-spacer></v-spacer>
                         <v-btn
                             v-show="!order_check"
@@ -672,35 +672,35 @@
                     return fmt;
                 }
 
-                if (this.$page.user.username[0] < "5") {
+                if (this.$page.props.user.username[0] < "5") {
                     this.choose = this.choose_items[0]
-                    this.cloths = this.$page.inventory.slice(8, 12)
-                    this.accessories = this.$page.inventory.slice(0, 2)
-                    this.price = parseInt(this.$page.configs.bachelor_price, 10)
-                    this.margin = parseInt(this.$page.configs.bachelor_margin_price, 10)
+                    this.cloths = this.$page.props.inventory.slice(8, 12)
+                    this.accessories = this.$page.props.inventory.slice(0, 2)
+                    this.price = parseInt(this.$page.props.configs.bachelor_price, 10)
+                    this.margin = parseInt(this.$page.props.configs.bachelor_margin_price, 10)
                 } else {
                     this.choose = this.choose_items[1]
-                    this.cloths = this.$page.inventory.slice(12, 15)
-                    this.accessories = this.$page.inventory.slice(2, 8)
-                    this.price = parseInt(this.$page.configs.master_price, 10);
-                    this.margin = parseInt(this.$page.configs.master_margin_price, 10);
+                    this.cloths = this.$page.props.inventory.slice(12, 15)
+                    this.accessories = this.$page.props.inventory.slice(2, 8)
+                    this.price = parseInt(this.$page.props.configs.master_price, 10);
+                    this.margin = parseInt(this.$page.props.configs.master_margin_price, 10);
                 }
 
-                let x = this.$page.configs.time_range[1]
-                let y = this.$page.configs.time_range[this.$page.user.username[0] < "5" ? 2 : 3]
+                let x = this.$page.props.configs.time_range[1]
+                let y = this.$page.props.configs.time_range[this.$page.props.user.username[0] < "5" ? 2 : 3]
                 this.payment_time_range.start_time = new Date(x.start_time).Format('yyyy/MM/dd')
                 this.payment_time_range.end_time = new Date(x.end_time).Format('yyyy/MM/dd')
                 this.receive_time_range.start_time = new Date(y.start_time).Format('yyyy/MM/dd')
                 this.receive_time_range.end_time = new Date(y.end_time).Format('yyyy/MM/dd')
 
                 let order_item = Object.assign({}, this.edited_item)
-                order_item.stu_id = this.$page.user.username
-                order_item.name = this.$page.user.name
-                order_item.department = this.$page.user.school_class.class_name
-                order_item.color = this.$page.user.school_class.default_color
+                order_item.stu_id = this.$page.props.user.username
+                order_item.name = this.$page.props.user.name
+                order_item.department = this.$page.props.user.school_class.class_name
+                order_item.color = this.$page.props.user.school_class.default_color
                 this.order.push(order_item)
 
-                let open_time = this.$page.configs.time_range.find(x => x.id == 1)
+                let open_time = this.$page.props.configs.time_range.find(x => x.id == 1)
                 let start_time = new Date(open_time.start_time)
                 let end_time = new Date(open_time.end_time)
                 let a = new Date()
@@ -712,7 +712,7 @@
                     return
                 }
 
-                if (this.$page.orders.set) {
+                if (this.$page.props.orders.set) {
                     this.step = 4
                     this.order_check = false
                     this.error_msg = '您已有訂購紀錄，不可重複訂購，請確認是否自己或是它人已幫您訂購。'
@@ -751,7 +751,7 @@
                     this.snackbar = true
                     return
                 }
-                if (this.$page.user.username[0] != this.student_id[0]) {
+                if (this.$page.props.user.username[0] != this.student_id[0]) {
                     this.student_id = ''
                     this.msg = '不可以跨學位購買'
                     this.snackbar_true = false
@@ -811,7 +811,7 @@
             async submit_order() {
                 this.loading = true
                 let new_order = {}
-                new_order['username'] = this.$page.user.username
+                new_order['username'] = this.$page.props.user.username
                 let sets = []
                 for (let i of this.order) {
                     let item = {}

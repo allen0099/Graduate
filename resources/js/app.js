@@ -2,22 +2,20 @@ require("./bootstrap");
 
 import Vue from "vue";
 
-import { InertiaApp } from "@inertiajs/inertia-vue";
-import { InertiaForm } from "laravel-jetstream";
+import { App, plugin } from "@inertiajs/inertia-vue";
 import PortalVue from "portal-vue";
 import vuetify from "./vuetify";
 
 Vue.mixin({ methods: { route } });
-Vue.use(InertiaApp);
-Vue.use(InertiaForm);
 Vue.use(PortalVue);
+Vue.use(plugin);
 
 const app = document.getElementById("app");
 
 new Vue({
     vuetify,
     render: h =>
-        h(InertiaApp, {
+        h(App, {
             props: {
                 initialPage: JSON.parse(app.dataset.page),
                 resolveComponent: name => require(`./Pages/${name}`).default

@@ -349,10 +349,10 @@
         }),
         methods: {
             async init_obj() {
-                this.bachelor_accessories = this.$page.inventory.slice(0, 2)
-                this.master_accessories = this.$page.inventory.slice(2, 8)
-                this.bachelor_cloths = this.$page.inventory.slice(8, 12)
-                this.master_cloths = this.$page.inventory.slice(12, 15)
+                this.bachelor_accessories = this.$page.props.inventory.slice(0, 2)
+                this.master_accessories = this.$page.props.inventory.slice(2, 8)
+                this.bachelor_cloths = this.$page.props.inventory.slice(8, 12)
+                this.master_cloths = this.$page.props.inventory.slice(12, 15)
 
 
                 Date.prototype.Format = function (fmt) {

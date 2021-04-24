@@ -118,10 +118,11 @@
                             ref="password"
                             v-model="form.password"
                             @keyup.enter.native="logoutOtherBrowserSessions"
+                            autocomplete="current-password"
                         />
 
                         <jet-input-error
-                            :message="form.error('password')"
+                            :message="form.errors.password"
                             class="mt-2"
                         />
                     </div>
@@ -193,10 +194,11 @@
 
             logoutOtherBrowserSessions() {
                 this.form.post(route('other-browser-sessions.destroy'), {
-                    preserveScroll: true
-                }).then(response => {
-                    if (!this.form.hasErrors()) {
-                        this.confirmingLogout = false
+                    preserveScroll: true,
+                    onFinish: () => {
+                        if (!this.form.hasErrors) {
+                            this.confirmingLogout = false
+                        }
                     }
                 })
             },
