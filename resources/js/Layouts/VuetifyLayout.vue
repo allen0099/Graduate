@@ -417,8 +417,7 @@
         },
         computed: {
             year() {
-                let today = new Date()
-                return today.getFullYear()
+                return moment().year()
             }
         }
     }
