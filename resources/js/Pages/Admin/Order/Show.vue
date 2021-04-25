@@ -112,7 +112,8 @@
                                     <v-col
                                         cols="12"
                                         md="4"
-                                    >訂單日期：{{ new Date(order.created_at).Format("yyyy-MM-dd HH:mm") }}</v-col>
+                                    >訂單日期：{{ $moment(order.created_at).format('YYYY-MM-DD HH:mm') }}
+                                    </v-col>
                                     <v-col
                                         cols="12"
                                         md="4"
@@ -132,7 +133,7 @@
                                         <span>{{ '訂單狀態：' }}</span>
                                         <span :class="order.status_code === Status.returned || order.status_code === Status.refunded ? 'green--text text--accent--3' :
                                             'red--text'">{{ statusMsg[order.status_code] }}
-                                            {{ !!order.deleted_at ? '(' + new Date(order.deleted_at).Format("yyyy-MM-dd HH:mm") +')' : '' }}</span>
+                                            {{ !!order.deleted_at ? '(' + $moment(order.deleted_at).format('YYYY-MM-DD HH:mm') +')' : '' }}</span>
                                     </v-col>
                                     <v-col
                                         v-if="order.status_code === Status.paid"
@@ -270,7 +271,7 @@
                             <v-col
                                 cols="12"
                                 md="4"
-                            >訂單日期：{{ new Date(order.created_at).Format("yyyy-MM-dd HH:mm") }}</v-col>
+                            >訂單日期：{{ $moment(order.created_at).format('YYYY-MM-DD HH:mm')  }}</v-col>
                             <v-col
                                 cols="12"
                                 md="4"
@@ -469,31 +470,6 @@
             }
         },
         methods: {
-            init() {
-                Date.prototype.Format = function (fmt) {
-                    var o = {
-                        "M+": this.getMonth() + 1, //月份
-                        "d+": this.getDate(), //日
-                        "H+": this.getHours(), //小時
-                        "m+": this.getMinutes(), //分
-                        "s+": this.getSeconds(), //秒
-                        "q+": Math.floor((this.getMonth() + 3) / 3), //季度
-                        "S": this.getMilliseconds() //毫秒
-                    };
-                    if (/(y+)/.test(fmt)) {
-                        fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
-                    }
-                    for (var k in o) {
-                        if (new RegExp("(" + k + ")").test(fmt)) {
-                            fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k])
-                                .substr((
-                                    "" +
-                                    o[k]).length)));
-                        }
-                    }
-                    return fmt;
-                }
-            },
             onResize() {
                 this.windowSize = {
                     x: window.innerWidth,
@@ -560,7 +536,7 @@
                             let target = this.orderList.find(x => x.document_id == this.order.document_id)
 
                             target.status_code = this.Status.canceled
-                            target.deleted_at = new Date()
+                            target.deleted_at = this.$moment().toISOString();
                         } else {
                             this.msg = '發生錯誤'
                         }
@@ -655,9 +631,6 @@
             })
             this.pageLoading = false
         },
-        created() {
-            this.init()
-        }
     }
 
 </script>

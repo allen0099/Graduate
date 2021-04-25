@@ -100,7 +100,7 @@
                         <v-col
                             cols="12"
                             md="4"
-                        >訂單日期：{{ new Date(order.created_at).Format("yyyy-MM-dd HH:mm") }}</v-col>
+                        >訂單日期：{{ $moment(order.created_at).format('YYYY-MM-DD HH:mm') }}</v-col>
                         <v-col
                             cols="12"
                             md="4"
@@ -354,33 +354,7 @@
                 this.bachelor_cloths = this.$page.props.inventory.slice(8, 12)
                 this.master_cloths = this.$page.props.inventory.slice(12, 15)
 
-
-                Date.prototype.Format = function (fmt) {
-                    var o = {
-                        "M+": this.getMonth() + 1, //月份
-                        "d+": this.getDate(), //日
-                        "H+": this.getHours(), //小時
-                        "m+": this.getMinutes(), //分
-                        "s+": this.getSeconds(), //秒
-                        "q+": Math.floor((this.getMonth() + 3) / 3), //季度
-                        "S": this.getMilliseconds() //毫秒
-                    };
-                    if (/(y+)/.test(fmt)) {
-                        fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
-                    }
-                    for (var k in o) {
-                        if (new RegExp("(" + k + ")").test(fmt)) {
-                            fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k])
-                                .substr((
-                                    "" +
-                                    o[k]).length)));
-                        }
-                    }
-                    return fmt;
-                }
-
-
-                this.today = new Date().Format("yyyy-MM-dd")
+                this.today = moment().format("YYYY-MM-DD");
                 this.file_list_loading = true
                 await apiPreservePdf().then(res => {
                     if (res.status == 200) {
@@ -406,7 +380,6 @@
                     }
                     this.search_loading = false
                 }).catch((err) => {
-                    console.log(err)
                     this.order_id = ''
                     this.msg = '查無此訂單編號'
                     this.error = true
@@ -433,7 +406,6 @@
                     status_code: this.Status.received
                 }, {
                     onSuccess: (page) => {
-                        console.log(page)
                         this.msg = '已領取'
                         this.error = false
                         this.show_msg = true

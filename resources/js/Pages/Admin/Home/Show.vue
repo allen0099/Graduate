@@ -267,97 +267,6 @@
                     r: '#FFFFFF'
                 }
             },
-            cancel_order_list: [{
-                name: '學生一',
-                stu_id: '406410232',
-                department: '電機喵喵喵喵組',
-                orderNumber: "20201116990146",
-                orderDate: "2020-11-28 14:29",
-                cancelDate: "2020-11-28 18:29",
-                order_content: "訂單內容",
-                reason: "品項或數量錯誤"
-            }, {
-                name: '學生一',
-                stu_id: '406410232',
-                department: '電機喵喵喵喵組',
-                orderNumber: "20201116990147",
-                orderDate: "2020-11-28 14:29",
-                cancelDate: "2020-11-28 18:29",
-                order_content: "訂單內容",
-                reason: "品項或數量錯誤"
-            }, {
-                name: '學生一',
-                stu_id: '406410232',
-                department: '電機喵喵喵喵組',
-                orderNumber: "20201116990148",
-                orderDate: "2020-11-28 14:29",
-                cancelDate: "2020-11-28 18:29",
-                order_content: "訂單內容",
-                reason: "品項或數量錯誤"
-            }, {
-                name: '學生一',
-                stu_id: '406410232',
-                department: '電機喵喵喵喵組',
-                orderNumber: "20201116990149",
-                orderDate: "2020-11-28 14:29",
-                cancelDate: "2020-11-28 18:29",
-                order_content: "訂單內容",
-                reason: "品項或數量錯誤"
-            }, {
-                name: '學生一',
-                stu_id: '406410232',
-                department: '電機喵喵喵喵組',
-                orderNumber: "20201116990150",
-                orderDate: "2020-11-28 14:29",
-                cancelDate: "2020-11-28 18:29",
-                order_content: "訂單內容",
-                reason: "品項或數量錯誤"
-            }, {
-                name: '學生一',
-                stu_id: '406410232',
-                department: '電機喵喵喵喵組',
-                orderNumber: "20201116990151",
-                orderDate: "2020-11-28 14:29",
-                cancelDate: "2020-11-28 18:29",
-                order_content: "訂單內容",
-                reason: "品項或數量錯誤"
-            }, {
-                name: '學生一',
-                stu_id: '406410232',
-                department: '電機喵喵喵喵組',
-                orderNumber: "20201116990152",
-                orderDate: "2020-11-28 14:29",
-                cancelDate: "2020-11-28 18:29",
-                order_content: "訂單內容",
-                reason: "品項或數量錯誤"
-            }, {
-                name: '學生一',
-                stu_id: '406410232',
-                department: '電機喵喵喵喵組',
-                orderNumber: "20201116990153",
-                orderDate: "2020-11-28 14:29",
-                cancelDate: "2020-11-28 18:29",
-                order_content: "訂單內容",
-                reason: "品項或數量錯誤"
-            }, {
-                name: '學生一',
-                stu_id: '406410232',
-                department: '電機喵喵喵喵組',
-                orderNumber: "20201116990154",
-                orderDate: "2020-11-28 14:29",
-                cancelDate: "2020-11-28 18:29",
-                order_content: "訂單內容",
-                reason: "品項或數量錯誤"
-            }, {
-                name: '學生一',
-                stu_id: '406410232',
-                department: '電機喵喵喵喵組',
-                orderNumber: "20201116990155",
-                orderDate: "2020-11-28 14:29",
-                cancelDate: "2020-11-28 18:29",
-                order_content: "訂單內容",
-                reason: "meow meow meow meow meow"
-            }, ],
             item_height: 100,
             windowSize: {
                 x: 0,
@@ -382,20 +291,6 @@
                 this.bachelor_cloths = this.$page.props.inventory.slice(8, 12)
                 this.master_cloths = this.$page.props.inventory.slice(12, 15)
             },
-            async approve(item) {
-                this.cancel_choose = item.orderNumber
-                await new Promise(r => setTimeout(r, 3000))
-                this.cancel_order_list = this.cancel_order_list.filter(x => x.orderNumber !== item
-                    .orderNumber)
-                this.cancel_choose = null
-            },
-            async cancel(item) {
-                this.cancel_choose = item.orderNumber
-                await new Promise(r => setTimeout(r, 3000))
-                this.cancel_order_list = this.cancel_order_list.filter(x => x.orderNumber !== item
-                    .orderNumber)
-                this.cancel_choose = null
-            }
         },
         created() {
             this.init_obj()

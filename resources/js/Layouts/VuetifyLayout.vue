@@ -417,7 +417,7 @@
         },
         computed: {
             year() {
-                return moment().year()
+                return this.$moment().year()
             }
         }
     }

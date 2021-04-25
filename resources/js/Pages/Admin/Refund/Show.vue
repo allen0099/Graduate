@@ -59,7 +59,7 @@
                         {{ item.cloth.spec }}, {{ item.accessory.spec }}
                     </template>
                     <template v-slot:item.returned="{ item }">
-                        {{ new Date(item.returned).Format("MM/dd") }}
+                        {{ $moment(item.returned).format('MM/DD') }}
                     </template>
                 </v-data-table>
             </v-card-text>
@@ -126,7 +126,7 @@
                         {{ item.type === 0 ? '學士' : '碩士' }}
                     </template>
                     <template v-slot:item.created_at="{ item }">
-                        {{ new Date(item.created_at).Format("MM/dd HH:mm") }}
+                        {{ $moment(item.created_at).format('MM/DD HH:mm') }}
                     </template>
                     <template v-slot:item.start="{ item }">
                         {{ item.start.slice(5).replace('-', '/') }}~{{ item.end.slice(5).replace('-', '/') }}
@@ -173,7 +173,7 @@
                         {{ item.type === 0 ? '學士' : '碩士' }}
                     </template>
                     <template v-slot:item.updated_at="{ item }">
-                        {{ new Date(item.updated_at).Format("MM/dd HH:mm") }}
+                        {{ $moment(item.updated_at).format('MM/DD HH:mm') }}
                     </template>
                     <template v-slot:item.start="{ item }">
                         {{ item.start.slice(5).replace('-', '/') }}~{{ item.end.slice(5).replace('-', '/') }}
@@ -220,7 +220,7 @@
                         {{ item.type === 0 ? '學士' : '碩士' }}
                     </template>
                     <template v-slot:item.updated_at="{ item }">
-                        {{ new Date(item.updated_at).Format("MM/dd HH:mm") }}
+                        {{ $moment(item.updated_at).format('MM/DD HH:mm') }}
                     </template>
                     <template v-slot:item.start="{ item }">
                         {{ item.start.slice(5).replace('-', '/') }}~{{ item.end.slice(5).replace('-', '/') }}
@@ -312,7 +312,7 @@
                             {{ item.cloth.spec }}, {{ item.accessory.spec }}
                         </template>
                         <template v-slot:item.returned="{ item }">
-                            {{ new Date(item.returned).Format("MM/dd") }}
+                            {{ $moment(item.returned).format('MM/DD') }}
                         </template>
                     </v-data-table>
                 </v-card-text>
@@ -690,43 +690,17 @@
         methods: {
             async init() {
                 this.pageLoading = true
-                Date.prototype.Format = function (fmt) {
-                    var o = {
-                        "M+": this.getMonth() + 1, //月份
-                        "d+": this.getDate(), //日
-                        "H+": this.getHours(), //小時
-                        "m+": this.getMinutes(), //分
-                        "s+": this.getSeconds(), //秒
-                        "q+": Math.floor((this.getMonth() + 3) / 3), //季度
-                        "S": this.getMilliseconds() //毫秒
-                    };
-                    if (/(y+)/.test(fmt)) {
-                        fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
-                    }
-                    for (var k in o) {
-                        if (new RegExp("(" + k + ")").test(fmt)) {
-                            fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k])
-                                .substr((
-                                    "" +
-                                    o[k]).length)));
-                        }
-                    }
-                    return fmt;
-                }
 
                 let time_range = this.$page.props.configs.time_range[4]
 
-                let today = new Date(new Date().Format("yyyy-MM-dd") + " 00:00:00")
-
-                let start_time = new Date(time_range.start_time)
-                let end_time = new Date(time_range.end_time)
+                let start_time = this.$moment(time_range.start_time)
+                let end_time = this.$moment(time_range.end_time)
 
                 this.dateList = []
 
-                for (let i = start_time; i <= end_time; i = new Date(i.getTime() + 24 * 60 * 60 * 1000)) {
-                    if (i <= today) {
-                        this.dateList.push(i.Format("yyyy-MM-dd"))
-                    }
+                for (let i = start_time.clone(); i <= end_time; i = i.add(1, 'day')) {
+                    if (i <= this.$moment.now())
+                        this.dateList.push(i.format("YYYY-MM-DD"))
                 }
 
                 await apiGetListByStatus(Refond_code.init).then(res => {

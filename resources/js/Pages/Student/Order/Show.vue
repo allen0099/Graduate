@@ -347,7 +347,7 @@
                                 <v-col cols="12">
                                     訂單編號：{{ result.document_id }}</v-col>
                                 <v-col cols="12">
-                                    訂單日期：{{ new Date(result.created_at).Format("yyyy-MM-dd HH:mm") }}
+                                    訂單日期：{{ $moment(result.created_at).format("YYYY-MM-DD HH:mm") }}
                                 </v-col>
                                 <v-col cols="12">
                                     總金額：{{ result.total_price }}</v-col>
@@ -648,30 +648,6 @@
         methods: {
             async init_obj() {
 
-                Date.prototype.Format = function (fmt) {
-                    var o = {
-                        "M+": this.getMonth() + 1, //月份
-                        "d+": this.getDate(), //日
-                        "H+": this.getHours(), //小時
-                        "m+": this.getMinutes(), //分
-                        "s+": this.getSeconds(), //秒
-                        "q+": Math.floor((this.getMonth() + 3) / 3), //季度
-                        "S": this.getMilliseconds() //毫秒
-                    };
-                    if (/(y+)/.test(fmt)) {
-                        fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
-                    }
-                    for (var k in o) {
-                        if (new RegExp("(" + k + ")").test(fmt)) {
-                            fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k])
-                                .substr((
-                                    "" +
-                                    o[k]).length)));
-                        }
-                    }
-                    return fmt;
-                }
-
                 if (this.$page.props.user.username[0] < "5") {
                     this.choose = this.choose_items[0]
                     this.cloths = this.$page.props.inventory.slice(8, 12)
@@ -688,10 +664,10 @@
 
                 let x = this.$page.props.configs.time_range[1]
                 let y = this.$page.props.configs.time_range[this.$page.props.user.username[0] < "5" ? 2 : 3]
-                this.payment_time_range.start_time = new Date(x.start_time).Format('yyyy/MM/dd')
-                this.payment_time_range.end_time = new Date(x.end_time).Format('yyyy/MM/dd')
-                this.receive_time_range.start_time = new Date(y.start_time).Format('yyyy/MM/dd')
-                this.receive_time_range.end_time = new Date(y.end_time).Format('yyyy/MM/dd')
+                this.payment_time_range.start_time = this.$moment(x.start_time).format('YYYY/MM/DD')
+                this.payment_time_range.end_time = this.$moment(x.end_time).format('YYYY/MM/DD')
+                this.receive_time_range.start_time = this.$moment(y.start_time).format('YYYY/MM/DD')
+                this.receive_time_range.end_time = this.$moment(y.end_time).format('YYYY/MM/DD')
 
                 let order_item = Object.assign({}, this.edited_item)
                 order_item.stu_id = this.$page.props.user.username
@@ -701,14 +677,14 @@
                 this.order.push(order_item)
 
                 let open_time = this.$page.props.configs.time_range.find(x => x.id == 1)
-                let start_time = new Date(open_time.start_time)
-                let end_time = new Date(open_time.end_time)
-                let a = new Date()
-                if (!(a >= start_time && a <= end_time)) {
+                let start_time = this.$moment(open_time.start_time)
+                let end_time = this.$moment(open_time.end_time)
+
+                if (this.$moment().isBetween(start_time, end_time) !== true) {
                     this.step = 4
                     this.order_check = false
-                    this.error_msg = '非開放訂購時段，開放時間為 ' + start_time.Format("yyyy-MM-dd HH:mm:ss") + ' ~ ' +
-                        end_time.Format("yyyy-MM-dd HH:mm:ss") + '。'
+                    this.error_msg = '非開放訂購時段，開放時間為 ' + start_time.format("YYYY-MM-DD HH:mm:ss") + ' ~ ' +
+                        end_time.format("YYYY-MM-DD HH:mm:ss") + '。'
                     return
                 }
 

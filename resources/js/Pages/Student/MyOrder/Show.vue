@@ -151,7 +151,7 @@
                                     <v-col
                                         cols="12"
                                         md="4"
-                                    >訂單日期：{{ new Date(order.created_at).Format("yyyy-MM-dd HH:mm") }}</v-col>
+                                    >訂單日期：{{ $moment(order.created_at).format('YYYY-MM-DD HH:mm') }}</v-col>
                                     <v-col
                                         cols="12"
                                         md="4"
@@ -168,7 +168,7 @@
                                         <span>{{ '訂單狀態：' }}</span>
                                         <span :class="order.status_code === Status.returned || order.status_code === Status.refunded ? 'green--text text--accent--3' :
                                             'red--text'">{{ statusMsg[order.status_code] }}
-                                            {{ !!order.deleted_at ? '(' + new Date(order.deleted_at).Format("yyyy-MM-dd HH:mm") +')' : '' }}</span>
+                                            {{ !!order.deleted_at ? '(' + $moment(order.deleted_at).format('YYYY-MM-DD HH:mm') +')' : '' }}</span>
                                     </v-col>
                                     <v-col
                                         v-if="order.status_code === Status.paid"
@@ -346,14 +346,15 @@
                         style="list-style: decimal;"
                     >
                         <li>開放領取{{ $page.props.user.username[0] < "5" ? '學士服' : '碩士服' }}時段：
-                            <span style="color: #d48344;">{{ new Date(time_range.start_time).Format("yyyy-MM-dd") }}
+                            <span style="color:
+                                #d48344;">{{ $moment(time_range.start_time).format('YYYY-MM-DD') }}
                                 ~
-                                {{ new Date(time_range.end_time).Format("yyyy-MM-dd") }}
+                                {{ $moment(time_range.end_time).format('YYYY-MM-DD') }}
                             </span>。
                         </li>
-                        <li>最晚預約時間為欲預約之日期前 2 天，如欲預約 {{ new Date(time_range.start_time).Format("MM/dd") }} 請在
-                            {{ new Date(new Date(time_range.start_time).getTime() - 172800000).Format("MM/dd")}}
-                            23:59:59 前預約完畢。
+                        <li>最晚預約時間為欲預約之日期前 2 天，如欲預約 {{ $moment(time_range.start_time).format('MM/DD') }} 請在
+                            {{ $moment(time_range.start_time).subtract(2, 'days').endOf('day').format("MM/DD HH:mm:ss") }}
+                            前預約完畢。
                         </li>
                         <li>
                             <span>請注意，</span>
@@ -585,57 +586,28 @@
                 this.time_range = this.$page.props.configs.time_range[this.$page.props.user.username[0] < "5" ? 2 :
                     3]
 
-                Date.prototype.Format = function (fmt) {
-                    var o = {
-                        "M+": this.getMonth() + 1, //月份
-                        "d+": this.getDate(), //日
-                        "H+": this.getHours(), //小時
-                        "m+": this.getMinutes(), //分
-                        "s+": this.getSeconds(), //秒
-                        "q+": Math.floor((this.getMonth() + 3) / 3), //季度
-                        "S": this.getMilliseconds() //毫秒
-                    };
-                    if (/(y+)/.test(fmt)) {
-                        fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
-                    }
-                    for (var k in o) {
-                        if (new RegExp("(" + k + ")").test(fmt)) {
-                            fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k])
-                                .substr((
-                                    "" +
-                                    o[k]).length)));
-                        }
-                    }
-                    return fmt;
-                }
-
                 let pay = this.$page.props.configs.time_range[1]
                 let B_rev = this.$page.props.configs.time_range[2]
                 let M_rev = this.$page.props.configs.time_range[3]
                 let ret = this.$page.props.configs.time_range[4]
 
-                this.payment_time_range.start_time = new Date(pay.start_time).Format('yyyy/MM/dd')
-                this.payment_time_range.end_time = new Date(pay.end_time).Format('yyyy/MM/dd')
-                this.B_receive_time_range.start_time = new Date(B_rev.start_time).Format('yyyy/MM/dd')
-                this.B_receive_time_range.end_time = new Date(B_rev.end_time).Format('yyyy/MM/dd')
-                this.M_receive_time_range.start_time = new Date(M_rev.start_time).Format('yyyy/MM/dd')
-                this.M_receive_time_range.end_time = new Date(M_rev.end_time).Format('yyyy/MM/dd')
-                this.return_time_range.start_time = new Date(ret.start_time).Format('yyyy/MM/dd')
-                this.return_time_range.end_time = new Date(ret.end_time).Format('yyyy/MM/dd')
+                this.payment_time_range.start_time = this.$moment(pay.start_time).format('YYYY/MM/DD')
+                this.payment_time_range.end_time = this.$moment(pay.end_time).format('YYYY/MM/DD')
+                this.B_receive_time_range.start_time = this.$moment(B_rev.start_time).format('YYYY/MM/DD')
+                this.B_receive_time_range.end_time = this.$moment(B_rev.end_time).format('YYYY/MM/DD')
+                this.M_receive_time_range.start_time = this.$moment(M_rev.start_time).format('YYYY/MM/DD')
+                this.M_receive_time_range.end_time = this.$moment(M_rev.end_time).format('YYYY/MM/DD')
+                this.return_time_range.start_time = this.$moment(ret.start_time).format('YYYY/MM/DD')
+                this.return_time_range.end_time = this.$moment(ret.end_time).format('YYYY/MM/DD')
 
-                let today = new Date(new Date().Format("yyyy-MM-dd") + " 00:00:00")
-
-                let start_time = new Date(this.time_range.start_time)
-                let end_time = new Date(this.time_range.end_time)
-
-                let x = new Date(today.getTime() + 2 * 24 * 60 * 60 * 1000)
+                let start_time = this.$moment(this.time_range.start_time)
+                let end_time = this.$moment(this.time_range.end_time)
 
                 this.timeList = []
 
-                for (let i = start_time; i <= end_time; i = new Date(i.getTime() + 24 * 60 * 60 * 1000)) {
-                    if (x <= i) {
-                        this.timeList.push(i.Format("yyyy-MM-dd"))
-                    }
+                for (let i = start_time.clone(); i <= end_time; i = i.add(1, 'day')) {
+                    if (this.$moment().startOf('day').add(2, 'day') <= i)
+                        this.timeList.push(i.format("YYYY-MM-DD"))
                 }
             },
             cancel_check(order) {

@@ -70,7 +70,6 @@
         props: ['title', 'type'],
         data() {
             return {
-                dates: [], // new Date().toISOString().substr(0, 10)
                 show: false,
                 location: '',
                 form: this.$inertia.form({
