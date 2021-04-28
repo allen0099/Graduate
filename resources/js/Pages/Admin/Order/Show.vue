@@ -421,7 +421,7 @@
                 pageLoading: false,
                 checkCancel: false,
                 show: [],
-                statusFilterSelected: -1,
+                statusFilterSelected: 0,
                 edit_toggle: false,
                 valid: false,
                 baseorder: {
