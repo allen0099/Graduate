@@ -343,7 +343,7 @@
     <div class="l-child">{{ substr($set->student->school_class->class_id, 0, 2) }}</div>
     <div class="r-child">
         <span style="font-size: 14px;">
-            {{ '（事務組整備組收執聯-' . $check_code . ')' }}
+            {{ '（事務整備組收執聯-' . $check_code . ')' }}
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         </span>
         {{ substr($set->student->school_class->class_id, 2, 2) }}
