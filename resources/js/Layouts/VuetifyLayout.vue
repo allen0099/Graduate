@@ -331,7 +331,7 @@
                         role: ['admin'],
                     },
                     {
-                        label: '訂單管理',
+                        label: '管理',
                         url: 'admin.order',
                         icon: 'mdi-format-list-bulleted-type',
                         role: ['admin'],
@@ -357,6 +357,12 @@
                     {
                         label: '還款',
                         url: 'admin.refund',
+                        icon: '',
+                        role: ['admin'],
+                    },
+                    {
+                        label: '修改',
+                        url: 'admin.fix_order',
                         icon: '',
                         role: ['admin'],
                     },

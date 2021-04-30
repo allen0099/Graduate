@@ -175,6 +175,9 @@ Route::group([
     Route::get('/admin/setting', fn() => Inertia::render('Admin/Setting/Show'))
         ->name('setting'); // routes name as 'admin.setting'
 
+    Route::get('/admin/fix_order', fn() => Inertia::render('Admin/FixOrder/Show'))
+        ->name('fix_order');
+
     Route::apiResource('order', OrderController::class, ['except' => ['index', 'store', 'update']]);
 
     Route::apiResource('item', ItemController::class, ['except' => ['index']]);
