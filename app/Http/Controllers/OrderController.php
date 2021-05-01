@@ -6,6 +6,7 @@ use App\Http\Requests\CheckOrder;
 use App\Http\Requests\PreserveDate;
 use App\Http\Requests\StoreOrder;
 use App\Http\Requests\UpdateOrder;
+use App\Http\Requests\UpdateSet;
 use App\Models\Config;
 use App\Models\Order;
 use App\Models\Set;
@@ -151,6 +152,19 @@ class OrderController extends Controller
         return response()->noContent();
     }
 
+    public function editSets(UpdateSet $request)
+    {
+        $request->validated();
+        $set = Set::where('id', $request->set_id)->first();
+
+        $set->forceFill([
+            'color_item' => $request->accessory_id,
+            'size_item' => $request->cloth_id,
+        ])->save();
+
+        return response()->noContent();
+    }
+
     public function searchOrder(Request $request)
     {
         $search = $request->search;
@@ -190,8 +204,8 @@ class OrderController extends Controller
     public function preserveDate(PreserveDate $request)
     {
         Log::info("[Log::preserveDate]", [
-                'ip' => $request->ip(),
-                'username' => Auth::user()->username ? Auth::user() : 'who_are_you'
+            'ip' => $request->ip(),
+            'username' => Auth::user()->username ? Auth::user() : 'who_are_you'
         ]);
 
         $request->validated();
