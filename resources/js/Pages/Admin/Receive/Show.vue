@@ -354,7 +354,7 @@
                 this.bachelor_cloths = this.$page.props.inventory.slice(8, 12)
                 this.master_cloths = this.$page.props.inventory.slice(12, 15)
 
-                this.today = moment().format("YYYY-MM-DD");
+                this.today = this.$moment().format("YYYY-MM-DD");
                 this.file_list_loading = true
                 await apiPreservePdf().then(res => {
                     if (res.status == 200) {
@@ -363,7 +363,6 @@
                 }).then(() => {
                     this.file_list_loading = false
                 })
-
             },
             async receive_submit() {
                 this.search_loading = true
