@@ -64,6 +64,9 @@ export const apiReturnCloth = stu_username =>
 
 export const apiNotReturnedTotal = () => Request.get("/not_returned_total");
 
+export const apiEditSet = (set_id, cloth_id, accessory_id) =>
+    Request.post("/edit_set", { set_id, cloth_id, accessory_id });
+
 // Admin Refund
 export const apiNoneListedSets = (start_date, end_date) =>
     Request.get(

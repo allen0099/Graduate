@@ -178,6 +178,7 @@
 
     import {
         apiSearchStudent,
+        apiEditSet
     } from '@/api/api'
 
     export default {
@@ -256,9 +257,24 @@
             },
             async part1_save() {
                 this.part1.dialog_loading = true
-                this.msg = '已修改'
-                this.snackbar_true = true
-                this.snackbar = true
+                let set_id = this.part1.set_id
+                let cloth_id = this.part1.cloth_id
+                let accessory_id = this.part1.accessory_id
+                await apiEditSet(set_id, cloth_id, accessory_id).then((res) => {
+                    if (res.status == 204) {
+                        this.msg = '已修改'
+                        this.snackbar_true = true
+                        this.snackbar = true
+                    } else {
+                        this.msg = '修改失敗'
+                        this.snackbar_true = false
+                        this.snackbar = true
+                    }
+                }).catch(() => {
+                    this.msg = '修改失敗'
+                    this.snackbar_true = false
+                    this.snackbar = true
+                })
                 await this.part1_cancel()
             },
             part1_cancel() {
