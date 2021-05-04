@@ -127,6 +127,9 @@ Route::group([
     Route::post('/paid_order', [OrderController::class, 'paidOrder'])
         ->name('paid_order');
 
+    Route::post('/edit_set', [OrderController::class, 'editSets'])
+        ->name('edit_set');
+
     Route::post('/receive_order', [OrderController::class, 'receiveCloth'])
         ->name('receive_order');
 
@@ -147,7 +150,7 @@ Route::group([
 
     Route::post('/create_new_student', [UserController::class, 'addNewStudent'])
         ->name('create_new_student');
-    
+
     Route::post('/create_new_admin', [UserController::class, 'addNewAdmin'])
         ->name('create_new_admin');
 
