@@ -43,44 +43,28 @@ class UpdateSet extends FormRequest
                 'required',
                 'exists:items,id',
                 function ($attribute, $value, $fail) use ($request) {
-                    if (!in_array($value, Item::accessoryIds())) {
+                    if (!in_array($value, Item::clothIds())) {
                         $fail(__('validation.item_set_wrong'));
                     }
                 },
-                function ($attribute, $value, $fail) use ($request) {
-                    $sets = $request->sets;
-                    $return = array();
-                    array_walk($sets, function ($a) use (&$return) {
-                        $return[] = $a['accessory'];
-                        $return[] = $a['cloth'];
-                    });
-                    foreach (array_count_values($return) as $key => $value) {
-                        $item = Item::find($key);
-                        if ($item->remainQuantity - $value < 0)
-                            $fail(__('validation.item_not_enough'));
-                    }
+                function ($attribute, $value, $fail) {
+                    $item = Item::find($value);
+                    if ($item->remainQuantity - $value < 0)
+                        $fail(__('validation.item_not_enough'));
                 },
             ],
             'accessory_id' => [
                 'required',
                 'exists:items,id',
                 function ($attribute, $value, $fail) use ($request) {
-                    if (!in_array($value, Item::clothIds())) {
+                    if (!in_array($value, Item::accessoryIds())) {
                         $fail(__('validation.item_set_wrong'));
                     }
                 },
-                function ($attribute, $value, $fail) use ($request) {
-                    $sets = $request->sets;
-                    $return = array();
-                    array_walk($sets, function ($a) use (&$return) {
-                        $return[] = $a['accessory'];
-                        $return[] = $a['cloth'];
-                    });
-                    foreach (array_count_values($return) as $key => $value) {
-                        $item = Item::find($key);
-                        if ($item->remainQuantity - $value < 0)
-                            $fail(__('validation.item_not_enough'));
-                    }
+                function ($attribute, $value, $fail) {
+                    $item = Item::find($value);
+                    if ($item->remainQuantity - $value < 0)
+                        $fail(__('validation.item_not_enough'));
                 },
             ]
         ];
