@@ -88,6 +88,9 @@ export const apiLockList = id => Request.post(`/lock_list`, { id });
 
 // Admin pdf
 export const apiPreservePdf = () => Request.get("/preserve_pdf");
+export const apiPreserveAllPdf = () => Request.get("/preserve_all_pdf");
+export const apiNonePreservePdf = () => Request.get("/none_preserve_pdf");
+export const apiGetAllPreservePdf = () => Request.get("/get_all_preserve_pdf");
 
 // Admin Upload
 export const apiUploadFile = file => UploadRequest.post("/test_upload", file);

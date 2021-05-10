@@ -197,6 +197,15 @@ Route::group([
 
     Route::get('preserve_pdf', [PDFController::class, 'preservePdf'])
         ->name('preserve-pdf');
+    
+    Route::get('preserve_all_pdf', [PDFController::class, 'preserveAllPdf'])
+        ->name('preserve-all-pdf');
+
+    Route::get('none_preserve_pdf', [PDFController::class, 'nonePreservePdf'])
+        ->name('none-preserve-Pdf');
+
+    Route::get('get_all_preserve_pdf', [PDFController::class, 'getAllPreservePdf'])
+        ->name('get-all-preserve-pdf');
 
     Route::get('refund_pdf', [PDFController::class, 'refundPdf'])
         ->name('refund-pdf');

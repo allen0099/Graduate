@@ -243,7 +243,7 @@
     import {
         apiSearchOrder,
         apiOrderUpdate,
-        apiPreservePdf
+        apiGetAllPreservePdf
     } from '@/api/api'
 
     import {
@@ -306,9 +306,7 @@
                     width: 20,
                 }
             ],
-            file_list: [
-
-            ],
+            file_list: [],
             bachelor_cloths: [],
             bachelor_accessories: [],
             master_cloths: [],
@@ -354,15 +352,16 @@
                 this.bachelor_cloths = this.$page.props.inventory.slice(8, 12)
                 this.master_cloths = this.$page.props.inventory.slice(12, 15)
 
-                this.today = this.$moment().format("YYYY-MM-DD");
+                this.today = this.$moment().format("YYYY-MM-DD")
                 this.file_list_loading = true
-                await apiPreservePdf().then(res => {
+
+                await apiGetAllPreservePdf().then(res => {
                     if (res.status == 200) {
                         this.file_list = res.data
                     }
-                }).then(() => {
-                    this.file_list_loading = false
                 })
+
+                this.file_list_loading = false
             },
             async receive_submit() {
                 this.search_loading = true

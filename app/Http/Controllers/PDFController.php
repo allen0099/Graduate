@@ -134,7 +134,7 @@ class PDFController extends Controller
         return collect($sorted_orders);
     }
 
-    /** 管理員的預約清單 **/
+    /** 管理員的預約清單 單日**/
     public function preservePdf()
     {
         $year = today()->year - 1911;
@@ -143,6 +143,8 @@ class PDFController extends Controller
         }
 
         $disk = Storage::disk('pdf');
+
+        // 學士服
         $Bachelor_start = TimeRange::getBachelorReceiveStartTime();
         $Bachelor_end = TimeRange::getBachelorReceiveEndTime();
         $start = null;
@@ -206,6 +208,7 @@ class PDFController extends Controller
             }
         }
 
+        // 碩士服
         $Master_start = TimeRange::getMasterReceiveStartTime();
         $Master_end = TimeRange::getMasterReceiveEndTime();
         $start = null;
@@ -266,6 +269,246 @@ class PDFController extends Controller
         }
 
         return $res;
+    }
+
+    /** 管理員的 "已預約" 清單 全部**/
+    public function preserveAllPdf()
+    {
+        $year = today()->year - 1911;
+        if (today()->month <= 7) {
+            $year -= 1;
+        }
+
+        $disk = Storage::disk('pdf');
+
+        // 學士服
+        $Bachelor_start = TimeRange::getBachelorReceiveStartTime();
+        $Bachelor_end = TimeRange::getBachelorReceiveEndTime();
+        $start = null;
+        $end = null;
+
+        $res = [];
+
+        if (today()->addDays(1) >= $Bachelor_start) {
+            $start = today()->addDays(1) > $Bachelor_start ? $Bachelor_start : today()->addDays(1);
+            $end = today()->addDays(1) > $Bachelor_end ? $Bachelor_end : today()->addDays(1);
+            $allOrders = collect(new Order);
+            while ($start <= $end) {
+                $orders = Order::whereDate('preserve', '=', $start)->get();
+                $orders = $orders->filter(function ($value, $key) {
+                    return $value->owner->username[0] < "5" && $value->status_code === Order::code_paid;
+                });
+                $allOrders = $allOrders->merge($orders);
+                $start->addDays(1);
+            }
+
+            $computed_orders = $this->preserveCount($allOrders, 0);
+
+            $sizeList = ['S' => 0, 'M' => 0, 'L' => 0, 'XL' => 0];
+            $colorList = ['白' => 0, '藍' => 0];
+
+            foreach ($computed_orders as $index => $order) {
+                foreach ($sizeList as $spec => $value) {
+                    $sizeList[$spec] += $order->sizeList[$spec];
+                }
+                foreach ($colorList as $spec => $value) {
+                    $colorList[$spec] += $order->colorList[$spec];
+                }
+            }
+
+            $today = today()->format('m-d');
+
+            $data = [
+                'type' => '學士',
+                'preserve' => "已預約",
+                'date' => $today,
+                'orders_chunk' => $computed_orders->chunk(40),
+                'sizeList' => $sizeList,
+                'colorList' => $colorList,
+                'year' => $year
+            ];
+
+            $pdf = PDF::setOptions(['isRemoteEnabled' => true, 'isFontSubsettingEnabled' => true])->setPaper('a4', 'potrait')->loadView('pdf/preserve_all', $data);
+
+            $content = $pdf->download()->getOriginalContent();
+
+            Storage::put('pdf/preseve/學士服已預約清單-' . $year . '年度-'.$today.'.pdf', $content);
+
+            array_push($res, [
+                    'filepath' => $disk->url('preseve/學士服已預約清單-' . $year . '年度-'.$today.'.pdf'),
+                    'filename' => '學士服已預約清單-' . $year . '年度-'.$today.'.pdf'
+                    ]
+            );
+        }
+
+        // 碩士服
+        $Master_start = TimeRange::getMasterReceiveStartTime();
+        $Master_end = TimeRange::getMasterReceiveEndTime();
+        $start = null;
+        $end = null;
+
+        if (today()->addDays(1) >= $Master_start) {
+            $start = today()->addDays(1) > $Master_start ? $Master_start : today()->addDays(1);
+            $end = today()->addDays(1) > $Master_end ? $Master_end : today()->addDays(1);
+            while ($start <= $end) {
+                $orders = Order::whereDate('preserve', '=', $start)->get();
+                $orders = $orders->filter(function ($value, $key) {
+                    return $value->owner->username[0] > "5" && $value->status_code === Order::code_paid;
+                });
+                $allOrders = $allOrders->merge($orders);
+                $start->addDays(1);
+            }
+
+            $computed_orders = $this->preserveCount($allOrders, 1);
+
+            $sizeList = ['M' => 0, 'L' => 0, 'XL' => 0];
+            $colorList = ['白' => 0, '黃' => 0, '橘' => 0, '灰' => 0, '藍' => 0, '紫' => 0];
+
+            foreach ($computed_orders as $index => $order) {
+                foreach ($sizeList as $spec => $value) {
+                    $sizeList[$spec] += $order->sizeList[$spec];
+                }
+                foreach ($colorList as $spec => $value) {
+                    $colorList[$spec] += $order->colorList[$spec];
+                }
+            }
+
+
+            $today = today()->format('m-d');
+
+            $data = [
+                'type' => '碩士',
+                'preserve' => "已預約",
+                'date' => $today,
+                'orders_chunk' => $computed_orders->chunk(40),
+                'sizeList' => $sizeList,
+                'colorList' => $colorList,
+                'year' => $year
+            ];
+
+            $pdf = PDF::setOptions(['isRemoteEnabled' => true, 'isFontSubsettingEnabled' => true])->setPaper('a4', 'potrait')->loadView('pdf/preserve_all', $data);
+
+            $content = $pdf->download()->getOriginalContent();
+
+            Storage::put('pdf/preseve/碩士服已預約清單-' . $year . '年度-'.$today.'.pdf', $content);
+
+            array_push($res, [
+                    'filepath' => $disk->url('preseve/碩士服已預約清單-' . $year . '年度-'.$today.'.pdf'),
+                    'filename' => '碩士服已預約清單-' . $year . '年度-'.$today.'.pdf'
+                    ]
+            );
+        }
+
+        return $res;
+    }
+
+        /** 管理員的 "未預約" 清單**/
+    public function nonePreservePdf()
+    {
+        $year = today()->year - 1911;
+        if (today()->month <= 7) {
+            $year -= 1;
+        }
+        
+        $today = today()->format('m-d');
+
+        $disk = Storage::disk('pdf');
+
+        $res = [];
+
+        $orders = Order::whereNull('preserve')->get();
+
+        // 學士
+        $B_orders = $orders->filter(function ($value, $key) {
+            return $value->owner->username[0] < "5" && $value->status_code === Order::code_paid;
+        });
+
+        $computed_orders = $this->preserveCount($B_orders, 0);
+
+        $sizeList = ['S' => 0, 'M' => 0, 'L' => 0, 'XL' => 0];
+        $colorList = ['白' => 0, '藍' => 0];
+
+        foreach ($computed_orders as $index => $order) {
+            foreach ($sizeList as $spec => $value) {
+                $sizeList[$spec] += $order->sizeList[$spec];
+            }
+            foreach ($colorList as $spec => $value) {
+                $colorList[$spec] += $order->colorList[$spec];
+            }
+        }
+
+        $data = [
+            'type' => '學士',
+            'preserve' => "未預約",
+            'date' => $today,
+            'orders_chunk' => $computed_orders->chunk(40),
+            'sizeList' => $sizeList,
+            'colorList' => $colorList,
+            'year' => $year
+        ];
+
+        $pdf = PDF::setOptions(['isRemoteEnabled' => true, 'isFontSubsettingEnabled' => true])->setPaper('a4', 'potrait')->loadView('pdf/preserve_all', $data);
+
+        $content = $pdf->download()->getOriginalContent();
+
+        Storage::put('pdf/preseve/學士服未預約清單-' . $year . '年度-'.$today.'.pdf', $content);
+
+        array_push($res, [
+                'filepath' => $disk->url('preseve/學士服未預約清單-' . $year . '年度-'.$today.'.pdf'),
+                'filename' => '學士服未預約清單-' . $year . '年度-'.$today.'.pdf'
+                ]
+        );
+
+        // 碩士
+        $M_orders = $orders->filter(function ($value, $key) {
+            return $value->owner->username[0] > "5" && $value->status_code === Order::code_paid;
+        });
+
+        $computed_orders = $this->preserveCount($M_orders, 1);
+
+        $sizeList = ['M' => 0, 'L' => 0, 'XL' => 0];
+        $colorList = ['白' => 0, '黃' => 0, '橘' => 0, '灰' => 0, '藍' => 0, '紫' => 0];
+
+        foreach ($computed_orders as $index => $order) {
+            foreach ($sizeList as $spec => $value) {
+                $sizeList[$spec] += $order->sizeList[$spec];
+            }
+            foreach ($colorList as $spec => $value) {
+                $colorList[$spec] += $order->colorList[$spec];
+            }
+        }
+
+        $data = [
+            'type' => '碩士',
+            'preserve' => "未預約",
+            'date' => $today,
+            'orders_chunk' => $computed_orders->chunk(40),
+            'sizeList' => $sizeList,
+            'colorList' => $colorList,
+            'year' => $year
+        ];
+
+        $pdf = PDF::setOptions(['isRemoteEnabled' => true, 'isFontSubsettingEnabled' => true])->setPaper('a4', 'potrait')->loadView('pdf/preserve_all', $data);
+
+        $content = $pdf->download()->getOriginalContent();
+
+        Storage::put('pdf/preseve/碩士服未預約清單-' . $year . '年度-'.$today.'.pdf', $content);
+
+        array_push($res, [
+                'filepath' => $disk->url('preseve/碩士服未預約清單-' . $year . '年度-'.$today.'.pdf'),
+                'filename' => '碩士服未預約清單-' . $year . '年度-'.$today.'.pdf'
+                ]
+        );
+
+        return $res;
+    }
+
+    /** 已預約 + 未預約清單 合在一起送就不用在前端處理 **/
+    public function getAllPreservePdf(){
+        $preservePdf = $this->preservePdf();
+        $preserveAllPdf = $this->preserveAllPdf();
+        $nonePreservePdf = $this->nonePreservePdf();
+        return [...$preservePdf, ...$preserveAllPdf, ...$nonePreservePdf];
     }
 
     /** 還款那頁的清單 **/
