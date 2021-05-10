@@ -59,6 +59,23 @@
             >
             </v-select>
 
+            <v-container v-show="statusFilterSelected < -1">
+                <v-btn class="ml-3">清除未付款</v-btn>
+                <v-btn class="ml-3">清除未付款</v-btn>
+                <v-btn class="ml-3">清除未付款</v-btn>
+            </v-container>
+            <!-- <v-row
+                v-show="statusFilterSelected > -1"
+                class="ml-2"
+                justify="start"
+                align="center"
+            >
+                <v-col cols="12">
+                    <v-btn class="ml-3">清除未付款</v-btn>
+                </v-col>
+            </v-row> -->
+
+
             <v-card
                 v-for="(order, order_index) in orderList"
                 :key="order.document_id"
