@@ -142,8 +142,9 @@
 
                         <v-divider></v-divider>
 
+                        <!-- 首頁 雖然只有一個item ㄏㄏ-->
                         <v-list-item
-                            v-for="link in leftLinks"
+                            v-for="link in leftLinks.slice(0, 1)"
                             :key="`${link.label}-drawer-left-link`"
                             :href="route(link.url)"
                             class="text-decoration-none"
@@ -162,6 +163,33 @@
 
                         <v-divider></v-divider>
 
+                        <!-- 訂單管理 -->
+                        <v-list-group
+                            prepend-icon="mdi-format-list-bulleted-type"
+                            no-action
+                        >
+                            <template v-slot:activator>
+                                <v-list-item-title>訂單管理</v-list-item-title>
+                            </template>
+                            <v-list-item
+                                v-for="link in leftLinks.slice(1)"
+                                :key="`${link.label}-drawer-left-link`"
+                                :href="route(link.url)"
+                                class="text-decoration-none"
+                                color="primary"
+                                :class="{'v-btn--active': route().current(link.url)}"
+                                v-if="link.role.indexOf($page.props.user.role) >= 0"
+                            >
+
+                                <v-list-item-content>
+                                    <v-list-item-title v-text="link.label" />
+                                </v-list-item-content>
+                            </v-list-item>
+                        </v-list-group>
+
+                        <v-divider></v-divider>
+
+                        <!-- 系統設定 -->
                         <v-list-item
                             v-for="link in rightLinks"
                             :key="`${link.label}-drawer-right-link`"
@@ -182,6 +210,7 @@
 
                         <v-divider></v-divider>
 
+                        <!-- 帳號管理 -->
                         <v-list-group
                             prepend-icon="mdi-account-circle"
                             no-action
