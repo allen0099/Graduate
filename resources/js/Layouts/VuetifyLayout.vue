@@ -263,7 +263,7 @@
                 padless
                 class="w-full bg-gray-800 text-white mt-5 my-0"
             >
-                <div class="xl:px-40 pb-5 lg:px-20 md:px-10 sm:px-5 px-10">
+                <div class="w-full xl:px-40 pb-5 lg:px-20 md:px-10 sm:px-5 px-10">
                     <div class="w-full pt-12 flex flex-col sm:flex-row space-y-2  justify-start">
                         <div class="w-full sm:w-1/2 pr-6 flex flex-col space-y-4">
                             <div class="md:text-3xl sm:text-2xl text-xl">總務處事務整備組：</div>
