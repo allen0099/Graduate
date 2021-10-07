@@ -45,6 +45,12 @@ export const apiUpdateUser = (id, name, class_id) =>
     Request.post("/update_user", { id, name, class_id });
 
 // Admin Order Actions
+export const apiGetOrder = (status, search) =>
+    Request.get(`/get_orders?status=${status}&search=${search}`);
+
+export const apiChangePage = (page, status, search) =>
+    Request.get(`/get_orders?page=${page}&status=${status}&search=${search}`);
+
 export const apiSearchOrder = search =>
     Request.get(`/search_order?search=${search}`);
 
@@ -56,6 +62,9 @@ export const apiPaidOrder = (order_id, payment_id) =>
 
 export const apiCancelOrder = order_id =>
     Request.post("/cancel_order", { order_id });
+
+export const apiCancelAllUnpaidOrder = check =>
+    Request.post("/cancel_all_unpaid_orders", { check });
 
 export const apiReceiveCloth = order_id =>
     Request.post("/receive_order", { order_id });

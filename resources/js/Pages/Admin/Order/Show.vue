@@ -12,7 +12,7 @@
                     cols="12"
                 >
                     <v-text-field
-                        v-model="$page.props.search"
+                        v-model="search"
                         label="訂單搜尋 (學號、訂單編號或付款單據)"
                         hide-details
                         clearable
@@ -31,6 +31,7 @@
                 mandatory
                 dense
                 class="hidden-sm-and-down"
+                @change="get_oraders(statusFilterSelected, $page.props.search)"
             >
                 <v-btn
                     :value="-1"
@@ -56,25 +57,47 @@
                 label="Standard"
                 hide-details
                 solo
+                @change="get_oraders(statusFilterSelected, $page.props.search)"
             >
             </v-select>
 
-            <v-container v-show="statusFilterSelected < -1">
-                <v-btn class="ml-3">清除未付款</v-btn>
-                <v-btn class="ml-3">清除未付款</v-btn>
-                <v-btn class="ml-3">清除未付款</v-btn>
-            </v-container>
-            <!-- <v-row
-                v-show="statusFilterSelected > -1"
-                class="ml-2"
-                justify="start"
-                align="center"
-            >
-                <v-col cols="12">
-                    <v-btn class="ml-3">清除未付款</v-btn>
-                </v-col>
-            </v-row> -->
+            <v-container class="mt-2">
+                <v-row>
+                    <v-col v-show="!!$page.props.search == false"
+                        cols="12"
+                    >
+                        <v-btn
+                            v-for="(tool, tool_index) in tools[statusFilterSelected+1]"
+                            :key="`status-${statusFilterSelected+1}-tool-${tool_index}`"
+                            class="ma-2"
+                            outlined
+                            color="indigo"
+                            @click="tool.func(tool.label)"
+                        >
+                            {{ tool.label }}
+                        </v-btn>
+                    </v-col>
+                    <v-spacer></v-spacer>
+                    <v-col
+                        align="right"
+                        xl="2"
+                        lg="3"
+                        md="4"
+                        sm="6"
+                        cols="12"
+                    >
+                        <v-select
+                            v-model="select_page"
+                            :items="pageItems"
+                            :label="`共 ${paginate.total} 筆資料`"
+                            item-text="label"
+                            item-value="index"
+                            @change="change_page(statusFilterSelected, $page.props.search, select_page)"
+                        ></v-select>
+                    </v-col>
+                </v-row>
 
+            </v-container>
 
             <v-card
                 v-for="(order, order_index) in orderList"
@@ -253,6 +276,7 @@
                     </div>
                 </v-expand-transition>
             </v-card>
+
         </v-container>
         <v-dialog
             v-model="edit_toggle"
@@ -370,6 +394,50 @@
             </v-dialog>
         </v-dialog>
         <v-dialog
+            v-model="checkDeleteAllUnpaid"
+            persistent
+            max-width="400px"
+        >
+            <v-card>
+                <v-card-title>
+                    警告
+                </v-card-title>
+                <v-card-text class="font-weight-bold">
+                    取消後將無法復原，確定要取消<span class="red--text">全部未付款訂單</span>?
+                    <br>
+                    繳費截止期限：{{ $moment(this.$page.props.configs.time_range[1].end_time).format('YYYY-MM-DD HH:mm') }}
+                    <br>
+                    共 {{paginate.total}} 筆資料<br>
+                    <v-text-field
+                        v-model="input_checkDeleteAll"
+                        label="請輸入 '刪除' 以解鎖確認鍵。"
+                        hide-details
+                        clearable
+                        :rules="[value=> value === '刪除' || '請輸入 \'刪除\'']"
+                    ></v-text-field>
+                </v-card-text>
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn
+                        color="error"
+                        dark
+                        @click="check_cancel"
+                    >
+                        返回
+                    </v-btn>
+                    <v-btn
+                        color="primary"
+                        :dark="!!input_checkDeleteAll && input_checkDeleteAll === '刪除'"
+                        @click="check_delete_all_unpaid"
+                        :disabled="!input_checkDeleteAll || input_checkDeleteAll !== '刪除'"
+                    >
+                        確認
+                    </v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
+        </v-dialog>
+        <v-dialog
             v-model="pageLoading"
             persistent
             width="300"
@@ -403,6 +471,7 @@
                 </v-btn>
             </template>
         </v-snackbar>
+
     </VuetifyLayout>
 </template>
 
@@ -416,8 +485,11 @@
 <script>
     import VuetifyLayout from '@/Layouts/VuetifyLayout'
     import {
+        apiGetOrder,
         apiCancelOrder,
-        apiTrashedOrders
+        apiTrashedOrders,
+        apiChangePage,
+        apiCancelAllUnpaidOrder
     } from '@/api/api'
 
     import {
@@ -437,10 +509,12 @@
                 snackbar: false,
                 pageLoading: false,
                 checkCancel: false,
+                checkDeleteAllUnpaid: false,
                 show: [],
                 statusFilterSelected: -1,
                 edit_toggle: false,
                 valid: false,
+                input_checkDeleteAll: '',
                 baseorder: {
                     document_id: "",
                     payment_id: '',
@@ -483,10 +557,166 @@
                     'status_code': -1,
                 }, {
                     bag: 'updateOrder',
-                })
+                }),
+                search: '',
+                paginate: {
+                    current_page: 1,
+                    last_page: 1,
+                    total: 0,
+                },
+                pageItems: [],
+                select_page: null,
+                tools: [
+                    [ // 全部
+                        {
+                            label: 'Excel 下載',
+                            func: this.alert_meow,
+                        }
+                    ],
+                    [ // 未付款
+                        {
+                            label: 'Excel 下載',
+                            func: this.alert_meow,
+                        }, {
+                            label: '全部刪除',
+                            func: this.delete_all_unpaid,
+                        },
+                    ],
+                    [ // 已付款
+                        {
+                            label: 'Excel 下載',
+                            func: this.alert_meow,
+                        }
+                    ],
+                    [ // 未歸還
+                        {
+                            label: 'Excel 下載',
+                            func: this.alert_meow,
+                        }
+                    ],
+                    [ // 已歸還
+                        {
+                            label: 'Excel 下載',
+                            func: this.alert_meow,
+                        }
+                    ],
+                    [ // 已還款
+                        {
+                            label: 'Excel 下載',
+                            func: this.alert_meow,
+                        }
+                    ],
+                    [ // 已取消
+                        {
+                            label: 'Excel 下載',
+                            func: this.alert_meow,
+                        }
+                    ],
+                ],
             }
         },
         methods: {
+            alert_meow(meow) {
+                alert(meow)
+            },
+            delete_all_unpaid() {
+                this.checkDeleteAllUnpaid = true
+            },
+            async change_page(status, search, pages) {
+                this.snackbar = false
+                this.pageLoading = true
+                this.orderList = []
+                await apiChangePage(pages, status + 1, search).then(
+                    res => {
+                        if (res.status == 200) {
+                            let orders = res.data.data
+                            this.orderList = orders.map(x => Object.assign({
+                                show: false
+                            }, x))
+
+                            this.paginate.current_page = res.data.current_page
+                            this.paginate.last_page = res.data.last_page
+                            this.paginate.total = res.data.total
+
+                            let pages = []
+
+                            for (let i = 1; i <= this.paginate.last_page; i++) {
+                                let y = i * res.data.per_page
+                                pages.push({
+                                    label: '第 ' + String(y - res.data.per_page + 1) + ' - ' + String(
+                                        y) + ' 筆',
+                                    index: i
+                                })
+                            }
+                            this.pageItems = pages
+
+                        } else {
+                            this.msg = '發生錯誤'
+                            this.snackbar = true
+                        }
+                    }).catch((err) => {
+                    this.msg = '發生錯誤'
+                    if (err.response.status == 404) {
+                        this.msg = '查無資料'
+                    } else if (err.response.status == 401) {
+                        this.msg = '登入逾時，請重新登入'
+                        window.location.reload();
+                    }
+                    this.pageLoading = false
+                    this.snackbar = true
+                })
+                this.pageLoading = false
+            },
+            async get_oraders(status, search) {
+                this.snackbar = false
+                this.pageLoading = true
+                this.paginate = {
+                    current_page: 1,
+                    last_page: 1,
+                    total: 0,
+                }
+                this.orderList = []
+                await apiGetOrder(status + 1, search).then(
+                    res => {
+                        if (res.status == 200) {
+                            let orders = res.data.data
+                            this.orderList = orders.map(x => Object.assign({
+                                show: false
+                            }, x))
+
+                            this.paginate.current_page = res.data.current_page
+                            this.paginate.last_page = res.data.last_page
+                            this.paginate.total = res.data.total
+
+                            let pages = []
+
+                            for (let i = 1; i <= this.paginate.last_page; i++) {
+                                let y = i * res.data.per_page
+                                pages.push({
+                                    label: '第 ' + String(y - res.data.per_page + 1) + ' - ' + String(
+                                        y) + ' 筆',
+                                    index: i
+                                })
+                            }
+                            this.pageItems = pages
+                            this.select_page = pages[0]
+
+                        } else {
+                            this.msg = '發生錯誤'
+                            this.snackbar = true
+                        }
+                    }).catch((err) => {
+                    this.msg = '發生錯誤'
+                    if (err.response.status == 404) {
+                        this.msg = '查無資料'
+                    } else if (err.response.status == 401) {
+                        window.location.reload();
+                    }
+                    this.pageLoading = false
+                    this.snackbar = true
+                })
+                this.pageLoading = false
+            },
             onResize() {
                 this.windowSize = {
                     x: window.innerWidth,
@@ -541,6 +771,8 @@
             check_cancel() {
                 this.checkCancel = false
                 this.pageLoading = false
+                this.checkDeleteAllUnpaid = false
+                this.input_checkDeleteAll = ''
                 this.edit_cancel()
             },
             async check_save() {
@@ -551,9 +783,9 @@
                         if (res.status == 204) {
                             this.msg = '已取消訂單'
                             let target = this.orderList.find(x => x.document_id == this.order.document_id)
-
                             target.status_code = this.Status.canceled
-                            target.deleted_at = this.$moment().toISOString();
+                            target.deleted_at = this.$moment().toISOString()
+                            this.paginate.total -= 1
                         } else {
                             this.msg = '發生錯誤'
                         }
@@ -572,22 +804,54 @@
             search_submit() {
                 this.pageLoading = true
 
-                if (this.$page.props.search) {
+                if (this.search) {
                     this.$inertia.get('/admin/order', {
-                        search: this.$page.props.search
+                        search: this.search
                     })
                 } else {
                     this.$inertia.get('/admin/order')
                 }
             },
-            init_show() {
-                this.orderList = this.$page.props.orders.map(x => Object.assign({
-                    show: false
-                }, x))
-            },
             show_handle(order_index) {
                 this.show[order_index] = true
             },
+            async check_delete_all_unpaid(){
+                this.pageLoading = true
+
+                await new Promise(r => setTimeout(r, 500))
+
+                if (this.paginate.total <= 0) {
+                    this.msg = '沒有任何可取消的未付款訂單'
+                    this.pageLoading = false
+                    this.check_cancel()
+                    this.snackbar = true
+                    return
+                }
+                await apiCancelAllUnpaidOrder(this.input_checkDeleteAll).then(res => {
+                    if (res.status == 204) {
+                        this.msg = '已取消全部未付款訂單'
+                    } else {
+                        this.msg = '發生錯誤'
+                    }
+
+                    this.paginate = {
+                        current_page: 1,
+                        last_page: 1,
+                        total: 0,
+                    }
+                    this.orderList = []
+
+                    this.pageLoading = false
+                    this.check_cancel()
+                    this.snackbar = true
+
+                }).catch((err) => {
+                    this.msg = '發生錯誤'
+                    this.pageLoading = false
+                    this.check_cancel()
+                    this.snackbar = true
+                })
+            }
         },
         computed: {
             statusMsgObj() {
@@ -623,29 +887,52 @@
         },
         async mounted() {
             this.pageLoading = true
+            this.search = this.$page.props.search
             await this.onResize()
-            await this.init_show()
-            await apiTrashedOrders().then(res => { // 我也不知道為啥要寫在這ㄏㄏ
-                if (res.status == 200) {
-                    let trashed_orders = res.data.map(x => Object.assign({
-                        show: false
-                    }, x))
-                    let temp = []
-                    for (let order of trashed_orders) {
-                        if (!this.$page.props.search) {
-                            temp = trashed_orders
-                            break
-                        }
-                        if (this.$page.props.search == order.document_id ||
-                            this.$page.props.search == order.payment_id ||
-                            order.sets.findIndex(x => this.$page.props.search == x.student.username) > -1) {
-                            temp.push(order)
-                        }
-                    }
 
-                    this.orderList = this.orderList.concat(temp)
+            await apiGetOrder(this.statusFilterSelected + 1, this.$page.props.search).then(
+                res => { // 我也不知道為啥要寫在這ㄏㄏ
+                    if (res.status == 200) {
+                        let orders = res.data.data
+                        this.orderList = orders.map(x => Object.assign({
+                            show: false
+                        }, x))
+
+                        this.paginate.current_page = res.data.current_page
+                        this.paginate.last_page = res.data.last_page
+                        this.paginate.total = res.data.total
+
+                        let pages = []
+
+                        for (let i = 1; i <= this.paginate.last_page; i++) {
+                            let y = i * res.data.per_page
+                            pages.push({
+                                label: '第 ' + String(y - res.data.per_page + 1) + ' - ' + String(y) +
+                                    ' 筆',
+                                index: i
+                            })
+                        }
+
+                        this.pageItems = pages
+                        this.select_page = pages[0]
+
+                    } else {
+                        this.msg = '發生錯誤'
+                        this.pageLoading = false
+                        this.snackbar = true
+                    }
+                }).catch((err) => {
+                this.msg = '發生錯誤'
+                if (err.response.status == 404) {
+                    this.msg = '查無資料'
+                } else if (err.response.status == 401) {
+                    this.msg = '登入逾時，請重新登入'
+                    window.location.reload();
                 }
+                this.pageLoading = false
+                this.snackbar = true
             })
+
             this.pageLoading = false
         },
     }

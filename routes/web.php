@@ -1,6 +1,5 @@
 <?php
-
-use App\Http\Controllers\AdminShowOrderController;
+use App\Http\Controllers\AdminOrderController;
 use App\Http\Controllers\ConfigController;
 use App\Http\Controllers\DepartmentClassController;
 use App\Http\Controllers\DepartmentController;
@@ -160,8 +159,8 @@ Route::group([
     Route::get('/admin/home', fn() => Inertia::render('Admin/Home/Show'))
         ->name('home');
 
-    Route::get('/admin/order', AdminShowOrderController::class)
-        ->name('order'); // routes name as 'admin.setting'
+    Route::get('/admin/order', AdminOrderController::class)
+        ->name('order');
 
     Route::get('/admin/paying', fn() => Inertia::render('Admin/Paying/Show'))
         ->name('paying');
@@ -215,6 +214,12 @@ Route::group([
 
     Route::post('admin_stamp', [ConfigController::class, 'updateAdminStamp'])
         ->name('admin-stamp');
+    
+    Route::get('/get_orders', [AdminOrderController::class, 'getOrderByState'])
+        ->name('get_orders'); // routes name as 'admin.setting'
+
+    Route::post('/cancel_all_unpaid_orders', [AdminOrderController::class, 'cancelAllUnpaidOrder'])
+        ->name('cancel_all_unpaid_orders'); // routes name as 'admin.setting'
 });
 
 // Student routes group
