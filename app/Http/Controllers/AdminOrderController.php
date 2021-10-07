@@ -126,6 +126,14 @@ class AdminOrderController extends Controller
         return response()->noContent();
     }
 
+
+    public function replace_character($str){
+        $illegal = array("'", '"', "=", "`", "|", "?", "/", "\\", "&", "|", ";");
+        $new_str = str_replace($illegal, "", $str);
+        return $new_str;
+    }
+
+
     public function find_sets($order) {
         $res = collect([]);
 
@@ -142,14 +150,14 @@ class AdminOrderController extends Controller
 
             $x = [
                 '學位' => $set->student->username[0] < "5" ? '學士' :'碩士',
-                '學號' => $set->student->username,
-                '姓名' => $set->student->name,
-                '系級' => $set->student->school_class->class_name,
-                '尺寸' => $set->cloth->spec,
-                '顏色' => $set->accessory->spec,
-                '訂單編號'=> $order->document_id, 
-                '付款單據編號' => $order->payment_id, 
-                '訂單狀態' => $status_code[$order->status_code]
+                '學號' => $this->replace_character($set->student->username),
+                '姓名' => $this->replace_character($set->student->name),
+                '系級' => $this->replace_character($set->student->school_class->class_name),
+                '尺寸' => $this->replace_character($set->cloth->spec),
+                '顏色' => $this->replace_character($set->accessory->spec),
+                '訂單編號'=> $this->replace_character($order->document_id), 
+                '付款單據編號' => $this->replace_character($order->payment_id), 
+                '訂單狀態' => $this->replace_character($status_code[$order->status_code])
             ];
 
             $res->push($x);
