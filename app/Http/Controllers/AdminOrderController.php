@@ -7,8 +7,10 @@ use App\Models\User;
 use App\Models\Set;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Inertia\Inertia;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
+use Inertia\Inertia;
+use Rap2hpoutre\FastExcel\FastExcel;
 
 class AdminOrderController extends Controller
 {
@@ -86,7 +88,7 @@ class AdminOrderController extends Controller
         return $result;
     }
 
-        public function cancelAllUnpaidOrder(Request $request)
+    public function cancelAllUnpaidOrder(Request $request)
     {
         Log::info("[Log::cancelAllUnpaidOrder]", [
             'ip' => $request->ip(),
@@ -122,5 +124,51 @@ class AdminOrderController extends Controller
         ]);
 
         return response()->noContent();
+    }
+
+    public function find_sets($order) {
+        $res = collect([]);
+
+        foreach ($order->sets as $set){
+            
+            $status_code = [
+                (string)(Order::code_created) => "未付款",
+                (string)(Order::code_paid) => "已付款，未領取衣服",
+                (string)(Order::code_received) => "未歸還衣服",
+                (string)(Order::code_returned) => "已歸還衣服",
+                (string)(Order::code_refunded) => "已還款",
+                (string)(Order::code_canceled) => "已取消"
+            ];
+
+            $x = [
+                '學位' => $set->student->username[0] < "5" ? '學士' :'碩士',
+                '學號' => $set->student->username,
+                '姓名' => $set->student->name,
+                '系級' => $set->student->school_class->class_name,
+                '尺寸' => $set->cloth->spec,
+                '顏色' => $set->accessory->spec,
+                '訂單編號'=> $order->document_id, 
+                '付款單據編號' => $order->payment_id, 
+                '訂單狀態' => $status_code[$order->status_code]
+            ];
+
+            $res->push($x);
+        }
+
+        return $res;
+    }
+
+    public function exportAllOrdersToExcel(Request $request){
+
+        $list = collect([]);
+
+        $orders = Order::orderBy('status_code')->get();
+
+        foreach ($orders as $order){
+            $sets = $this->find_sets($order);
+            $list = $list->merge($sets);
+        }
+
+        return (new FastExcel($list))->download('學位服名單-' . today()->format('Y-m-d-') . Str::random(5) . '.xlsx');
     }
 }

@@ -216,10 +216,13 @@ Route::group([
         ->name('admin-stamp');
     
     Route::get('/get_orders', [AdminOrderController::class, 'getOrderByState'])
-        ->name('get_orders'); // routes name as 'admin.setting'
+        ->name('get_orders');
 
     Route::post('/cancel_all_unpaid_orders', [AdminOrderController::class, 'cancelAllUnpaidOrder'])
-        ->name('cancel_all_unpaid_orders'); // routes name as 'admin.setting'
+        ->name('cancel_all_unpaid_orders');
+
+    Route::get('/export_all_orders_to_excel', [AdminOrderController::class, 'exportAllOrdersToExcel'])
+        ->name('export_al_orders_to_excel');
 });
 
 // Student routes group

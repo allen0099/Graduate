@@ -76,6 +76,8 @@ export const apiNotReturnedTotal = () => Request.get("/not_returned_total");
 export const apiEditSet = (set_id, cloth_id, accessory_id) =>
     Request.post("/edit_set", { set_id, cloth_id, accessory_id });
 
+export const apiExportAllOrdersToExcel_path = "/export_all_orders_to_excel";
+
 // Admin Refund
 export const apiNoneListedSets = (start_date, end_date) =>
     Request.get(

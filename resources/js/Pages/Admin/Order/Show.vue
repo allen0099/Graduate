@@ -67,12 +67,20 @@
                         cols="12"
                     >
                         <v-btn
+                            :href="download_export_excel_path"
+                            class="ma-2"
+                            outlined
+                            color="indigo"
+                        >
+                            {{ 'Excel 下載' }}
+                        </v-btn>
+                        <v-btn
                             v-for="(tool, tool_index) in tools[statusFilterSelected+1]"
                             :key="`status-${statusFilterSelected+1}-tool-${tool_index}`"
                             class="ma-2"
                             outlined
                             color="indigo"
-                            @click="tool.func(tool.label)"
+                            @click="tool.func()"
                         >
                             {{ tool.label }}
                         </v-btn>
@@ -321,6 +329,7 @@
                                 <v-text-field
                                     v-model="order.payment_id"
                                     label="付款單據編號"
+                                    :rules="[value => /^[0-9]{8}$/.test(value) || '必為 8 個數字']"
                                 ></v-text-field>
                             </v-col>
                             <v-col
@@ -489,7 +498,8 @@
         apiCancelOrder,
         apiTrashedOrders,
         apiChangePage,
-        apiCancelAllUnpaidOrder
+        apiCancelAllUnpaidOrder,
+        apiExportAllOrdersToExcel_path
     } from '@/api/api'
 
     import {
@@ -505,6 +515,7 @@
         name: "AdminOrder",
         data() {
             return {
+                download_export_excel_path: apiExportAllOrdersToExcel_path,
                 msg: '',
                 snackbar: false,
                 pageLoading: false,
@@ -568,57 +579,33 @@
                 select_page: null,
                 tools: [
                     [ // 全部
-                        {
-                            label: 'Excel 下載',
-                            func: this.alert_meow,
-                        }
+
                     ],
                     [ // 未付款
                         {
-                            label: 'Excel 下載',
-                            func: this.alert_meow,
-                        }, {
                             label: '全部刪除',
                             func: this.delete_all_unpaid,
                         },
                     ],
                     [ // 已付款
-                        {
-                            label: 'Excel 下載',
-                            func: this.alert_meow,
-                        }
+
                     ],
                     [ // 未歸還
-                        {
-                            label: 'Excel 下載',
-                            func: this.alert_meow,
-                        }
+
                     ],
                     [ // 已歸還
-                        {
-                            label: 'Excel 下載',
-                            func: this.alert_meow,
-                        }
+
                     ],
                     [ // 已還款
-                        {
-                            label: 'Excel 下載',
-                            func: this.alert_meow,
-                        }
+
                     ],
                     [ // 已取消
-                        {
-                            label: 'Excel 下載',
-                            func: this.alert_meow,
-                        }
+
                     ],
                 ],
             }
         },
         methods: {
-            alert_meow(meow) {
-                alert(meow)
-            },
             delete_all_unpaid() {
                 this.checkDeleteAllUnpaid = true
             },
