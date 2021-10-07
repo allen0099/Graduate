@@ -2,13 +2,7 @@
     <v-app>
         <v-main>
             <!-- navbar -->
-            <v-app-bar
-                app
-                elevation="2"
-                color="white"
-                fixed
-            >
-
+            <v-app-bar app elevation="2" color="white" fixed>
                 <!-- desktop navbar -->
                 <div class="d-flex align-center">
                     <v-img
@@ -29,20 +23,17 @@
                     </v-toolbar-title>
                 </div>
                 <v-btn
-                    v-for="(link) in leftLinks"
+                    v-for="link in leftLinks"
                     :key="`${link.label}-left-link`"
                     color="gray"
                     text
                     rounded
                     class="ml-2 bottom hidden-sm-and-down text-decoration-none"
                     :href="route(link.url)"
-                    :class="{'v-btn--active': route().current(link.url)}"
+                    :class="{ 'v-btn--active': route().current(link.url) }"
                     v-if="link.role.indexOf($page.props.user.role) >= 0"
                 >
-                    <v-icon
-                        left
-                        v-show="link.icon"
-                    >{{ link.icon }}</v-icon>
+                    <v-icon left v-show="link.icon">{{ link.icon }}</v-icon>
                     {{ link.label }}
                 </v-btn>
                 <v-spacer />
@@ -55,17 +46,13 @@
                     rounded
                     class="ml-2 hidden-sm-and-down text-decoration-none"
                     :href="route(link.url)"
-                    :class="{'v-btn--active': route().current(link.url)}"
+                    :class="{ 'v-btn--active': route().current(link.url) }"
                     v-if="link.role.indexOf($page.props.user.role) >= 0"
                 >
                     <v-icon left>{{ link.icon }}</v-icon>
                     {{ link.label }}
                 </v-btn>
-                <v-menu
-                    offset-y
-                    left
-                    min-width="200"
-                >
+                <v-menu offset-y left min-width="200">
                     <template v-slot:activator="{ on, attrs }">
                         <v-btn
                             v-bind="attrs"
@@ -74,7 +61,8 @@
                             text
                             class="ml-2 hidden-sm-and-down text-decoration-none"
                         >
-                            {{$page.props.user.name}}<v-icon right>{{ 'mdi-menu-down' }}</v-icon>
+                            {{ $page.props.user.name
+                            }}<v-icon right>{{ "mdi-menu-down" }}</v-icon>
                         </v-btn>
                     </template>
                     <v-list class="hidden-sm-and-down">
@@ -86,7 +74,8 @@
                             class="text-decoration-none"
                         >
                             <v-list-item-title>
-                                <v-icon left>{{ link.icon }}</v-icon> {{ link.label }}
+                                <v-icon left>{{ link.icon }}</v-icon>
+                                {{ link.label }}
                             </v-list-item-title>
                         </v-list-item>
                         <v-list-item
@@ -95,7 +84,8 @@
                             @click.prevent="logout"
                         >
                             <v-list-item-title>
-                                <v-icon left>{{ 'mdi-logout' }}</v-icon> {{ '登出' }}
+                                <v-icon left>{{ "mdi-logout" }}</v-icon>
+                                {{ "登出" }}
                             </v-list-item-title>
                         </v-list-item>
                     </v-list>
@@ -119,15 +109,22 @@
                     width="300"
                     app
                 >
-
                     <v-list nav>
                         <v-list-item>
                             <v-list-item-content>
                                 <v-list-item-title class="title">
-                                    {{$page.props.user.name? $page.props.user.name : "訪客"}}
+                                    {{
+                                        $page.props.user.name
+                                            ? $page.props.user.name
+                                            : "訪客"
+                                    }}
                                 </v-list-item-title>
                                 <v-list-item-subtitle>
-                                    {{ $page.props.user.username? $page.props.user.username : "Owooooooooo" }}
+                                    {{
+                                        $page.props.user.username
+                                            ? $page.props.user.username
+                                            : "Owooooooooo"
+                                    }}
                                 </v-list-item-subtitle>
                             </v-list-item-content>
                             <v-list-item-avatar>
@@ -135,7 +132,8 @@
                                     <v-icon
                                         color="grey"
                                         @click.stop="sidebar = !sidebar"
-                                    >mdi-close-thick</v-icon>
+                                        >mdi-close-thick</v-icon
+                                    >
                                 </v-btn>
                             </v-list-item-avatar>
                         </v-list-item>
@@ -149,7 +147,9 @@
                             :href="route(link.url)"
                             class="text-decoration-none"
                             color="primary"
-                            :class="{'v-btn--active': route().current(link.url)}"
+                            :class="{
+                                'v-btn--active': route().current(link.url)
+                            }"
                             v-if="link.role.indexOf($page.props.user.role) >= 0"
                         >
                             <v-list-item-icon>
@@ -177,10 +177,14 @@
                                 :href="route(link.url)"
                                 class="text-decoration-none"
                                 color="primary"
-                                :class="{'v-btn--active': route().current(link.url)}"
-                                v-if="link.role.indexOf($page.props.user.role) >= 0"
+                                :class="{
+                                    'v-btn--active': route().current(link.url)
+                                }"
+                                v-if="
+                                    link.role.indexOf($page.props.user.role) >=
+                                        0
+                                "
                             >
-
                                 <v-list-item-content>
                                     <v-list-item-title v-text="link.label" />
                                 </v-list-item-content>
@@ -196,7 +200,9 @@
                             :href="route(link.url)"
                             class="text-decoration-none"
                             color="primary"
-                            :class="{'v-btn--active': route().current(link.url)}"
+                            :class="{
+                                'v-btn--active': route().current(link.url)
+                            }"
                             v-if="link.role.indexOf($page.props.user.role) >= 0"
                         >
                             <v-list-item-icon>
@@ -223,10 +229,13 @@
                                 :key="`${link.label}-drawer-menu-link`"
                                 :href="route(link.url)"
                                 class="text-decoration-none"
-                                :class="{'v-btn--active': route().current(link.url)}"
+                                :class="{
+                                    'v-btn--active': route().current(link.url)
+                                }"
                             >
                                 <v-list-item-title>
-                                    <v-icon left>{{ link.icon }}</v-icon>{{ link.label }}
+                                    <v-icon left>{{ link.icon }}</v-icon
+                                    >{{ link.label }}
                                 </v-list-item-title>
                             </v-list-item>
                             <v-list-item
@@ -235,7 +244,8 @@
                                 @click.prevent="logout"
                             >
                                 <v-list-item-title>
-                                    <v-icon left>{{ 'mdi-logout' }}</v-icon> {{ '登出' }}
+                                    <v-icon left>{{ "mdi-logout" }}</v-icon>
+                                    {{ "登出" }}
                                 </v-list-item-title>
                             </v-list-item>
                         </v-list-group>
@@ -245,11 +255,10 @@
 
             <!-- main page -->
             <v-container class="py-5">
-                <v-card
-                    min-height="87vh"
-                    class="pb-10"
-                >
-                    <v-card-title class="title font-weight-bold mx-auto px-sm-6 px-lg-8">
+                <v-card min-height="87vh" class="pb-10">
+                    <v-card-title
+                        class="title font-weight-bold mx-auto px-sm-6 px-lg-8"
+                    >
                         <slot name="header"></slot>
                     </v-card-title>
                     <v-divider class="mx-5 v-divider-bold" />
@@ -263,80 +272,110 @@
                 padless
                 class="w-full bg-gray-800 text-white mt-5 my-0"
             >
-                <div class="w-full xl:px-40 pb-5 lg:px-20 md:px-10 sm:px-5 px-10">
-                    <div class="w-full pt-12 flex flex-col sm:flex-row space-y-2  justify-start">
-                        <div class="w-full sm:w-1/2 pr-6 flex flex-col space-y-4">
-                            <div class="md:text-3xl sm:text-2xl text-xl">總務處事務整備組：</div>
-                            <p class="opacity-60">上班時間：星期一至星期五 上午8:00~12:00 下午1:00~5:00</p>
-                            <p class="opacity-60">電話：(02)2621-5656 / 0919-585656 轉 2275</p>
-                            <p class="opacity-60">地址：25137新北市淡水區英專路151號 守謙會議中心HC308室</p>
+                <div
+                    class="w-full px-10 px-xl-16 px-lg-12 px-md-8 px-sm-4 pb-5"
+                >
+                    <div
+                        class="w-full pt-12 flex flex-col sm:flex-row space-y-2  justify-start"
+                    >
+                        <div
+                            class="w-full sm:w-1/2 pr-6 flex flex-col space-y-4"
+                        >
+                            <div class="md:text-3xl sm:text-2xl text-xl">
+                                總務處事務整備組：
+                            </div>
+                            <p class="opacity-60">
+                                上班時間：星期一至星期五 上午8:00~12:00
+                                下午1:00~5:00
+                            </p>
+                            <p class="opacity-60">
+                                電話：(02)2621-5656 / 0919-585656 轉 2275
+                            </p>
+                            <p class="opacity-60">
+                                地址：25137新北市淡水區英專路151號
+                                守謙會議中心HC308室
+                            </p>
                         </div>
-                        <div class="w-full sm:w-1/2 flex flex-col space-y-4 sm:pt-0">
-                            <div class="md:text-3xl sm:text-2xl text-xl">網頁維護及個資聯絡窗口：</div>
-                            <p class="opacity-60">本網頁由事務整備組黃慶文先生負責維護，個資保護聯絡窗口為賴文經專員；若您有任何問題及意見，歡迎來信批評指教。</p>
-                            <p class="opacity-60">聯絡信箱：<a
+                        <div
+                            class="w-full sm:w-1/2 flex flex-col space-y-4 sm:pt-0"
+                        >
+                            <div class="md:text-3xl sm:text-2xl text-xl">
+                                網頁維護及個資聯絡窗口：
+                            </div>
+                            <p class="opacity-60">
+                                本網頁由事務整備組黃慶文先生負責維護，個資保護聯絡窗口為賴文經專員；若您有任何問題及意見，歡迎來信批評指教。
+                            </p>
+                            <p class="opacity-60">
+                                聯絡信箱：<a
                                     href="mailto:agox@oa.tku.edu.tw"
                                     class="orange--text text--lighten-3"
-                                >agox@oa.tku.edu.tw</a></p>
+                                    >agox@oa.tku.edu.tw</a
+                                >
+                            </p>
                         </div>
                     </div>
                     <hr class="mt-5" />
-                    <div class="w-full pt-5 flex flex-col sm:flex-row space-y-2  justify-start">
+                    <div
+                        class="w-full pt-5 flex flex-col sm:flex-row space-y-2  justify-start"
+                    >
                         <div class="w-full pr-6 flex flex-col space-y-4">
-                            <p class="opacity-60">本網站著作權屬於淡江大學總務處，請詳見。
+                            <p class="opacity-60">
+                                本網站著作權屬於淡江大學總務處，請詳見。
                                 <a
                                     href="https://www.tku.edu.tw/privacy.asp"
                                     class="orange--text text--lighten-3"
                                     target="_blank"
-                                >隱私權政策</a>
-                                │ <a
+                                    >隱私權政策</a
+                                >
+                                │
+                                <a
                                     href="https://www.tku.edu.tw/pdp.asp"
                                     class="orange--text text--lighten-3"
                                     target="_blank"
-                                >個資政策</a>
-                                │ <a
+                                    >個資政策</a
+                                >
+                                │
+                                <a
                                     href="https://www.tku.edu.tw/notify.asp"
                                     class="orange--text text--lighten-3"
                                     target="_blank"
-                                >個人資料告知聲明</a>
+                                    >個人資料告知聲明</a
+                                >
                             </p>
-                            <p class="opacity-60">建議最佳瀏覽 Google Chrome / Mozilla Firefox / Edge 或相容 W3C 網頁標準之最新版瀏覽器。</p>
+                            <p class="opacity-60">
+                                建議最佳瀏覽 Google Chrome / Mozilla Firefox /
+                                Edge 或相容 W3C 網頁標準之最新版瀏覽器。
+                            </p>
                         </div>
                     </div>
                 </div>
-                <div class="w-full bg-gray-600 xl:px-20 lg:px-10 md:px-5 sm:px-3 px-5">
+                <div
+                    class="w-full bg-gray-600 xl:px-20 lg:px-10 md:px-5 sm:px-3 px-5"
+                >
                     <div class="opacity-60 pt-5 text-center">
-                        <p>Copyright © 2020-{{ year }} ALL RIGHTS RESERVED BY TAMKANG UNIVERSITY OFFICE OF
-                            INFORMATION SERVICES.</p>
+                        <p>
+                            Copyright © 2020-{{ year }} ALL RIGHTS RESERVED BY
+                            TAMKANG UNIVERSITY OFFICE OF INFORMATION SERVICES.
+                        </p>
                     </div>
                 </div>
             </v-footer>
-
         </v-main>
-        <v-dialog
-            v-model="license_check"
-            persistent
-            max-width="500"
-        >
+        <v-dialog v-model="license_check" persistent max-width="500">
             <v-card>
                 <v-card-title>
-                    <v-icon
-                        color="red"
-                        large
-                    >
+                    <v-icon color="red" large>
                         mdi-alert-octagon-outline
                     </v-icon>
                     <span class="ml-3">系統通知</span>
                 </v-card-title>
                 <v-card-text class="font-weight-bold">
-                    系統發現您尚未確認已填寫「出納付款查詢平台」之基本資料與金融帳戶，請填寫完畢並且在「使用者設定 > 使用者資訊」勾選確認。
+                    系統發現您尚未確認已填寫「出納付款查詢平台」之基本資料與金融帳戶，請填寫完畢並且在「使用者設定
+                    > 使用者資訊」勾選確認。
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn
-                        color="primary"
-                        :href="route('profile.show')"
-                    >
+                    <v-btn color="primary" :href="route('profile.show')">
                         前往設定
                     </v-btn>
                 </v-card-actions>
@@ -346,116 +385,124 @@
 </template>
 
 <script>
-    export default {
-        data() {
-            return {
-                license_check: false,
-                sidebar: false,
-                helloworld: 'helloworld',
-                showingNavigationDropdown: false,
-                leftLinks: [{
-                        label: '首頁',
-                        url: 'admin.home',
-                        icon: 'mdi-home',
-                        role: ['admin'],
-                    },
-                    {
-                        label: '管理',
-                        url: 'admin.order',
-                        icon: 'mdi-format-list-bulleted-type',
-                        role: ['admin'],
-                    },
-                    {
-                        label: '付款',
-                        url: 'admin.paying',
-                        icon: '',
-                        role: ['admin'],
-                    },
-                    {
-                        label: '領取',
-                        url: 'admin.receive',
-                        icon: '',
-                        role: ['admin'],
-                    },
-                    {
-                        label: '歸還',
-                        url: 'admin.return',
-                        icon: '',
-                        role: ['admin'],
-                    },
-                    {
-                        label: '還款',
-                        url: 'admin.refund',
-                        icon: '',
-                        role: ['admin'],
-                    },
-                    {
-                        label: '修改',
-                        url: 'admin.fix_order',
-                        icon: '',
-                        role: ['admin'],
-                    },
-                    {
-                        label: '我的訂單',
-                        url: 'student.myorder',
-                        icon: 'mdi-format-list-bulleted-type',
-                        role: ['student'],
-                    },
-                    {
-                        label: '新增訂單',
-                        url: 'student.order',
-                        icon: 'mdi-cart-plus ',
-                        role: ['student'],
-                    },
-                ],
-                rightLinks: [{
-                    label: '系統設定',
-                    url: 'admin.setting',
-                    icon: 'mdi-cog',
-                    role: ['admin'],
-                }].reverse(),
-                menuLinks: [{
-                    label: '個人設定',
-                    url: 'profile.show', // 在 vendor 裡面有 定義
-                    icon: 'mdi-account-cog-outline',
-                }, ],
-            }
-        },
-
-        methods: {
-            switchToTeam(team) {
-                this.$inertia.put(route('current-team.update'), {
-                    'team_id': team.id
-                }, {
-                    preserveState: false
-                })
-            },
-
-            logout() {
-                axios.post(route('logout').url()).then(response => {
-                    window.location = '/';
-                })
-            },
-            cancel() {
-                this.license_check = false
-            },
-            check() {
-                if (this.$page.props.user.role === 'student') {
-                    if (this.$inertia.page.url !== '/user/profile') {
-                        this.license_check = !this.$page.props.user.filled_pay_form
-                    }
+export default {
+    data() {
+        return {
+            license_check: false,
+            sidebar: false,
+            helloworld: "helloworld",
+            showingNavigationDropdown: false,
+            leftLinks: [
+                {
+                    label: "首頁",
+                    url: "admin.home",
+                    icon: "mdi-home",
+                    role: ["admin"]
+                },
+                {
+                    label: "管理",
+                    url: "admin.order",
+                    icon: "mdi-format-list-bulleted-type",
+                    role: ["admin"]
+                },
+                {
+                    label: "付款",
+                    url: "admin.paying",
+                    icon: "",
+                    role: ["admin"]
+                },
+                {
+                    label: "領取",
+                    url: "admin.receive",
+                    icon: "",
+                    role: ["admin"]
+                },
+                {
+                    label: "歸還",
+                    url: "admin.return",
+                    icon: "",
+                    role: ["admin"]
+                },
+                {
+                    label: "還款",
+                    url: "admin.refund",
+                    icon: "",
+                    role: ["admin"]
+                },
+                {
+                    label: "修改",
+                    url: "admin.fix_order",
+                    icon: "",
+                    role: ["admin"]
+                },
+                {
+                    label: "我的訂單",
+                    url: "student.myorder",
+                    icon: "mdi-format-list-bulleted-type",
+                    role: ["student"]
+                },
+                {
+                    label: "新增訂單",
+                    url: "student.order",
+                    icon: "mdi-cart-plus ",
+                    role: ["student"]
                 }
-            },
+            ],
+            rightLinks: [
+                {
+                    label: "系統設定",
+                    url: "admin.setting",
+                    icon: "mdi-cog",
+                    role: ["admin"]
+                }
+            ].reverse(),
+            menuLinks: [
+                {
+                    label: "個人設定",
+                    url: "profile.show", // 在 vendor 裡面有 定義
+                    icon: "mdi-account-cog-outline"
+                }
+            ]
+        };
+    },
+
+    methods: {
+        switchToTeam(team) {
+            this.$inertia.put(
+                route("current-team.update"),
+                {
+                    team_id: team.id
+                },
+                {
+                    preserveState: false
+                }
+            );
         },
-        mounted() {
-            this.check()
+
+        logout() {
+            axios.post(route("logout").url()).then(response => {
+                window.location = "/";
+            });
         },
-        computed: {
-            year() {
-                return this.$moment().year()
+        cancel() {
+            this.license_check = false;
+        },
+        check() {
+            if (this.$page.props.user.role === "student") {
+                if (this.$inertia.page.url !== "/user/profile") {
+                    this.license_check = !this.$page.props.user.filled_pay_form;
+                }
             }
         }
+    },
+    mounted() {
+        this.check();
+    },
+    computed: {
+        year() {
+            return this.$moment().year();
+        }
     }
-
+};
 </script>
 <style src="vuetify/dist/vuetify.min.css" />
