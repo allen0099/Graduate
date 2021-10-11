@@ -177,6 +177,6 @@ class AdminOrderController extends Controller
             $list = $list->merge($sets);
         }
 
-        return (new FastExcel($list))->download('學位服名單-' . today()->format('Y-m-d-') . Str::random(5) . '.xlsx');
+        return (new FastExcel($list))->download('order-' . today()->format('Y-m-d-') . Str::random(5) . '.xlsx');
     }
 }
