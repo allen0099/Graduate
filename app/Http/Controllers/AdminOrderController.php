@@ -148,6 +148,14 @@ class AdminOrderController extends Controller
                 (string)(Order::code_canceled) => "已取消"
             ];
 
+            if ($set->refund) {
+                $status = "已還款";
+            } else if (!empty($set->returned)) {
+                $status = "已歸還衣服";
+            } else {
+                $status = $this->replace_character($status_code[$order->status_code]);
+            }
+
             $x = [
                 '學位' => $set->student->username[0] < "5" ? '學士' :'碩士',
                 '學號' => $this->replace_character($set->student->username),
@@ -157,7 +165,7 @@ class AdminOrderController extends Controller
                 '顏色' => $this->replace_character($set->accessory->spec),
                 '訂單編號'=> $this->replace_character($order->document_id), 
                 '付款單據編號' => $this->replace_character($order->payment_id), 
-                '訂單狀態' => $this->replace_character($status_code[$order->status_code])
+                '訂單狀態' => $status
             ];
 
             $res->push($x);
