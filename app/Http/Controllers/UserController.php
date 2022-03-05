@@ -290,7 +290,8 @@ class UserController extends Controller
                     unset($user->set->student);
                 }
 
-                return $user->makeHidden(array_keys($user->toArray()))->makeVisible(['name', 'username', 'school_class', 'set', 'filled_pay_form']);
+                return $user->makeHidden(array_keys($user->toArray()))->makeVisible(['name', 'username', 'school_class',
+                'set', 'payment_check_status']);
             } else if (Auth::user()->isRole(User::ADMIN)) {
                 if (!is_null($user->set)) {
                     unset($user->set->student);

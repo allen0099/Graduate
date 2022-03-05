@@ -78,10 +78,7 @@
 
             <!-- Name -->
             <div class="col-span-6 sm:col-span-4">
-                <jet-label
-                    for="name"
-                    value="姓名"
-                />
+                <jet-label for="name" value="姓名" />
                 <jet-input
                     id="name"
                     type="text"
@@ -106,14 +103,8 @@
                 />
             </div>
 
-            <div
-                class="col-span-6 sm:col-span-4"
-                v-if="user.role !== 'admin'"
-            >
-                <jet-label
-                    for="sud_id"
-                    value="系級"
-                />
+            <div class="col-span-6 sm:col-span-4" v-if="user.role !== 'admin'">
+                <jet-label for="sud_id" value="系級" />
                 <jet-input
                     id="sud_id"
                     type="text"
@@ -125,20 +116,14 @@
 
             <!-- Email -->
             <div class="col-span-6 sm:col-span-4">
-                <jet-label
-                    for="email"
-                    value="Email"
-                />
+                <jet-label for="email" value="Email" />
                 <jet-input
                     id="email"
                     type="email"
                     class="mt-1 block w-full"
                     v-model="form.email"
                 />
-                <jet-input-error
-                    :message="form.errors.email"
-                    class="mt-2"
-                />
+                <jet-input-error :message="form.errors.email" class="mt-2" />
             </div>
 
             <!-- License Confirm -->
@@ -146,7 +131,8 @@
                 class="col-span-6 sm:col-span-4"
                 v-if="user.role === 'student'"
             >
-                <jet-label for="license">出納付款查詢平台資料填寫確認
+                <jet-label for="license"
+                    >出納付款查詢平台資料填寫確認
                     <v-tooltip bottom>
                         <template v-slot:activator="{ on, attrs }">
                             <v-btn
@@ -190,14 +176,32 @@
                         </div>
                     </template>
                 </v-checkbox>
+                <!-- payment_check_status -->
+                <jet-label
+                    for="payment_check_status"
+                    v-show="form.filled_pay_form"
+                >
+                    出納付款查詢平台資料查核狀態：
+                    <span
+                        :class="
+                            payment_check_status_colors[
+                                user.payment_check_status
+                            ]
+                        "
+                    >
+                        {{
+                            payment_check_status_contents[
+                                user.payment_check_status
+                            ]
+                        }}
+                    </span>
+                </jet-label>
             </div>
-            <v-dialog
-                v-model="help"
-                max-width="820"
-            >
+            <v-dialog v-model="help" max-width="820">
                 <v-card>
                     <v-card-title>
-                        <v-icon large>mdi-help-circle-outline</v-icon><span class="ml-3">幫助</span>
+                        <v-icon large>mdi-help-circle-outline</v-icon
+                        ><span class="ml-3">幫助</span>
                     </v-card-title>
                     <v-card-text class="font-weight-bold">
                         <ol
@@ -214,10 +218,7 @@
                     </v-card-text>
                     <v-card-actions>
                         <v-spacer></v-spacer>
-                        <v-btn
-                            color="primary"
-                            @click="help = false"
-                        >
+                        <v-btn color="primary" @click="help = false">
                             關閉
                         </v-btn>
                     </v-card-actions>
@@ -226,10 +227,7 @@
         </template>
 
         <template #actions>
-            <jet-action-message
-                :on="form.recentlySuccessful"
-                class="mr-3"
-            >
+            <jet-action-message :on="form.recentlySuccessful" class="mr-3">
                 已儲存
             </jet-action-message>
 
@@ -244,82 +242,92 @@
 </template>
 
 <script>
-    import JetButton from '@/Jetstream/Button'
-    import JetFormSection from '@/Jetstream/FormSection'
-    import JetInput from '@/Jetstream/Input'
-    import JetInputError from '@/Jetstream/InputError'
-    import JetLabel from '@/Jetstream/Label'
-    import JetActionMessage from '@/Jetstream/ActionMessage'
-    import JetSecondaryButton from '@/Jetstream/SecondaryButton'
+import JetButton from "@/Jetstream/Button";
+import JetFormSection from "@/Jetstream/FormSection";
+import JetInput from "@/Jetstream/Input";
+import JetInputError from "@/Jetstream/InputError";
+import JetLabel from "@/Jetstream/Label";
+import JetActionMessage from "@/Jetstream/ActionMessage";
+import JetSecondaryButton from "@/Jetstream/SecondaryButton";
 
-    export default {
-        components: {
-            JetActionMessage,
-            JetButton,
-            JetFormSection,
-            JetInput,
-            JetInputError,
-            JetLabel,
-            JetSecondaryButton,
-        },
+export default {
+    components: {
+        JetActionMessage,
+        JetButton,
+        JetFormSection,
+        JetInput,
+        JetInputError,
+        JetLabel,
+        JetSecondaryButton
+    },
 
-        props: ['user'],
+    props: ["user"],
 
-        data() {
-            return {
-                help: false,
-                form: this.$inertia.form({
-                    '_method': 'PUT',
+    data() {
+        return {
+            help: false,
+            form: this.$inertia.form(
+                {
+                    _method: "PUT",
                     name: this.user.name,
                     email: this.user.email,
                     username: this.user.username,
                     filled_pay_form: this.user.filled_pay_form,
-                    photo: null,
-                }, {
-                    bag: 'updateProfileInformation',
-                    resetOnSuccess: false,
-                }),
-
-                photoPreview: null,
-            }
-        },
-
-        methods: {
-            updateProfileInformation() {
-                if (this.$refs.photo) {
-                    this.form.photo = this.$refs.photo.files[0]
+                    photo: null
+                },
+                {
+                    bag: "updateProfileInformation",
+                    resetOnSuccess: false
                 }
+            ),
+            payment_check_status_contents: ["查核中", "未通過", "通過"],
+            payment_check_status_colors: [
+                "orange--text",
+                "red--text",
+                "green--text text--accent--3"
+            ],
 
-                this.form.post(route('user-profile-information.update'), {
-                    preserveScroll: true,
-                });
-            },
+            photoPreview: null
+        };
+    },
 
-            selectNewPhoto() {
-                this.$refs.photo.click();
-            },
-
-            updatePhotoPreview() {
-                const reader = new FileReader();
-
-                reader.onload = (e) => {
-                    this.photoPreview = e.target.result;
-                };
-
-                reader.readAsDataURL(this.$refs.photo.files[0]);
-            },
-
-            deletePhoto() {
-                this.$inertia.delete(route('current-user-photo.destroy'), {
-                    preserveScroll: true,
-                }).then(() => {
-                    this.photoPreview = null
-                });
-            },
-            help_cancel() {
-                this.help = false
+    methods: {
+        updateProfileInformation() {
+            if (this.$refs.photo) {
+                this.form.photo = this.$refs.photo.files[0];
             }
-        },
-    }
 
+            this.form.post(route("user-profile-information.update"), {
+                preserveScroll: true
+            });
+        },
+
+        selectNewPhoto() {
+            this.$refs.photo.click();
+        },
+
+        updatePhotoPreview() {
+            const reader = new FileReader();
+
+            reader.onload = e => {
+                this.photoPreview = e.target.result;
+            };
+
+            reader.readAsDataURL(this.$refs.photo.files[0]);
+        },
+
+        deletePhoto() {
+            this.$inertia
+                .delete(route("current-user-photo.destroy"), {
+                    preserveScroll: true
+                })
+                .then(() => {
+                    this.photoPreview = null;
+                });
+        },
+        help_cancel() {
+            this.help = false;
+        }
+    }
+};
 </script>

@@ -27,6 +27,7 @@ class CreateUsersTable extends Migration
                 ->cascadeOnDelete(); // student
 
             $table->boolean('filled_pay_form')->default(false);
+            $table->integer('payment_check_status')->default(0); // 0 - not checked, 1 - failed, 2 - success
 
             $table->string('stamp')->nullable(); // admin
 

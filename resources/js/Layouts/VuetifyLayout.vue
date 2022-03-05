@@ -369,10 +369,32 @@
                     </v-icon>
                     <span class="ml-3">系統通知</span>
                 </v-card-title>
-                <v-card-text class="font-weight-bold">
+                <v-card-text
+                    class="font-weight-bold"
+                    v-if="!this.$page.props.user.filled_pay_form"
+                >
                     系統發現您尚未確認已填寫「出納付款查詢平台」之基本資料與金融帳戶，請填寫完畢並且在「使用者設定
                     > 使用者資訊」勾選確認。
                 </v-card-text>
+
+                <v-card-text class="font-weight-bold" v-else>
+                    出納付款查詢平台資料查核尚未通過，若還在查核中請耐心等候，若為未通過請確認出納付款查詢平台是否資料有誤。
+                    <br />
+                    當前查核狀態：<span
+                        :class="
+                            payment_check_status_colors[
+                                this.$page.props.user.payment_check_status
+                            ]
+                        "
+                    >
+                        {{
+                            payment_check_status_contents[
+                                this.$page.props.user.payment_check_status
+                            ]
+                        }}
+                    </span>
+                </v-card-text>
+
                 <v-card-actions>
                     <v-spacer></v-spacer>
                     <v-btn color="primary" :href="route('profile.show')">
@@ -462,6 +484,12 @@ export default {
                     url: "profile.show", // 在 vendor 裡面有 定義
                     icon: "mdi-account-cog-outline"
                 }
+            ],
+            payment_check_status_contents: ["查核中", "未通過", "通過"],
+            payment_check_status_colors: [
+                "orange--text",
+                "red--text",
+                "green--text text--accent--3"
             ]
         };
     },
@@ -490,7 +518,15 @@ export default {
         check() {
             if (this.$page.props.user.role === "student") {
                 if (this.$inertia.page.url !== "/user/profile") {
-                    this.license_check = !this.$page.props.user.filled_pay_form;
+                    if (
+                        // 有勾且有通過
+                        this.$page.props.user.filled_pay_form &&
+                        this.$page.props.user.payment_check_status == 2
+                    ) {
+                        this.license_check = false;
+                    } else {
+                        this.license_check = true;
+                    }
                 }
             }
         }
