@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Rap2hpoutre\FastExcel\FastExcel;
+use Rap2hpoutre\FastExcel\SheetCollection;
 
 class AdminOrderController extends Controller
 {
@@ -137,7 +138,7 @@ class AdminOrderController extends Controller
     public function find_sets($order) {
         $res = collect([]);
 
-        foreach ($order->sets as $set){
+        foreach ($order->sets as $pos => $set) {
             
             $status_code = [
                 (string)(Order::code_created) => "未付款",
@@ -156,6 +157,14 @@ class AdminOrderController extends Controller
                 $status = $this->replace_character($status_code[$order->status_code]);
             }
 
+            $add = $order->sets->count() > 1 ? 1 : 0;
+
+
+            $return_id = null;
+            if(!(is_null($set->list_id))) {
+                $return_id = $this->replace_character($order->payment_id . '-' . ($pos+$add));
+            }
+
             $x = [
                 '學位' => $set->student->username[0] < "5" ? '學士' :'碩士',
                 '學號' => $this->replace_character($set->student->username),
@@ -164,7 +173,9 @@ class AdminOrderController extends Controller
                 '尺寸' => $this->replace_character($set->cloth->spec),
                 '顏色' => $this->replace_character($set->accessory->spec),
                 '訂單編號'=> $this->replace_character($order->document_id), 
-                '付款單據編號' => $this->replace_character($order->payment_id), 
+                '付款單據編號' => $this->replace_character($order->payment_id),
+                '還款編號' => $return_id,
+                '批次編號' => $this->replace_character($set->list_id),
                 '訂單狀態' => $status
             ];
 
@@ -185,6 +196,19 @@ class AdminOrderController extends Controller
             $list = $list->merge($sets);
         }
 
-        return (new FastExcel($list))->download('order-' . today()->format('Y-m-d-') . Str::random(5) . '.xlsx');
+        $list = $list->sortBy('訂單狀態');
+        
+
+        $sheets = new SheetCollection([
+            $a = $list->filter(function ($item, $index) {
+                return $item['學位'] == '學士';
+            })->all(),
+
+            $b = $list->filter(function ($item, $index) {
+                return $item['學位'] == '碩士';
+            })->all()
+        ]);
+
+        return (new FastExcel($sheets))->download('order-' . today()->format('Y-m-d-') . Str::random(5) . '.xlsx');
     }
 }
