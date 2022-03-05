@@ -26,11 +26,13 @@ class UserController extends Controller
             'id' => ['required'],
             'name' => ['required'],
             'class_id' => ['required'],
+            'payment_check_status' => ['required']
         ]);
 
         $id = $request->id;
         $name = $request->name;
         $class_id = $request->class_id;
+        $payment_check_status = $request->payment_check_status;
 
         if (!is_null($id)) {
             if (Auth::user()->isRole(User::ADMIN)) {
@@ -47,7 +49,10 @@ class UserController extends Controller
                     $user->forceFill([
                         'name' => $name,
                         'class_id' => $d_class->id,
+                        'payment_check_status' => $payment_check_status,
                     ])->save();
+
+
                 }
 
 
