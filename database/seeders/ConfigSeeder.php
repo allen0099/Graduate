@@ -56,11 +56,11 @@ class ConfigSeeder extends Seeder
         ]);
         DB::table('configs')->insert([
             'key' => 'department_stamp',
-            'value' => null,
+            'value' => 'PX8LKEBveG4s24JFnMt9nf3pMRiCBO4p6xf4QDSm.jpg',
         ]);
         DB::table('configs')->insert([
             'key' => 'admin_stamp',
-            'value' => null,
+            'value' => 'IOauP3b5XUhtZ3IWLaiWllZ2muUziKWOZhNngrUt.jpg',
         ]);
     }
 }
