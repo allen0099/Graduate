@@ -409,7 +409,7 @@ class UserController extends Controller
                 $phone = trim($row['聯絡電話'] ?? $row[6]);
                 $state = trim($row['繳費狀態'] ?? $row[7]);
 
-                if(!strlen($payment_id) or !strlen($money) or !strlen($stuname) or !strlen($state)) {
+                if(!strlen($payment_id) or !strlen($money) or !strlen($stuname)) {
                     Log::info("[Log::uploadPayments]", [
                     'info' => "Error: 發生不明錯誤，請檢察檔案是否有缺失!",
                     ]);
