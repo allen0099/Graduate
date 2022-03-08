@@ -410,15 +410,16 @@ class UserController extends Controller
                 $state = trim($row['繳費狀態'] ?? $row[7]);
 
                 if(!strlen($payment_id) or !strlen($money) or !strlen($stuname) or !strlen($state)) {
-                    array_push($fail, "發生不明錯誤，請檢察檔案是否有缺失!");
+                    Log::info("[Log::uploadPayments]", [
+                    'info' => "Error: 發生不明錯誤，請檢察檔案是否有缺失!",
+                    ]);
+                    array_push($fail, "發生不明錯誤，請檢察檔案是否有缺失! 繳費號 ".$payment_id);
                     return;
                 }
 
             } catch (\Exception $e) {
                 Log::info("[Log::uploadPayments]", [
                     'info' => "Error: $e",
-                    'ip' => $request->ip(),
-                    'username' => Auth::user()->username
                 ]);
                 array_push($fail, "發生不明錯誤，請檢察檔案是否有缺失!");
                 return;
