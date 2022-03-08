@@ -26,13 +26,15 @@ class UserController extends Controller
             'id' => ['required'],
             'name' => ['required'],
             'class_id' => ['required'],
-            'payment_check_status' => ['required']
+            'payment_check_status' => ['required'],
+            'phone' => ['digits:10'],
         ]);
 
         $id = $request->id;
         $name = $request->name;
         $class_id = $request->class_id;
         $payment_check_status = $request->payment_check_status;
+        $phone = $request->phone;
 
         if (!is_null($id)) {
             if (Auth::user()->isRole(User::ADMIN)) {
@@ -50,6 +52,7 @@ class UserController extends Controller
                         'name' => $name,
                         'class_id' => $d_class->id,
                         'payment_check_status' => $payment_check_status,
+                        'phone' => $phone,
                     ])->save();
 
 
@@ -301,7 +304,7 @@ class UserController extends Controller
                 if (!is_null($user->set)) {
                     unset($user->set->student);
                 }
-                return $user;
+                return $user->makeVisible(['phone']);
             }
             return abort(403);
         }

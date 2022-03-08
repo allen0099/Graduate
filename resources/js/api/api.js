@@ -41,8 +41,8 @@ export const apiResetPassword = id => Request.post("/reset_password", { id });
 
 export const apiAdminList = () => Request.get("/admin_list");
 
-export const apiUpdateUser = (id, name, class_id, payment_check_status) =>
-    Request.post("/update_user", { id, name, class_id, payment_check_status });
+export const apiUpdateUser = (id, name, class_id, payment_check_status, phone) =>
+    Request.post("/update_user", { id, name, class_id, payment_check_status, phone });
 
 // Admin Order Actions
 export const apiGetOrder = (status, search) =>

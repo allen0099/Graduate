@@ -108,6 +108,7 @@
                                 user.email
                             }}</a>
                         </v-col>
+                        <v-col cols="12"> 手機：{{ user.phone }} </v-col>
                         <v-col cols="12" v-show="user.role === 'student'">
                             是否有勾選出納付款平台資料：{{
                                 user.filled_pay_form ? "是" : "否"
@@ -143,6 +144,7 @@
                                 v-model="user.name"
                                 hide-details
                                 clearable
+                                required
                             ></v-text-field>
                         </v-col>
                         <v-col cols="12" v-if="user.role === 'student'">
@@ -152,6 +154,7 @@
                                 label="系級"
                                 item-value="class_id"
                                 item-text="class_name"
+                                required
                             ></v-autocomplete>
                         </v-col>
                         <v-col cols="12" v-if="user.role === 'student'">
@@ -164,6 +167,14 @@
                                 required
                             >
                             </v-select>
+                        </v-col>
+                        <v-col cols="12" v-if="user.role === 'student'">
+                            <v-text-field
+                                label="手機號碼"
+                                v-model="user.phone"
+                                hide-details
+                                clearable
+                            ></v-text-field>
                         </v-col>
                     </v-row>
                 </v-card-text>
@@ -507,8 +518,9 @@ export default {
                     ? -1
                     : this.user.school_class.class_id;
             let payment_check_status = this.user.payment_check_status;
+            let phone = this.user.phone;
 
-            await apiUpdateUser(id, name, class_id, payment_check_status)
+            await apiUpdateUser(id, name, class_id, payment_check_status, phone)
                 .then(res => {
                     if (res.status === 204) {
                         this.msg = "修改成功";
