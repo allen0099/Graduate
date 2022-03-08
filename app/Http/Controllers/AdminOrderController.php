@@ -142,9 +142,9 @@ class AdminOrderController extends Controller
             
             $status_code = [
                 (string)(Order::code_created) => "未付款",
-                (string)(Order::code_paid) => "已付款，未領取衣服",
-                (string)(Order::code_received) => "未歸還衣服",
-                (string)(Order::code_returned) => "已歸還衣服",
+                (string)(Order::code_paid) => "已付款",
+                (string)(Order::code_received) => "未歸還",
+                (string)(Order::code_returned) => "已歸還",
                 (string)(Order::code_refunded) => "已還款",
                 (string)(Order::code_canceled) => "已取消"
             ];
@@ -196,7 +196,7 @@ class AdminOrderController extends Controller
             $list = $list->merge($sets);
         }
 
-        $list = $list->sortBy('訂單狀態');
+        $list = $list->sortBy('訂單狀態')->values();;
         
 
         $sheets = new SheetCollection([
@@ -209,6 +209,6 @@ class AdminOrderController extends Controller
             })->all()
         ]);
 
-        return (new FastExcel($sheets))->download('order-' . today()->format('Y-m-d-') . Str::random(5) . '.xlsx');
+        return (new FastExcel($sheets))->download('訂單匯出-' . today()->format('Y-m-d-') . Str::random(5) . '.xlsx');
     }
 }

@@ -223,6 +223,9 @@ Route::group([
 
     Route::get('/export_all_orders_to_excel', [AdminOrderController::class, 'exportAllOrdersToExcel'])
         ->name('export_al_orders_to_excel');
+
+    Route::get('export_pdf', [PDFController::class, 'exportPdf'])
+        ->name('export-pdf');
 });
 
 // Student routes group
@@ -240,6 +243,3 @@ Route::group([
 });
 
 Route::middleware(['auth:sanctum'])->get('index', RedirectAfterLoginController::class);
-
-Route::get('p', [PDFController::class, 'preserveCount'])
-    ->name('preserve-test');

@@ -71,8 +71,29 @@
                             class="ma-2"
                             outlined
                             color="indigo"
+                            v-show="statusFilterSelected == -1"
                         >
-                            {{ 'Excel 下載' }}
+                            {{ 'Excel匯出' }}
+                        </v-btn>
+                        <v-btn
+                            :href="`/export_pdf?type=0`"
+                            class="ma-2"
+                            outlined
+                            color="indigo"
+                            target="_blank"
+                            v-show="statusFilterSelected == -1"
+                        >
+                            {{ '學士PDF匯出' }}
+                        </v-btn>
+                        <v-btn
+                            :href="`/export_pdf?type=1`"
+                            class="ma-2"
+                            outlined
+                            color="indigo"
+                            target="_blank"
+                            v-show="statusFilterSelected == -1"
+                        >
+                            {{ '碩士PDF匯出'}}
                         </v-btn>
                         <v-btn
                             v-for="(tool, tool_index) in tools[statusFilterSelected+1]"

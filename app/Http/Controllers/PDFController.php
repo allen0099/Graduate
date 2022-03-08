@@ -642,11 +642,99 @@ class PDFController extends Controller
         return abort(403);
     }
 
-    public function test()
-    {
-        $barcode_username = (new DNS1D)->getBarcodeHTML('4445645656', 'C39+');
-        error_log($barcode_username);
-        // return '<img src="data:image/png; base64, '.$barcode_username.'" />';
-        return $barcode_username;
+
+    /** 匯出訂單用 **/
+    public function find_sets($order) {
+        $res = [];
+
+        foreach ($order->sets as $pos => $set) {
+
+            $status_code = [
+                (string)(Order::code_created) => "未付款",
+                (string)(Order::code_paid) => "已付款",
+                (string)(Order::code_received) => "未歸還",
+                (string)(Order::code_returned) => "已歸還",
+                (string)(Order::code_refunded) => "已還款",
+                (string)(Order::code_canceled) => "已取消"
+            ];
+
+            if ($set->refund) {
+                $status = "已還款";
+            } else if (!empty($set->returned)) {
+                $status = "已歸還";
+            } else {
+                $status = $status_code[$order->status_code];
+            }
+
+            $add = $order->sets->count() > 1 ? 1 : 0;
+
+
+            $return_id = null;
+            if(!(is_null($set->list_id))) {
+                $return_id = $order->payment_id . '-' . ($pos+$add);
+            }
+
+            $x = [
+                'student_id' => $set->student->username,
+                'name' => $set->student->name,
+                'class' => $set->student->school_class->class_name,
+                'size' => $set->cloth->spec,
+                'color' => $set->accessory->spec,
+                'document_id'=> $order->document_id,
+                'payment_id' => $order->payment_id,
+                'return_id' => $return_id,
+                'batch_id' => $set->list_id,
+                'status' => $status
+            ];
+            array_push($res, $x);
+        }
+
+        return $res;
+    }
+    
+    /** 匯出全部訂單 
+     * type: 0:學士 1:碩士
+     * **/
+    public function exportPdf(Request $request){
+        
+        $type = $request->type;
+
+        $list = collect([]);
+        if ($type == 1){
+            $orders = Order::all()->filter(function ($value, $key) {
+                return $value->owner->username[0] > "5";
+            });
+        } else {
+            $orders = Order::all()->filter(function ($value, $key) {
+                return $value->owner->username[0] < "5";
+            });
+        }
+
+        foreach ($orders as $order){
+            $sets = $this->find_sets($order);
+            $list = $list->merge($sets);
+        }
+
+
+        $list = $list->sortBy('status')->values();
+
+        // return $list;
+
+        $year = today()->year - 1911;
+        if (today()->month <= 7) {
+            $year -= 1;
+        }
+
+        $data = [
+            'type' => $type == 1 ? '碩士' : '學士',
+            'list' => $list,
+            'list_chunk' => $list->chunk(45),
+            'year' => $year,
+        ];
+
+
+        $pdf = PDF::loadView('pdf/export_orders', $data)->setPaper('a4', 'potrait');
+
+        return $pdf->stream($type == 1 ? '碩士' : '學士' . today()->format('Y-m-d-') . Str::random(5) . '.pdf');
     }
 }
