@@ -10,12 +10,14 @@ use App\Models\Department;
 use App\Models\DepartmentClass;
 use App\Models\OldClass;
 use App\Models\User;
+use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Rap2hpoutre\FastExcel\Facades\FastExcel;
+use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
@@ -345,5 +347,151 @@ class UserController extends Controller
         ])->save();
 
         return $user;
+    }
+
+    public function uploadPayments(Request $request)
+    {
+        $request->validate([
+            'csv_file' => ['required', 'mimes:csv,txt', 'max:5000'],
+        ]);
+
+        $path = $request->file('csv_file')->storeAs('', Str::random(16).'.csv', 'public');
+        $fp = Storage::disk('public')->get($path);
+
+        Log::info("[Log::uploadPayments]", [
+            'info' => 'Upload started!',
+            'ip' => $request->ip(),
+            'username' => Auth::user()->username
+        ]);
+
+        mb_detect_order('ASCII,UTF-8,BIG-5');
+        $encode = mb_detect_encoding($request->file('csv_file')->getContent());
+
+        Log::info("[Log::uploadPayments]", [
+            'info' => "Encoding: $encode",
+            'ip' => $request->ip(),
+            'username' => Auth::user()->username
+        ]);
+
+        $fp_utf8 = mb_convert_encoding($fp, 'UTF-8', $encode);
+        Storage::disk('public')->put($path, $fp_utf8);
+
+        $firstLine = preg_split('/\r\n|\r|\n/', $fp_utf8)[0];
+        $check = str_contains($firstLine, '繳費單編號');
+
+        Log::info("[Log::uploadPayments]", [
+            'info' => "First Line: $check",
+            'ip' => $request->ip(),
+            'username' => Auth::user()->username
+        ]);
+
+        $fsExcel = FastExcel::configureCsv(',', '"', '\n', 'UTF-8');
+
+        if (!$check) {
+            $fsExcel->withoutHeaders();
+        }
+
+        Log::info('fast excel');
+
+
+        $fail = [];
+        $succeed = [];
+
+        $fsExcel->import(Storage::disk('public')->path($path), function ($row) use (&$fail, &$succeed) {
+            try {
+                $time = microtime(true);
+                $payment_id = trim($row['繳費單編號'] ?? $row[0]);
+                $money = trim($row['收費金額'] ?? $row[3]);
+                $date = trim($row['繳費日期'] ?? $row[4]);
+                $stuname = trim($row['繳款人'] ?? $row[5]);
+                $student_id = explode("-", $stuname)[0];
+                $student_name = explode("-", $stuname)[1];
+                $phone = trim($row['聯絡電話'] ?? $row[6]);
+                $state = trim($row['繳費狀態'] ?? $row[7]);
+
+                if(!strlen($payment_id) or !strlen($money) or !strlen($stuname) or !strlen($state)) {
+                    array_push($fail, "發生不明錯誤，請檢察檔案是否有缺失!");
+                    return;
+                }
+
+            } catch (\Exception $e) {
+                Log::info("[Log::uploadPayments]", [
+                    'info' => "Error: $e",
+                    'ip' => $request->ip(),
+                    'username' => Auth::user()->username
+                ]);
+                array_push($fail, "發生不明錯誤，請檢察檔案是否有缺失!");
+                return;
+            }
+            Log::debug('[Log::uploadPayments] => !!!Row setup!!!', [
+                'time' => microtime(true) - $time,
+                'row' => [
+                    'payment_id' => $payment_id,
+                    'money' => $money,
+                    'date' => $date,
+                    'username' => $student_id,
+                    'name' => $student_name,
+                    'phone' => $phone,
+                    'state' => $state,
+                ],
+            ]);
+            $real_integer = filter_var($money, FILTER_SANITIZE_NUMBER_INT);
+
+            $find_owner = User::where('username', $student_id);
+            if ($find_owner->count() > 0) {
+                $user = $find_owner->first();
+                $find_order = $find_owner->first()->orders()->get();
+                if ($find_order->count() === 0) {
+                    Log::debug('[Log::uploadPayments] order => 沒有訂單', [
+                        'username' => $student_id,
+                    ]);
+                    $msg = $user->name.'('.$user->username.') 沒有訂單';
+                    array_push($fail, $msg);
+                } else {
+                    $order = $find_order->first();
+                    if(is_null($order->payment_id)) {
+                        if($real_integer >= $order->total_price) {
+                            $order->forceFill([
+                                'status_code' => Order::code_paid,
+                                'payment_id' => $payment_id
+                            ])->save();
+                            
+                            $user->forceFill([
+                                'phone' => $phone
+                            ])->save();
+
+                            Log::debug('[Log::uploadPayments] order => 更新訂單', [
+                                'document_id' => $order->document_id,
+                                'payment_id' => $payment_id,
+                                'username' => $student_id,
+                            ]);
+                            $msg = $user->name.'('.$user->username.') 訂單 '.$order->document_id.' 更新付款資訊 '.$payment_id;
+                            array_push($succeed, $msg);
+                        } else {
+                            $msg = $user->name.'('.$student_id.') 訂單 '.$order->document_id.' 付款金額不足 '.($real_integer - $order->total_price);
+                            array_push($fail, $msg);
+                        }
+                    } else {
+                        Log::debug('[Log::uploadPayments] order => 訂單已存在付款資訊', [
+                            'username' => $student_id,
+                        ]);
+                        $msg = $user->name.'('.$user->username.') 訂單 '.$order->document_id.' 已存在付款資訊 '.$order->payment_id;
+                        array_push($fail, $msg);
+                    }
+                }
+            } else {
+                Log::debug('[Log::uploadPayments] order => 沒有找到此學生', [
+                    'username' => $student_id,
+                ]);
+                $msg = $student_name.'('.$student_id.') 沒有找到此學生';
+                array_push($fail, $msg);
+            }
+
+            return;
+        });
+        
+        Log::debug('[Log::uploadPayments] => upload done');
+
+        return ['fail' => $fail, 'succeed' => $succeed];
     }
 }

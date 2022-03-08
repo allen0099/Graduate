@@ -226,6 +226,9 @@ Route::group([
 
     Route::get('export_pdf', [PDFController::class, 'exportPdf'])
         ->name('export-pdf');
+
+    Route::post('upload_payments', [UserController::class, 'uploadPayments'])
+        ->name('upload-payments');
 });
 
 // Student routes group

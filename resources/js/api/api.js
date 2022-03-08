@@ -114,6 +114,8 @@ export const apiUploadStudent = csv_file =>
 export const apiUploadPdf = pdf_file =>
     UploadRequest.post("/upload_pdf", pdf_file);
 export const apiCheckExist = filepath => Request.get(`${filepath}`);
+export const apiUploadPayments = csv_file =>
+    UploadRequest.post("/upload_payments", csv_file);
 
 export const apiCheckPdfExist = filename =>
     Request.get(`find_pdf?name=${filename}`);
