@@ -229,6 +229,15 @@ Route::group([
 
     Route::post('upload_payments', [UserController::class, 'uploadPayments'])
         ->name('upload-payments');
+
+    Route::get('get_payment_check_status', [UserController::class, 'getPaymentCheckStatus'])
+        ->name('get-payment-check-status');
+    
+    Route::get('export_payment_check_status', [UserController::class, 'exportPaymentCheckStatus'])
+        ->name('export-payment-check-status');
+
+    Route::post('upload_payment_check_status', [UserController::class, 'uploadPaymentCheckStatus'])
+        ->name('upload-payment-check-status');
 });
 
 // Student routes group

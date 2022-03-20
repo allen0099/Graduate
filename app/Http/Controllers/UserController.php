@@ -11,12 +11,13 @@ use App\Models\DepartmentClass;
 use App\Models\OldClass;
 use App\Models\User;
 use App\Models\Order;
+use Rap2hpoutre\FastExcel\Facades\FastExcel;
+use Rap2hpoutre\FastExcel\SheetCollection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
-use Rap2hpoutre\FastExcel\Facades\FastExcel;
 use Illuminate\Support\Str;
 
 class UserController extends Controller
@@ -349,13 +350,19 @@ class UserController extends Controller
         return $user;
     }
 
+    /** 其實是我寫錯地方 我應該寫在 order 但沒注意 
+     * 請手動將 xlsx 轉成 csv 檔案，記得過濾掉不是繳學士服費用的學生
+     * csv 檔案欄位名必須包含要有 (繳費單編號,收費金額,繳款人)
+     * 
+    */
+
     public function uploadPayments(Request $request)
     {
         $request->validate([
             'csv_file' => ['required', 'mimes:csv,txt', 'max:5000'],
         ]);
 
-        $path = $request->file('csv_file')->storeAs('', Str::random(16).'.csv', 'public');
+        $path = $request->file('csv_file')->storeAs('', 'Payments'.Str::random(16).'.csv', 'public');
         $fp = Storage::disk('public')->get($path);
 
         Log::info("[Log::uploadPayments]", [
@@ -417,7 +424,7 @@ class UserController extends Controller
                     return;
                 }
 
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 Log::info("[Log::uploadPayments]", [
                     'info' => "Error: $e",
                 ]);
@@ -492,6 +499,153 @@ class UserController extends Controller
         });
         
         Log::debug('[Log::uploadPayments] => upload done');
+
+        return ['fail' => $fail, 'succeed' => $succeed];
+    }
+
+    /*************************************************************************/
+
+    /**
+     * PaymentCheckStatus
+     */
+
+    public function getPaymentCheckStatus(Request $request){
+        $users = User::where('role', 'student')
+            ->where('filled_pay_form', 1)
+            ->where('payment_check_status', '<', 2)
+            ->get();
+        return $users;
+    }
+
+    public function exportPaymentCheckStatus(Request $request){
+
+        $list = collect([]);
+
+        $users = User::where('role', 'student')
+            ->where('filled_pay_form', 1)
+            ->where('payment_check_status', '<', 2)
+            ->get();
+
+        foreach ($users as $user){
+            $list->push([
+                '學號' => $user->username,
+                '姓名' => $user->name,
+                '帳戶狀態' => $user->payment_check_status ? "上次未通過" : "尚未查核",
+            ]);
+        }
+
+        $list = $list->sortByDesc('帳戶狀態');
+
+        $chunks = $list->chunk(60);
+        
+        $sheets = new SheetCollection($chunks);
+
+        return (FastExcel::data($sheets))->download('名單匯出-' . today()->format('Y-m-d-') . Str::random(5) . '.xlsx');
+
+    }
+
+    public function uploadPaymentCheckStatus(Request $request)
+    {
+        $request->validate([
+            'csv_file' => ['required', 'mimes:csv,txt', 'max:5000'],
+        ]);
+
+        $path = $request->file('csv_file')->storeAs('', 'PaymentCheckStatus'.Str::random(16).'.csv', 'public');
+
+        $fp = Storage::disk('public')->get($path);
+
+        Log::info("[Log::uploadPaymentCheckStatus]", [
+            'info' => 'Upload started!',
+            'ip' => $request->ip(),
+            'username' => Auth::user()->username
+        ]);
+
+        mb_detect_order('ASCII,UTF-8,BIG-5');
+        $encode = mb_detect_encoding($request->file('csv_file')->getContent());
+
+        Log::info("[Log::uploadPaymentCheckStatus]", [
+            'info' => "Encoding: $encode",
+            'ip' => $request->ip(),
+            'username' => Auth::user()->username
+        ]);
+
+        $fp_utf8 = mb_convert_encoding($fp, 'UTF-8', $encode);
+        Storage::disk('public')->put($path, $fp_utf8);
+
+        $firstLine = preg_split('/\r\n|\r|\n/', $fp_utf8)[0];
+        $check = str_contains($firstLine, '受款人代號');
+
+        Log::info("[Log::uploadPaymentCheckStatus]", [
+            'info' => "First Line: $check",
+            'ip' => $request->ip(),
+            'username' => Auth::user()->username
+        ]);
+
+        $fsExcel = FastExcel::configureCsv(',', '"', '\n', 'UTF-8');
+
+        if (!$check) {
+            $fsExcel->withoutHeaders();
+        }
+
+        Log::info('fast excel');
+
+
+        $fail = [];
+        $succeed = [];
+
+        $fsExcel->import(Storage::disk('public')->path($path), function ($row) use (&$fail, &$succeed) {
+            try {
+                $time = microtime(true);
+                $studentId = trim($row['受款人代號'] ?? $row[0]);
+                $name = trim($row['受款人名稱'] ?? $row[1]);
+                $status = trim($row['資料狀態'] ?? $row[2]);
+
+                if(!strlen($studentId) or !strlen($status)) {
+                    Log::info("[Log::uploadPaymentCheckStatus]", [
+                    'info' => "Error: 發生不明錯誤，請檢察檔案是否有缺失!",
+                    ]);
+                    array_push($fail, "發生不明錯誤，請檢察檔案是否有缺失! 受款人代號 ".$studentId);
+                    return;
+                }
+
+            } catch (Exception $e) {
+                Log::info("[Log::uploadPaymentCheckStatus]", [
+                    'info' => "Error: $e",
+                ]);
+                array_push($fail, "發生不明錯誤，請檢察檔案是否有缺失!");
+                return;
+            }
+            Log::debug('[Log::uploadPaymentCheckStatus] => !!!Row setup!!!', [
+                'time' => microtime(true) - $time,
+                'row' => [
+                    'studentId' => $studentId,
+                    'name' => $name,
+                    'status' => $status,
+                ],
+            ]);
+
+            $find_owner = User::where('username', $studentId);
+
+            if ($find_owner->count() > 0) {
+                $user = $find_owner->first();
+                if($status === '可直接匯款') {
+                    $user->forceFill(['payment_check_status' => 2])->save();
+                    array_push($succeed, $user->name.'('.$user->username.') 審核通過');
+                } else {
+                    $user->forceFill(['payment_check_status' => 1])->save();
+                    array_push($fail, $user->name.'('.$user->username.') 審核未通過, 狀態: '.$status);
+                }
+            } else {
+                Log::debug('[Log::uploadPaymentCheckStatus] student => 沒有找到此學生', [
+                    'username' => $studentId,
+                ]);
+                $msg = $name.'('.$studentId.') 沒有找到此學生';
+                array_push($fail, $msg);
+            }
+            return;
+        });
+        
+        Log::debug('[Log::uploadPaymentCheckStatus] => upload done');
 
         return ['fail' => $fail, 'succeed' => $succeed];
     }

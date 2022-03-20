@@ -44,6 +44,8 @@ export const apiAdminList = () => Request.get("/admin_list");
 export const apiUpdateUser = (id, name, class_id, payment_check_status, phone) =>
     Request.post("/update_user", { id, name, class_id, payment_check_status, phone });
 
+export const apiPaymentCheckStatus = () => Request.get("/get_payment_check_status");
+
 // Admin Order Actions
 export const apiGetOrder = (status, search) =>
     Request.get(`/get_orders?status=${status}&search=${search}`);
@@ -116,6 +118,8 @@ export const apiUploadPdf = pdf_file =>
 export const apiCheckExist = filepath => Request.get(`${filepath}`);
 export const apiUploadPayments = csv_file =>
     UploadRequest.post("/upload_payments", csv_file);
+export const apiUploadPaymentCheckStatus = csv_file =>
+    UploadRequest.post("/upload_payment_check_status", csv_file);
 
 export const apiCheckPdfExist = filename =>
     Request.get(`find_pdf?name=${filename}`);
