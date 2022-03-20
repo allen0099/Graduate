@@ -196,15 +196,15 @@ class AdminOrderController extends Controller
             $list = $list->merge($sets);
         }
 
-        $list = $list->sortBy('訂單狀態')->values();;
+        $list = $list->sortBy('訂單狀態')->values();
         
 
         $sheets = new SheetCollection([
-            $a = $list->filter(function ($item, $index) {
+            '學士' => $list->filter(function ($item, $index) {
                 return $item['學位'] == '學士';
             })->all(),
 
-            $b = $list->filter(function ($item, $index) {
+            '碩士' => $list->filter(function ($item, $index) {
                 return $item['學位'] == '碩士';
             })->all()
         ]);
