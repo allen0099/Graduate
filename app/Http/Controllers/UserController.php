@@ -247,6 +247,7 @@ class UserController extends Controller
                     'password' => $pwd,
                     'role' => User::STUDENT,
                     'class_id' => $ccid,
+                    'phone' => ''
                 ]);
                 Log::debug('build user', ['time' => microtime(true) - $time]);
 
@@ -329,6 +330,7 @@ class UserController extends Controller
             'password' => Hash::make(substr($request->username, -6)),
             'role' => User::STUDENT,
             'class_id' => $d_class->id,
+            'phone' => "",
         ])->save();
 
         return $user;
@@ -345,6 +347,7 @@ class UserController extends Controller
             'email' => $request->username . '@admin.email',
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
             'role' => User::ADMIN,
+            'phone' => "",
         ])->save();
 
         return $user;
