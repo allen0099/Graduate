@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\NewAdminCheck;
 use App\Http\Requests\NewStudentCheck;
 use App\Jobs\ChangeStudentPassword;
+use App\Models\TimeRange;
 use App\Models\CashierList;
 use App\Models\Department;
 use App\Models\DepartmentClass;
@@ -305,6 +306,19 @@ class UserController extends Controller
             Log::debug('=> check user done', ['time' => microtime(true) - $func_time]);
             return null;
         });
+
+        TimeRange::all()->each(function($time) {
+            $time->forceFill([
+            'start_time' => today()->startOfDay(),
+            'end_time' => today()->endOfDay(),
+            ])->save();
+        });
+
+        Log::info("[Log::uploadStudentList]", [
+            'info' => 'uploadStudentList done!',
+            'ip' => $request->ip(),
+            'username' => Auth::user()->username
+        ]);
 
         return response()->noContent();
     }

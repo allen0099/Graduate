@@ -95,7 +95,7 @@
                         :color="snackbar_true ? 'success' : 'error'"
                         text
                         v-bind="attrs"
-                        @click="snackbar = false"
+                        @click="snackbar_close"
                     >
                         關閉
                     </v-btn>
@@ -170,6 +170,7 @@ export default {
             msg: "",
             file: null,
             edit_dialog: false,
+            refresh: false,
             student: {
                 name: null,
                 class_id: null,
@@ -211,11 +212,12 @@ export default {
             await apiUploadStudent(form_data)
                 .then(res => {
                     if (res.status === 204) {
-                        this.msg = "上傳成功";
+                        this.msg = "學生資料上傳成功";
                         this.snackbar = true;
                         this.snackbar_true = true;
+                        this.refresh = true;
                     } else {
-                        this.msg = "上傳失敗";
+                        this.msg = "學生資料上傳失敗";
                         this.snackbar = true;
                         this.snackbar_true = false;
                     }
@@ -225,7 +227,7 @@ export default {
                     console.log(err);
                     this.msg = err.response.data.errors;
                     if (!!this.msg === false) {
-                        this.msg = "上傳失敗";
+                        this.msg = "學生資料上傳失敗";
                     }
                     this.snackbar = true;
                     this.snackbar_true = false;
@@ -240,6 +242,13 @@ export default {
             this.edit_student = Object.assign({}, this.student);
             this.edit_dialog = false;
             this.pageLoading = false;
+        },
+        snackbar_close() {
+            this.snackbar = false;
+            if (this.refresh) {
+                window.location.reload();
+                console.log("refresh");
+            }
         },
         async save() {
             if (!/^[0-9]{9}$/.test(this.edit_student.username)) {
