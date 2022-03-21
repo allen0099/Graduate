@@ -209,13 +209,25 @@ class UserController extends Controller
             'ip' => $request->ip(),
             'username' => Auth::user()->username
         ]);
+
         $fsExcel->import(Storage::disk('public')->path($path), function ($row) {
-            $time = microtime(true);
-            $cid = trim($row['系年班代碼'] ?? $row[0]);
-            $cname = trim($row['系年班簡稱'] ?? $row[1]);
-            $uid = trim($row['學號'] ?? $row[2]);
-            $uname = trim($row['姓名'] ?? $row[3]);
-            Log::debug('!!!Row setup!!!', [
+
+            try {
+                $time = microtime(true);
+                $cid = trim($row['系年班代碼'] ?? $row[0]);
+                $cname = trim($row['系年班簡稱'] ?? $row[1]);
+                $uid = trim($row['學號'] ?? $row[2]);
+                $uname = trim($row['名稱'] ?? $row[3]);
+
+                } catch (Exception $e) {
+                Log::info("[Log::uploadStudentList]", [
+                    'info' => "Error: $e",
+                ]);
+                return;
+            }
+
+
+            Log::debug('[Log::uploadStudentList] !!!Row setup!!!', [
                 'time' => microtime(true) - $time,
                 'row' => $row,
             ]);
@@ -228,6 +240,22 @@ class UserController extends Controller
                     ['name' => substr($cname, 0, 6)]
                 );
 
+
+                // 刪除 簡稱一樣但編號不一樣的
+                $old = OldClass::where('class_name', $cname)->first();
+
+                if(!is_null($old) && $old->class_id != $cid){
+                    $old->delete();
+                }
+
+                // 刪除 編號一樣但簡稱不一樣的
+                $old = OldClass::where('class_id', $cid)->first();
+
+                if(!is_null($old) && $old->class_name != $cname){
+                    $old->delete();
+                }
+
+                // 只有完整一樣才會複製 不然就是都不一樣做新增
                 $old = OldClass::where('class_id', $cid)->firstOrCreate(
                     ['class_id' => $cid],
                     ['department_id' => $department->id, 'class_name' => $cname]
