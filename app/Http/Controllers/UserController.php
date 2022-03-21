@@ -132,7 +132,8 @@ class UserController extends Controller
         Log::info("[Log::uploadStudentList]", [
             'info' => 'Upload started!',
             'ip' => $request->ip(),
-            'username' => Auth::user()->username
+            'username' => Auth::user()->username,
+            'file' => $path
         ]);
 
         mb_detect_order('ASCII,UTF-8,BIG-5');
@@ -176,8 +177,20 @@ class UserController extends Controller
 
                 $origin_data->delete();
             });
+        Log::info("[Log::uploadStudentList]", [
+            'info' => 'DepartmentClass::all done!',
+            'ip' => $request->ip(),
+            'username' => Auth::user()->username
+        ]);
 
-        CashierList::all()->each(fn($o) => $o->delete()->save());
+        CashierList::all()->each(fn($o) => $o->delete());
+
+
+        Log::info("[Log::uploadStudentList]", [
+            'info' => 'CashierList::all done!',
+            'ip' => $request->ip(),
+            'username' => Auth::user()->username
+        ]);
 
         Log::info("[Log::uploadStudentList]", [
             'info' => 'Clear ended!',
@@ -191,7 +204,11 @@ class UserController extends Controller
             $fsExcel->withoutHeaders();
         }
 
-        Log::info('fast excel');
+        Log::info("[Log::uploadStudentList]", [
+            'info' => 'fast excel',
+            'ip' => $request->ip(),
+            'username' => Auth::user()->username
+        ]);
         $fsExcel->import(Storage::disk('public')->path($path), function ($row) {
             $time = microtime(true);
             $cid = trim($row['系年班代碼'] ?? $row[0]);
@@ -240,6 +257,7 @@ class UserController extends Controller
                 Log::debug('get ccid', ['time' => microtime(true) - $time]);
 
                 $time = microtime(true);
+
                 $user = User::create([
                     'name' => $uname,
                     'username' => $uid,
@@ -247,8 +265,9 @@ class UserController extends Controller
                     'password' => $pwd,
                     'role' => User::STUDENT,
                     'class_id' => $ccid,
-                    'phone' => ''
+                    'phone' => '123'
                 ]);
+
                 Log::debug('build user', ['time' => microtime(true) - $time]);
 
                 $time = microtime(true);
