@@ -473,6 +473,7 @@ export default {
             this.edit_user_alert = false;
             this.reset_pageLoading = false;
             this.edit_user_pageLoading = false;
+            this.edit_toggle = false;
         },
         async add_admin_submit() {
             this.add_admin_pageLoading = true;
@@ -537,7 +538,13 @@ export default {
                     }
                 })
                 .catch(err => {
-                    this.msg = "修改失敗";
+                    if (err.response.status == 422) {
+                        this.msg = `錯誤：${JSON.stringify(
+                            err.response.data.errors
+                        )}`;
+                    } else {
+                        this.msg = "修改失敗";
+                    }
                     this.snackbar = true;
                     this.snackbar_true = false;
                 });

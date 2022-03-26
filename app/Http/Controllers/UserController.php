@@ -31,7 +31,7 @@ class UserController extends Controller
             'name' => ['required'],
             'class_id' => ['required'],
             'payment_check_status' => ['required'],
-            'phone' => ['digits:10'],
+            'phone' => ['nullable', 'regex:/(09)[0-9]{8}/'],
         ]);
 
         $id = $request->id;
