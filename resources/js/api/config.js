@@ -60,3 +60,10 @@ export const colorList = [
         detail: "red accent-2"
     }
 ];
+
+
+export const Tkupay_path_B =
+    "https://finfo.ais.tku.edu.tw/pmt/PMT170/PMTSwitch?param=bnZFVDNSTmg1dU5POHdRVVk2VE5Hb0VFWjEvbk5xZ0RpUkJudmRaWS83MG1ob0tWY1l4SEFZbzY3NytsWWhPaQ=="
+
+export const Tkupay_path_M =
+    "https://finfo.ais.tku.edu.tw/pmt/PMT170/PMTSwitch?param=bnZFVDNSTmg1dU5POHdRVVk2VE5Hb0VFWjEvbk5xZ0RpUkJudmRaWS83MGJ4R2RTblVTdldtM1lHNU4yMUNXWg=="

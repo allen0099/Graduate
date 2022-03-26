@@ -379,6 +379,11 @@
                                         }}領取{{ choose.name }}。
                                     </p>
                                 </li>
+                                <li>
+                                    <p>
+                                        若訂單只有為自己購買一套則可以進行線上付款。
+                                    </p>
+                                </li>
                             </ol>
                         </v-card-text>
                         <v-card-text class="font-weight-bold body-1" v-else>
@@ -477,6 +482,18 @@
                             列印訂單
                         </v-btn>
                         <v-btn
+                            v-if="order.length === 1 && order_check"
+                            color="primary"
+                            class="mb-3 mr-3"
+                            :href="
+                                result.owner.username[0] < '5'
+                                    ? `${Tkupay_path_B}`
+                                    : `${Tkupay_path_M}`
+                            "
+                        >
+                            線上付款
+                        </v-btn>
+                        <v-btn
                             color="primary"
                             class="mb-3"
                             :href="route('student.myorder')"
@@ -536,6 +553,7 @@
 import VuetifyLayout from "@/Layouts/VuetifyLayout";
 import * as easings from "vuetify/es5/services/goto/easing-patterns";
 import { apiSearchStudent, apiCreateOrder, apiSearchOwner } from "@/api/api";
+import { Tkupay_path_B, Tkupay_path_M } from "@/api/config";
 
 export default {
     props: {
@@ -654,7 +672,9 @@ export default {
                 }
             ),
             result: null,
-            error_msg: ""
+            error_msg: "",
+            Tkupay_path_B: Tkupay_path_B,
+            Tkupay_path_M: Tkupay_path_M
         };
     },
 
