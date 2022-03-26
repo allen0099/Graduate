@@ -132,7 +132,7 @@
                 v-if="user.role === 'student'"
             >
                 <jet-label for="license"
-                    >出納付款查詢平台資料填寫確認
+                    >淡江智慧收付平台資料填寫確認
                     <v-tooltip bottom>
                         <template v-slot:activator="{ on, attrs }">
                             <v-btn
@@ -153,7 +153,7 @@
                 <v-checkbox
                     v-model="form.filled_pay_form"
                     persistent-hint
-                    hint="(請登入「出納付款查詢平台」，至「您的資料」進行填寫。)"
+                    hint="(請登入「淡江智慧收付平台」，至「您的資料」進行填寫。)"
                     :readonly="form.filled_pay_form"
                 >
                     <template v-slot:label>
@@ -167,7 +167,7 @@
                                         @click.stop
                                         v-on="on"
                                     >
-                                        出納付款查詢平台
+                                        淡江智慧收付平台
                                     </a>
                                 </template>
                                 請登入後，至「您的資料」進行填寫。
@@ -181,7 +181,7 @@
                     for="payment_check_status"
                     v-show="form.filled_pay_form"
                 >
-                    出納付款查詢平台資料查核狀態：
+                    淡江智慧收付平台資料查核狀態：
                     <span
                         :class="
                             payment_check_status_colors[

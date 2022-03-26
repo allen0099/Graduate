@@ -163,7 +163,7 @@
                                 :items="payment_check_status_objs"
                                 item-text="text"
                                 item-value="value"
-                                label="出納付款查詢平台資料查核狀態"
+                                label="淡江智慧收付平台資料查核狀態"
                                 required
                             >
                             </v-select>

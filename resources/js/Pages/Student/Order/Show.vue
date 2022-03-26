@@ -788,7 +788,7 @@ export default {
                             if (res.data.payment_check_status !== 2) {
                                 this.student_id = "";
                                 this.msg =
-                                    "該生尚完成「出納付款查詢平台」之基本資料與金融帳戶。";
+                                    "該生尚完成「淡江智慧收付平台」之基本資料與金融帳戶。";
                                 this.snackbar_true = false;
                                 this.snackbar = true;
                             } else {
