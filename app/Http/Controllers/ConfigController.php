@@ -131,4 +131,22 @@ class ConfigController extends Controller
 
         return Config::editPdfName($request->pdf, $request->value);
     }
+
+    public function editPaymentUrl(Request $request)
+    {
+
+        $request->validate([
+            'type' => 'required|in:bachelor,master',
+            'url' => 'required',
+        ]);
+
+        Log::info("[Log::editPaymentUrl]", [
+            'type' => $request->type,
+            'url' => $request->url,
+            'ip' => $request->ip(),
+            'username' => Auth::user()->username
+        ]);
+
+        return Config::editPaymentUrl($request->type, $request->url);
+    }
 }

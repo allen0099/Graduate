@@ -43,8 +43,24 @@ class Config extends Model
 
         $pdf->value = $value;
         $pdf->save();
-        
+
         return response()->noContent();
+    }
+
+    public static function editPaymentUrl($type, string $url)
+    {
+        if ($type === 'bachelor') {
+            $t = Config::getBachelorPaymentUrl();
+        } else if ($type === 'master') {
+            $t = Config::getMasterPaymentUrl();
+        } else {
+            return abort(404);
+        }
+
+        $t->value = $url;
+        $t->save();
+
+        return $t;
     }
 
     public static function getBachelorSetPriceValue()
@@ -81,6 +97,16 @@ class Config extends Model
     public static function getMasterMarginPrice()
     {
         return Config::where('key', 'master_margin_price')->first();
+    }
+
+    public static function getBachelorPaymentUrl()
+    {
+        return Config::where('key', 'bachelor_payment_url')->first();
+    }
+
+    public static function getMasterPaymentUrl()
+    {
+        return Config::where('key', 'master_payment_url')->first();
     }
 
     public static function getReturnLocation()

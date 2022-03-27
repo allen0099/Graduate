@@ -24,6 +24,9 @@ export const apiInventoryUpdate = (id, res) =>
 export const apiPriceUpdate = (type, price) =>
     Request.post(`/edit_price`, { type, price });
 
+export const apiPaymentUrlUpdate = (type, url) =>
+    Request.post(`/edit_payment_url`, { type, url });
+
 export const apiDepartment = () => Request.get("/department_class");
 
 export const apiClassSetColor = (class_id, color) =>

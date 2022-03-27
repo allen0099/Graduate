@@ -238,6 +238,9 @@ Route::group([
 
     Route::post('upload_payment_check_status', [UserController::class, 'uploadPaymentCheckStatus'])
         ->name('upload-payment-check-status');
+    
+    Route::post('/edit_payment_url', [ConfigController::class, 'editPaymentUrl'])
+        ->name('edit_payment_url');
 });
 
 // Student routes group

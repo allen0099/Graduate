@@ -112,6 +112,35 @@
 
                         <!-- 學士服 -->
                         <v-card flat v-if="toggle_btn === 0">
+                            <v-card-title>學士付款連結設定</v-card-title>
+                            <v-row class="mx-5" dense>
+                                <v-col cols="2" class="mt-2">
+                                    連結
+                                </v-col>
+                                <v-col md="4" cols="6">
+                                    <v-text-field
+                                        v-model="bachelor_payment_url"
+                                        outlined
+                                        dense
+                                    ></v-text-field>
+                                </v-col>
+                                <v-col md="3" cols="3" class="ml-3">
+                                    <v-btn
+                                        @click="
+                                            save_payment_url(
+                                                bachelor_payment_url
+                                            )
+                                        "
+                                        >儲存</v-btn
+                                    >
+                                    <v-btn
+                                        :href="bachelor_payment_url"
+                                        color="primary"
+                                        target="_blank"
+                                        >前往</v-btn
+                                    >
+                                </v-col>
+                            </v-row>
                             <v-card-title>學士服價格設定</v-card-title>
                             <v-row class="mx-5" dense>
                                 <v-col cols="2" class="mt-2">
@@ -211,6 +240,33 @@
 
                         <!-- 碩士服 -->
                         <v-card flat v-else>
+                            <v-card-title>碩士付款連結設定</v-card-title>
+                            <v-row class="mx-5" dense>
+                                <v-col cols="2" class="mt-2">
+                                    連結
+                                </v-col>
+                                <v-col md="4" cols="6">
+                                    <v-text-field
+                                        v-model="master_payment_url"
+                                        outlined
+                                        dense
+                                    ></v-text-field>
+                                </v-col>
+                                <v-col md="3" cols="3" class="ml-3">
+                                    <v-btn
+                                        @click="
+                                            save_payment_url(master_payment_url)
+                                        "
+                                        >儲存</v-btn
+                                    >
+                                    <v-btn
+                                        :href="master_payment_url"
+                                        color="primary"
+                                        target="_blank"
+                                        >前往</v-btn
+                                    >
+                                </v-col>
+                            </v-row>
                             <v-card-title>碩士服價格設定</v-card-title>
                             <v-row class="mx-5" dense>
                                 <v-col cols="2" class="mt-2">
@@ -366,7 +422,11 @@ import DepartmentColorSettimg from "@/Pages/Admin/Setting/DepartmentColorSettimg
 import UploadPdf from "@/Pages/Admin/Setting/UploadPdf";
 import UserSetting from "@/Pages/Admin/Setting/UserSetting";
 import RemittanceUpload from "@/Pages/Admin/Setting/RemittanceUpload";
-import { apiInventoryUpdate, apiPriceUpdate } from "@/api/api";
+import {
+    apiInventoryUpdate,
+    apiPriceUpdate,
+    apiPaymentUrlUpdate
+} from "@/api/api";
 
 export default {
     components: {
@@ -400,7 +460,9 @@ export default {
         numberRules: [
             v => !!v || "不可為空",
             v => /^[0-9]*$/.test(v) || "只能輸入數字"
-        ]
+        ],
+        bachelor_payment_url: "",
+        master_payment_url: ""
     }),
     methods: {
         init_obj() {
@@ -412,6 +474,8 @@ export default {
             this.bachelor_margin_price = this.$page.props.configs.bachelor_margin_price;
             this.master_price = this.$page.props.configs.master_price;
             this.master_margin_price = this.$page.props.configs.master_margin_price;
+            this.bachelor_payment_url = this.$page.props.configs.bachelor_payment_url;
+            this.master_payment_url = this.$page.props.configs.master_payment_url;
         },
         async save_inventory(item) {
             this.snackbar = false;
@@ -469,6 +533,31 @@ export default {
                 let type =
                     this.toggle_btn === 0 ? "bachelor_margin" : "master_margin";
                 await apiPriceUpdate(type, margin_price)
+                    .then(res => {
+                        if (res.status === 200) {
+                            this.snackbar_true = true;
+                            this.msg = "修改成功";
+                        } else {
+                            this.snackbar_true = false;
+                            this.msg = "修改失敗";
+                        }
+                    })
+                    .catch(err => {
+                        console.log(err);
+                        this.snackbar_true = false;
+                        this.msg = "修改失敗";
+                    });
+            } else {
+                this.snackbar_true = false;
+                this.msg = "修改失敗";
+            }
+            this.snackbar = true;
+        },
+        async save_payment_url(payment_url) {
+            this.snackbar = false;
+            if (true) {
+                let type = this.toggle_btn === 0 ? "bachelor" : "master";
+                await apiPaymentUrlUpdate(type, payment_url)
                     .then(res => {
                         if (res.status === 200) {
                             this.snackbar_true = true;

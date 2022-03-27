@@ -77,6 +77,7 @@
                                             color="indigo"
                                             class="mr-3"
                                             dense
+                                            target="_blank"
                                             :href="
                                                 order.owner.username[0] < '5'
                                                     ? `${Tkupay_path_B}`
@@ -577,13 +578,7 @@
 
 <script>
 import VuetifyLayout from "@/Layouts/VuetifyLayout";
-import {
-    Status,
-    StatusMsg,
-    colorList,
-    Tkupay_path_B,
-    Tkupay_path_M
-} from "@/api/config";
+import { Status, StatusMsg, colorList } from "@/api/config";
 
 import { apiPreserveDate, apiCancelOrder, apiTrashedOrders } from "@/api/api";
 
@@ -634,8 +629,8 @@ export default {
             x: 0,
             y: 0
         },
-        Tkupay_path_B: Tkupay_path_B,
-        Tkupay_path_M: Tkupay_path_M
+        Tkupay_path_B: "",
+        Tkupay_path_M: ""
     }),
     methods: {
         onResize() {
@@ -659,6 +654,8 @@ export default {
             return true;
         },
         async init() {
+            this.Tkupay_path_B = this.$page.props.configs.bachelor_payment_url;
+            this.Tkupay_path_M = this.$page.props.configs.master_payment_url;
             this.username = this.$page.props.user.username;
             this.orderList = this.$page.props.orders.own.map(x =>
                 Object.assign(

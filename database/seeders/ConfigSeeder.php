@@ -62,5 +62,13 @@ class ConfigSeeder extends Seeder
             'key' => 'admin_stamp',
             'value' => 'IOauP3b5XUhtZ3IWLaiWllZ2muUziKWOZhNngrUt.jpg',
         ]);
+        DB::table('configs')->insert([
+            'key' => 'bachelor_payment_url',
+            'value' => '',
+        ]);
+        DB::table('configs')->insert([
+            'key' => 'master_payment_url',
+            'value' => '',
+        ]);
     }
 }

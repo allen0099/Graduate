@@ -485,6 +485,7 @@
                             v-if="order.length === 1 && order_check"
                             color="primary"
                             class="mb-3 mr-3"
+                            target="_blank"
                             :href="
                                 result.owner.username[0] < '5'
                                     ? `${Tkupay_path_B}`
@@ -553,7 +554,6 @@
 import VuetifyLayout from "@/Layouts/VuetifyLayout";
 import * as easings from "vuetify/es5/services/goto/easing-patterns";
 import { apiSearchStudent, apiCreateOrder, apiSearchOwner } from "@/api/api";
-import { Tkupay_path_B, Tkupay_path_M } from "@/api/config";
 
 export default {
     props: {
@@ -673,13 +673,15 @@ export default {
             ),
             result: null,
             error_msg: "",
-            Tkupay_path_B: Tkupay_path_B,
-            Tkupay_path_M: Tkupay_path_M
+            Tkupay_path_B: "",
+            Tkupay_path_M: ""
         };
     },
 
     methods: {
         async init_obj() {
+            this.Tkupay_path_B = this.$page.props.configs.bachelor_payment_url;
+            this.Tkupay_path_M = this.$page.props.configs.master_payment_url;
             if (this.$page.props.user.username[0] < "5") {
                 this.choose = this.choose_items[0];
                 this.cloths = this.$page.props.inventory.slice(8, 12);
