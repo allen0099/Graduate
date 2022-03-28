@@ -22,9 +22,8 @@ class PDFController extends Controller
     {
         $file_name = $request->name . '.pdf';
         $disk = Storage::disk('pdf');
-
         return $disk->exists($file_name)
-            ? response()->redirectTo($disk->url($file_name))
+            ? response()->redirectTo($disk->url($file_name).'?t='.time())
             : abort(404);
     }
 
