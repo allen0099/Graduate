@@ -56,7 +56,7 @@
                                     </template>
                                     <span
                                         >csv 檔案欄位名必須包含要有
-                                        (繳費單編號,收費金額,繳款人)</span
+                                        (繳費單編號,項目名稱,繳款人姓名)</span
                                     >
                                 </v-tooltip>
                                 <v-file-input

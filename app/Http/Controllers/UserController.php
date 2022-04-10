@@ -416,7 +416,7 @@ class UserController extends Controller
 
     /** 其實是我寫錯地方 我應該寫在 order 但沒注意 
      * 請手動將 xlsx 轉成 csv 檔案，記得過濾掉不是繳學士服費用的學生
-     * csv 檔案欄位名必須包含要有 (繳費單編號,收費金額,繳款人)
+     * csv 檔案欄位名必須包含要有 (繳費單編號,項目名稱,繳款人姓名)
      * 
     */
 
@@ -472,15 +472,17 @@ class UserController extends Controller
             try {
                 $time = microtime(true);
                 $payment_id = trim($row['繳費單編號'] ?? $row[0]);
-                $money = trim($row['收費金額'] ?? $row[3]);
-                $date = trim($row['繳費日期'] ?? $row[4]);
-                $stuname = trim($row['繳款人'] ?? $row[5]);
+                $item_name = trim($row['項目名稱'] ?? $row[2]);
+                $method = trim($row['繳費方式與平台'] ?? $row[3]);
+                // $money = trim($row['總金額'] ?? $row[6]);
+                $date = trim($row['繳費日期'] ?? $row[7]);
+                $stuname = trim($row['繳款人姓名'] ?? $row[8]);
                 $student_id = explode("-", $stuname)[0];
                 $student_name = explode("-", $stuname)[1];
-                $phone = trim($row['聯絡電話'] ?? $row[6]);
-                $state = trim($row['繳費狀態'] ?? $row[7]);
+                $phone = trim($row['聯絡電話'] ?? $row[10]);
+                $state = trim($row['繳費狀態'] ?? $row[11]);
 
-                if(!strlen($payment_id) or !strlen($money) or !strlen($stuname)) {
+                if(!strlen($payment_id) or !strlen($item_name) or !strlen($stuname)) {
                     Log::info("[Log::uploadPayments]", [
                     'info' => "Error: 發生不明錯誤，請檢察檔案是否有缺失!",
                     ]);
@@ -495,11 +497,15 @@ class UserController extends Controller
                 array_push($fail, "發生不明錯誤，請檢察檔案是否有缺失!");
                 return;
             }
+
+            if(!str_contains($item_name, '保證金') || !str_contains($item_name, '學位服')) {
+                return; // 一件訂單有保證金和洗滌費只處理保證金那條
+            }
+
             Log::debug('[Log::uploadPayments] => !!!Row setup!!!', [
                 'time' => microtime(true) - $time,
                 'row' => [
                     'payment_id' => $payment_id,
-                    'money' => $money,
                     'date' => $date,
                     'username' => $student_id,
                     'name' => $student_name,
@@ -507,7 +513,6 @@ class UserController extends Controller
                     'state' => $state,
                 ],
             ]);
-            $real_integer = filter_var($money, FILTER_SANITIZE_NUMBER_INT);
 
             $find_owner = User::where('username', $student_id);
             if ($find_owner->count() > 0) {
@@ -522,27 +527,24 @@ class UserController extends Controller
                 } else {
                     $order = $find_order->first();
                     if(is_null($order->payment_id)) {
-                        if($real_integer >= $order->total_price) {
-                            $order->forceFill([
-                                'status_code' => Order::code_paid,
-                                'payment_id' => $payment_id
-                            ])->save();
-                            
-                            $user->forceFill([
-                                'phone' => $phone
-                            ])->save();
+                        $order->forceFill([
+                            'status_code' => Order::code_paid,
+                            'payment_id' => $payment_id
+                        ])->save();
+                        
+                        $user->forceFill([
+                            'phone' => $phone
+                        ])->save();
 
-                            Log::debug('[Log::uploadPayments] order => 更新訂單', [
-                                'document_id' => $order->document_id,
-                                'payment_id' => $payment_id,
-                                'username' => $student_id,
-                            ]);
-                            $msg = $user->name.'('.$user->username.') 訂單 '.$order->document_id.' 更新付款資訊 '.$payment_id;
-                            array_push($succeed, $msg);
-                        } else {
-                            $msg = $user->name.'('.$student_id.') 訂單 '.$order->document_id.' 付款金額不足 '.($real_integer - $order->total_price);
-                            array_push($fail, $msg);
-                        }
+                        Log::debug('[Log::uploadPayments] order => 更新訂單', [
+                            'document_id' => $order->document_id,
+                            'payment_id' => $payment_id,
+                            'username' => $student_id,
+                        ]);
+
+                        $msg = $user->name.'('.$user->username.') 訂單 '.$order->document_id.' 更新付款資訊 '.$payment_id;
+                        array_push($succeed, $msg);
+
                     } else {
                         Log::debug('[Log::uploadPayments] order => 訂單已存在付款資訊', [
                             'username' => $student_id,
