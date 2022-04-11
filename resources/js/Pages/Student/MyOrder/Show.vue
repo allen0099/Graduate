@@ -265,7 +265,7 @@
                                             {{ payment_time_range.start_time }}
                                             至
                                             {{ payment_time_range.end_time }}
-                                            止，至校園繳費機進行繳費，繳費完成後請持繳費單據與本單至{{
+                                            止完成線上繳費。若至校園繳費機進行繳費，繳費完成後請持繳費單據與本單至{{
                                                 $page.props.configs
                                                     .payment_location
                                             }}完成繳費登記。</span

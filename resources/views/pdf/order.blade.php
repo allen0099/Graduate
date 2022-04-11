@@ -209,7 +209,7 @@
                             <p>歸還採個人歸還，退還保證金一律採匯款至個人帳戶，配合學校付款作業時程，於歸還學位服後約7~10個工作日之後匯款。</p>
                         </li>
                         <li>
-                            <p>請在繳費期限{{ $paid_time->start_time->format('Y/m/d') }}至{{ $paid_time->end_time->format('Y/m/d') }}止，至校園繳費機進行繳費，繳費完成後請持繳費單據與本單至{{ $payment_location }}完成繳費登記。
+                            <p>請在繳費期限{{ $paid_time->start_time->format('Y/m/d') }}至{{ $paid_time->end_time->format('Y/m/d') }}止完成線上繳費。若至校園繳費機進行繳費，繳費完成後請持繳費單據與本單至{{ $payment_location }}完成繳費登記。
                             </p>
                         </li>
                         <li>
