@@ -135,8 +135,8 @@
                                 autofocus
                                 :rules="[
                                     value =>
-                                        /^[0-9]{8}$/.test(value) ||
-                                        '必為 8 個數字'
+                                        /^[0-9]{9}$/.test(value) ||
+                                        '必為 9 個數字'
                                 ]"
                             ></v-text-field>
                         </v-col>
