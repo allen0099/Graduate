@@ -134,10 +134,29 @@
                                             dense
                                             @click="reservation(order)"
                                             :disabled="!!order.preserve"
+                                            class="mr-3"
                                         >
                                             預約領衣
                                             <v-icon right>
                                                 mdi-hand-right
+                                            </v-icon>
+                                        </v-btn>
+                                        <v-btn
+                                            outlined
+                                            color="indigo"
+                                            dense
+                                            :href="
+                                                `${route(
+                                                    'order-pdf'
+                                                )}?document_id=${
+                                                    order.document_id
+                                                }`
+                                            "
+                                            download
+                                        >
+                                            列印訂單
+                                            <v-icon right>
+                                                mdi-download
                                             </v-icon>
                                         </v-btn>
                                     </v-col>
