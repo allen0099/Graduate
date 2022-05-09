@@ -288,10 +288,11 @@ class PDFController extends Controller
 
         $res = [];
 
+        $allOrders = collect(new Order);
+
         if (today()->addDays(1) >= $Bachelor_start) {
             $start = today()->addDays(1) > $Bachelor_start ? $Bachelor_start : today()->addDays(1);
             $end = today()->addDays(1) > $Bachelor_end ? $Bachelor_end : today()->addDays(1);
-            $allOrders = collect(new Order);
             while ($start <= $end) {
                 $orders = Order::whereDate('preserve', '=', $start)->get();
                 $orders = $orders->filter(function ($value, $key) {
