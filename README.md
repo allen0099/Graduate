@@ -2,31 +2,32 @@
 
 ## Frontend
 
-- jetstream 
-- install npm modules
+-   jetstream
+-   install npm modules
 
 ```shell script
 npm install && npm run dev
 ```
 
-- npm watch
+-   npm watch
 
 ```shell script
 npm run watch
 ```
 
-
 ## backend
 
-- install php composer
+-   install php composer
 
 ```shell script
-composer update
+composer install
 ```
+
+-   Please do not execute `compose update` casually
 
 ## laravel
 
-- [Laradock](https://laradock.io/)
+-   [Laradock](https://laradock.io/)
 
 ```shell script
 docker-compose up -d nginx mysql phpmyadmin
@@ -35,26 +36,26 @@ chown -R laradock:laradock /var/www
 composer update
 ```
 
-- update laradock
+-   update laradock
 
 ```shell script
 docker-compose build xxx
 docker-compose up --force-recreate -d xxx
 ```
 
-- migrate database with init data
+-   migrate database with init data
 
 ```shell script
 php artisan migrate:fresh --seed
 ```
 
-- public storage link
+-   public storage link
 
 ```shell
 php artisan storage:link
 ```
 
-- queue workers
+-   queue workers
 
 ```shell
 php artisan queue:work --queue=high,default
