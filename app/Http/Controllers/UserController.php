@@ -414,10 +414,10 @@ class UserController extends Controller
         return $user;
     }
 
-    /** 其實是我寫錯地方 我應該寫在 order 但沒注意 
+    /** 其實是我寫錯地方 我應該寫在 order 但沒注意
      * 請手動將 xlsx 轉成 csv 檔案，記得過濾掉不是繳學士服費用的學生
      * csv 檔案欄位名必須包含要有 (繳費單編號,項目名稱,繳款人姓名)
-     * 
+     *
     */
 
     public function uploadPayments(Request $request)
@@ -470,17 +470,38 @@ class UserController extends Controller
 
         $fsExcel->import(Storage::disk('public')->path($path), function ($row) use (&$fail, &$succeed) {
             try {
+
+                // 繳費單編號,繳費單名稱,繳費方式與平台,收費金額,繳費日期,繳款人,聯絡電話,繳費狀態,繳費專案編號,
+                 // 繳費項目代號,繳費單備註繳費單編號,繳費單名稱,繳費方式與平台,收費金額,繳費日期,繳款人,聯絡電話,繳費狀態,繳費專案編號,繳費項目代號,繳費單備註
+
                 $time = microtime(true);
+                // $payment_id = trim($row['繳費單編號'] ?? $row[0]);
+                // // $item_code = trim($row['項目代號'] ?? $row[1]);
+                // $item_name = trim($row['項目名稱'] ?? $row[2]);
+                // $method = trim($row['繳費方式與平台'] ?? $row[3]);
+                // // _ = trim($row['購買數量'] ?? $row[4]);
+                // // _ = trim($row['項目單價'] ?? $row[5]);
+                // // $money = trim($row['總金額'] ?? $row[6]);
+                // $date = trim($row['繳費日期'] ?? $row[7]);
+                // $stuname = trim($row['繳款人姓名'] ?? $row[8]);
+                // $student_id = explode("-", $stuname)[0];
+                // $student_name = explode("-", $stuname)[1];
+                // // _ = trim($row['繳款人單位'] ?? $row[10]);
+                // $phone = trim($row['聯絡電話'] ?? $row[10]);
+                // $state = trim($row['繳費狀態'] ?? $row[11]);
+
                 $payment_id = trim($row['繳費單編號'] ?? $row[0]);
-                $item_name = trim($row['項目名稱'] ?? $row[2]);
-                $method = trim($row['繳費方式與平台'] ?? $row[3]);
-                // $money = trim($row['總金額'] ?? $row[6]);
-                $date = trim($row['繳費日期'] ?? $row[7]);
-                $stuname = trim($row['繳款人姓名'] ?? $row[8]);
+                $item_name = trim($row['繳費單名稱'] ?? $row[1]);
+                $method = trim($row['繳費方式與平台'] ?? $row[2]);
+                // $money = trim($row['收費金額'] ?? $row[3]);
+                $date = trim($row['繳費日期'] ?? $row[4]);
+                $stuname = trim($row['繳款人'] ?? $row[5]);
                 $student_id = explode("-", $stuname)[0];
                 $student_name = explode("-", $stuname)[1];
-                $phone = trim($row['聯絡電話'] ?? $row[10]);
-                $state = trim($row['繳費狀態'] ?? $row[11]);
+                $phone = trim($row['聯絡電話'] ?? $row[6]);
+                $state = trim($row['繳費狀態'] ?? $row[7]);
+                // $item_code = trim($row['項目代號'] ?? $row[1]);
+
 
                 if(!strlen($payment_id) or !strlen($item_name) or !strlen($stuname)) {
                     Log::info("[Log::uploadPayments]", [
@@ -498,8 +519,9 @@ class UserController extends Controller
                 return;
             }
 
-            if(!str_contains($item_name, '保證金') || !str_contains($item_name, '學位服')) {
-                return; // 一件訂單有保證金和洗滌費只處理保證金那條
+            // ex: 學位服(碩士服)借用-W-折舊洗滌費等 2 個繳費項目
+            if(!str_contains($item_name, '學位服')) {
+                return;
             }
 
             Log::debug('[Log::uploadPayments] => !!!Row setup!!!', [
@@ -531,7 +553,7 @@ class UserController extends Controller
                             'status_code' => Order::code_paid,
                             'payment_id' => $payment_id
                         ])->save();
-                        
+
                         $user->forceFill([
                             'phone' => $phone
                         ])->save();
@@ -563,7 +585,7 @@ class UserController extends Controller
 
             return;
         });
-        
+
         Log::debug('[Log::uploadPayments] => upload done');
 
         return ['fail' => $fail, 'succeed' => $succeed];
@@ -603,7 +625,7 @@ class UserController extends Controller
         $list = $list->sortByDesc('帳戶狀態');
 
         $chunks = $list->chunk(60);
-        
+
         $sheets = new SheetCollection($chunks);
 
         return (FastExcel::data($sheets))->download('名單匯出-' . today()->format('Y-m-d-') . Str::random(5) . '.xlsx');
@@ -710,7 +732,7 @@ class UserController extends Controller
             }
             return;
         });
-        
+
         Log::debug('[Log::uploadPaymentCheckStatus] => upload done');
 
         return ['fail' => $fail, 'succeed' => $succeed];
