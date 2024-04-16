@@ -29,8 +29,8 @@
         <div class="w-full pt-12 flex flex-col sm:flex-row space-y-2  justify-start">
             <div class="w-full sm:w-1/2 pr-6 flex flex-col space-y-4">
                 <div class="md:text-3xl sm:text-2xl text-xl">總務處事務整備組：</div>
-                <p class="opacity-60">上班時間：星期一至星期五 上午8:00~12:00 下午1:00~5:00</p>
-                <p class="opacity-60">電話：(02)2621-5656 轉 2275</p>
+                <p class="opacity-60">上班時間：星期一至星期五 上午AM 8:00~12:00 下午PM 1:00~5:00</p>
+                <p class="opacity-60">電話：(02)2621-5656 轉 2376</p>
                 <p class="opacity-60">地址：25137新北市淡水區英專路151號 守謙會議中心HC308室</p>
             </div>
             <div class="w-full sm:w-1/2 flex flex-col space-y-4 sm:pt-0 pt-5">
