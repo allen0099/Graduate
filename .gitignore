@@ -4,6 +4,7 @@
 /public/storage
 /public/pdf
 /public/picture
+/public/.well-known
 /storage/*.key
 /vendor
 .env

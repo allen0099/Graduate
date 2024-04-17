@@ -519,8 +519,9 @@ class UserController extends Controller
                 return;
             }
 
-            // ex: 學位服(碩士服)借用-W-折舊洗滌費等 2 個繳費項目
-            if(!str_contains($item_name, '學位服')) {
+            
+            // ex: 碩士服-保證金等 2 個繳費項目 or 學士服-保證金等 2 個繳費項目
+            if(!str_contains($item_name, '碩士服') || !str_contains($item_name, '學士服')) {
                 return;
             }
 
